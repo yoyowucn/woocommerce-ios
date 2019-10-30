@@ -62,6 +62,13 @@
 		02B296A722FA6DB500FD7A4C /* Date+StartAndEnd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B296A622FA6DB500FD7A4C /* Date+StartAndEnd.swift */; };
 		02B296A922FA6E0000FD7A4C /* DateStartAndEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B296A822FA6E0000FD7A4C /* DateStartAndEndTests.swift */; };
 		02BA23C022EE9DAF009539E7 /* AsyncDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA23BF22EE9DAF009539E7 /* AsyncDictionaryTests.swift */; };
+		02BC677D23693BE500BEB725 /* ProductImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC677B23693BE500BEB725 /* ProductImagesViewController.swift */; };
+		02BC677E23693BE500BEB725 /* ProductImagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02BC677C23693BE500BEB725 /* ProductImagesViewController.xib */; };
+		02BC678023693C1100BEB725 /* ProductMediaPickerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC677F23693C1100BEB725 /* ProductMediaPickerHelper.swift */; };
+		02BC6782236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6781236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift */; };
+		02BC6784236943E400BEB725 /* CameraCaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */; };
+		02BC67862369449100BEB725 /* MediaLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67852369449100BEB725 /* MediaLibraryPicker.swift */; };
+		02BC6788236944CB00BEB725 /* MediaPickingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6787236944CA00BEB725 /* MediaPickingContext.swift */; };
 		02D45647231CB1FB008CF0A9 /* UIImage+Dot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */; };
 		02D4564C231D05E2008CF0A9 /* BetaFeaturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */; };
 		02E4FD7A230688BA0049610C /* OrderStatsV4Interval+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */; };
@@ -518,6 +525,13 @@
 		02B296A622FA6DB500FD7A4C /* Date+StartAndEnd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+StartAndEnd.swift"; sourceTree = "<group>"; };
 		02B296A822FA6E0000FD7A4C /* DateStartAndEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateStartAndEndTests.swift; sourceTree = "<group>"; };
 		02BA23BF22EE9DAF009539E7 /* AsyncDictionaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDictionaryTests.swift; sourceTree = "<group>"; };
+		02BC677B23693BE500BEB725 /* ProductImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductImagesViewController.swift; sourceTree = "<group>"; };
+		02BC677C23693BE500BEB725 /* ProductImagesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductImagesViewController.xib; sourceTree = "<group>"; };
+		02BC677F23693C1100BEB725 /* ProductMediaPickerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductMediaPickerHelper.swift; sourceTree = "<group>"; };
+		02BC6781236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryMediaPickingCoordinator.swift; sourceTree = "<group>"; };
+		02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureCoordinator.swift; sourceTree = "<group>"; };
+		02BC67852369449100BEB725 /* MediaLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryPicker.swift; sourceTree = "<group>"; };
+		02BC6787236944CA00BEB725 /* MediaPickingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickingContext.swift; sourceTree = "<group>"; };
 		02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Dot.swift"; sourceTree = "<group>"; };
 		02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaFeaturesViewController.swift; sourceTree = "<group>"; };
 		02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrderStatsV4Interval+Chart.swift"; sourceTree = "<group>"; };
@@ -1057,6 +1071,20 @@
 			path = "Stats v3";
 			sourceTree = "<group>";
 		};
+		02BC677A23693BB000BEB725 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				02BC677B23693BE500BEB725 /* ProductImagesViewController.swift */,
+				02BC677C23693BE500BEB725 /* ProductImagesViewController.xib */,
+				02BC677F23693C1100BEB725 /* ProductMediaPickerHelper.swift */,
+				02BC6781236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift */,
+				02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */,
+				02BC67852369449100BEB725 /* MediaLibraryPicker.swift */,
+				02BC6787236944CA00BEB725 /* MediaPickingContext.swift */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
 		02D4564A231D059E008CF0A9 /* Beta features */ = {
 			isa = PBXGroup;
 			children = (
@@ -1182,6 +1210,7 @@
 		74EC34A3225FE1F3004BBC2E /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				02BC677A23693BB000BEB725 /* Media */,
 				020DD48B2322A5F9005822B1 /* View Models */,
 				7447F9D8226A701B0031E10B /* Cells */,
 				74EC34A4225FE21F004BBC2E /* ProductLoaderViewController.swift */,
@@ -2244,6 +2273,7 @@
 				B559EBAF20A0BF8F00836CD4 /* README.md in Resources */,
 				CE583A082107849F00D73C1C /* SwitchTableViewCell.xib in Resources */,
 				CE22571B20E16FBC0037F478 /* LeftImageTableViewCell.xib in Resources */,
+				02BC677E23693BE500BEB725 /* ProductImagesViewController.xib in Resources */,
 				8CD41D4A21F8A7E300CF3C2B /* RELEASE-NOTES.txt in Resources */,
 				B5F8B7E5219478FA00DAB7E2 /* ReviewDetailsViewController.xib in Resources */,
 				B5FD111221D3CE7700560344 /* NewNoteViewController.xib in Resources */,
@@ -2399,6 +2429,7 @@
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Sentry/Sentry.framework",
 				"${BUILT_PRODUCTS_DIR}/UIDeviceIdentifier/UIDeviceIdentifier.framework",
+				"${BUILT_PRODUCTS_DIR}/WPMediaPicker/WPMediaPicker.framework",
 				"${BUILT_PRODUCTS_DIR}/WordPressKit/WordPressKit.framework",
 				"${BUILT_PRODUCTS_DIR}/WordPressShared/WordPressShared.framework",
 				"${BUILT_PRODUCTS_DIR}/WordPressUI/WordPressUI.framework",
@@ -2428,6 +2459,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sentry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIDeviceIdentifier.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WPMediaPicker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WordPressKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WordPressShared.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WordPressUI.framework",
@@ -2524,7 +2556,10 @@
 				748C7782211E294000814F2C /* Double+Woo.swift in Sources */,
 				D817586222BB64C300289CFE /* OrderDetailsNotices.swift in Sources */,
 				0282DD94233C9465006A5FDB /* SearchUICommand.swift in Sources */,
+				02BC67862369449100BEB725 /* MediaLibraryPicker.swift in Sources */,
 				028BAC4722F3B550008BB4AF /* StatsTimeRangeV4+UI.swift in Sources */,
+				02BC6782236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift in Sources */,
+				02BC677D23693BE500BEB725 /* ProductImagesViewController.swift in Sources */,
 				B5AA7B3F20ED81C2004DA14F /* UserDefaults+Woo.swift in Sources */,
 				0274C25423162FB200EF1E40 /* DashboardTopBannerFactory.swift in Sources */,
 				B58B4AB22108F01700076FDD /* NoticeView.swift in Sources */,
@@ -2532,6 +2567,7 @@
 				74B5713621CD7604008F9B8E /* SharingHelper.swift in Sources */,
 				D8149F532251CFE60006A245 /* EditableOrderTrackingTableViewCell.swift in Sources */,
 				028BAC4222F30B05008BB4AF /* StoreStatsV4PeriodViewController.swift in Sources */,
+				02BC6788236944CB00BEB725 /* MediaPickingContext.swift in Sources */,
 				740987B321B87760000E4C80 /* FancyAnimatedButton+Woo.swift in Sources */,
 				B511ED27218A660E005787DC /* StringDescriptor.swift in Sources */,
 				B5F355EF21CD500200A7077A /* SearchViewController.swift in Sources */,
@@ -2564,6 +2600,7 @@
 				B5A56BF0219F2CE90065A902 /* VerticalButton.swift in Sources */,
 				748C7780211E18A600814F2C /* OrderStats+Woo.swift in Sources */,
 				D831E2DC230E0558000037D0 /* Authentication.swift in Sources */,
+				02BC678023693C1100BEB725 /* ProductMediaPickerHelper.swift in Sources */,
 				024A543422BA6F8F00F4F38E /* DeveloperEmailChecker.swift in Sources */,
 				D8736B5A22F07D7100A14A29 /* MainTabViewModel.swift in Sources */,
 				CE4DA5C621DD755E00074607 /* CurrencyFormatter.swift in Sources */,
@@ -2682,6 +2719,7 @@
 				02E4FD7E2306A8180049610C /* StatsTimeRangeBarViewModel.swift in Sources */,
 				021FAFCF23556D2B00B99241 /* UIView+SubviewsAxis.swift in Sources */,
 				B5290ED9219B3FA900A6AF7F /* Date+Woo.swift in Sources */,
+				02BC6784236943E400BEB725 /* CameraCaptureCoordinator.swift in Sources */,
 				B57C744520F55BA600EEFC87 /* NSObject+Helpers.swift in Sources */,
 				D817586022BB614A00289CFE /* OrderMessageComposer.swift in Sources */,
 				CEEC9B6421E7AB850055EEF0 /* AppRatingManager.swift in Sources */,

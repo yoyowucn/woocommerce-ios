@@ -299,6 +299,12 @@ extension ProductsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
+
+        let imagesViewController = ProductImagesViewController()
+        navigationController?.pushViewController(imagesViewController, animated: true)
+        return
+
+
         ServiceLocator.analytics.track(.productListProductTapped)
 
         let product = resultsController.object(at: indexPath)
