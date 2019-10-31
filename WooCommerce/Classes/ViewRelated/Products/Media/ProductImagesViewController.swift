@@ -1,20 +1,35 @@
 import UIKit
 import WPMediaPicker
+import Yosemite
 
 class ProductImagesViewController: UIViewController {
     @IBOutlet weak var addButton: UIButton!
 
     @IBOutlet weak var imagesContainerView: UIView!
 
+    private let siteID: Int
 
     private lazy var mediaPickingCoordinator: MediaLibraryMediaPickingCoordinator = {
         return MediaLibraryMediaPickingCoordinator(delegate: self)
     }()
-    
+
+    init(siteID: Int) {
+        self.siteID = siteID
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureAddButton()
+
+        let action = MediaAction.retrieveMediaLibrary(siteID: siteID) { (mediaItems, error) in
+        }
+        ServiceLocator.stores.dispatch(action)
     }
 }
 
@@ -76,6 +91,10 @@ extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
             assets.count > 0 else { return }
 
         for asset in assets {
+            let action = MediaAction.uploadMedia(siteID: siteID,
+                                                 mediaAsset: asset) { (media, error) in
+            }
+            ServiceLocator.stores.dispatch(action)
 //            let info = MediaAnalyticsInfo(origin: .mediaLibrary(.deviceLibrary), selectionMethod: .fullScreenPicker)
 //            MediaCoordinator.shared.addMedia(from: asset, to: blog, analyticsInfo: info)
         }
@@ -84,7 +103,7 @@ extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
     func mediaPickerControllerDidCancel(_ picker: WPMediaPickerViewController) {
 //        pickerDataSource.searchCancelled()
 
-        dismiss(animated: true)
+        picker.dismiss(animated: true)
     }
 
     func mediaPickerController(_ picker: WPMediaPickerViewController, willShowOverlayView overlayView: UIView, forCellFor asset: WPMediaAsset) {
@@ -135,6 +154,7 @@ extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
         guard picker == self else {
             return true
         }
+        return true
 
 //        guard let media = asset as? Media else {
 //            return false
@@ -172,12 +192,13 @@ extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
 
     @objc func updateNavigationItemButtonsForCurrentAssetSelection() {
         if isEditing {
+            navigationItem.rightBarButtonItem?.isEnabled = true
             // Check that our selected items haven't been deleted – we're notified
             // of changes to the data source before the collection view has
             // updated its selected assets.
 //            guard let assets = (selectedAssets as? [Media]) else { return }
 //            let existingAssets = assets.filter({ !$0.isDeleted })
-//
+
 //            navigationItem.rightBarButtonItem?.isEnabled = (existingAssets.count > 0)
         }
     }

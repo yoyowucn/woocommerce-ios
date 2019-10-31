@@ -69,6 +69,7 @@
 		02BC6784236943E400BEB725 /* CameraCaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */; };
 		02BC67862369449100BEB725 /* MediaLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67852369449100BEB725 /* MediaLibraryPicker.swift */; };
 		02BC6788236944CB00BEB725 /* MediaPickingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6787236944CA00BEB725 /* MediaPickingContext.swift */; };
+		02BC678A2369541B00BEB725 /* MediaLibraryPickerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */; };
 		02D45647231CB1FB008CF0A9 /* UIImage+Dot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */; };
 		02D4564C231D05E2008CF0A9 /* BetaFeaturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */; };
 		02E4FD7A230688BA0049610C /* OrderStatsV4Interval+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */; };
@@ -532,6 +533,7 @@
 		02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureCoordinator.swift; sourceTree = "<group>"; };
 		02BC67852369449100BEB725 /* MediaLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryPicker.swift; sourceTree = "<group>"; };
 		02BC6787236944CA00BEB725 /* MediaPickingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickingContext.swift; sourceTree = "<group>"; };
+		02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryPickerDataSource.swift; sourceTree = "<group>"; };
 		02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Dot.swift"; sourceTree = "<group>"; };
 		02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaFeaturesViewController.swift; sourceTree = "<group>"; };
 		02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrderStatsV4Interval+Chart.swift"; sourceTree = "<group>"; };
@@ -1081,6 +1083,7 @@
 				02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */,
 				02BC67852369449100BEB725 /* MediaLibraryPicker.swift */,
 				02BC6787236944CA00BEB725 /* MediaPickingContext.swift */,
+				02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -2759,6 +2762,7 @@
 				CE1CCB4B20570B1F000EE3AC /* OrderTableViewCell.swift in Sources */,
 				748AD087219F481B00023535 /* UIView+Animation.swift in Sources */,
 				748D34DF214828DD00E21A2F /* TopPerformersViewController.swift in Sources */,
+				02BC678A2369541B00BEB725 /* MediaLibraryPickerDataSource.swift in Sources */,
 				B509FED321C05121000076A9 /* SupportManagerAdapter.swift in Sources */,
 				B5AA7B3D20ED5D15004DA14F /* SessionManager.swift in Sources */,
 				74C6FEA521C2F1FA009286B6 /* AboutViewController.swift in Sources */,

@@ -33,6 +33,10 @@ target 'WooCommerce' do
   
   pod 'WordPressUI', '~> 1.3.5'
 
+  pod 'WPMediaPicker', '~> 1.6.0'
+  ## while PR is in review:
+  ## pod 'WPMediaPicker', :git => 'https://github.com/wordpress-mobile/MediaPicker-iOS.git', :commit => '7c3cb8f00400b9316a803640b42bb88a66bbc648'
+
 
   # External Libraries
   # ==================
@@ -61,6 +65,7 @@ def yosemite_pods
   pod 'Alamofire', '~> 4.7'
   pod 'CocoaLumberjack', '~> 3.5'
   pod 'CocoaLumberjack/Swift', '~> 3.5'
+  pod 'WordPressKit', '~> 4.5.0'
 end
 
 # Yosemite Target:

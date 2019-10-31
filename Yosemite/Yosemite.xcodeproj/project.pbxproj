@@ -15,6 +15,16 @@
 		02BA23C222EEEABC009539E7 /* AvailabilityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA23C122EEEABC009539E7 /* AvailabilityStore.swift */; };
 		02BA23C422EEEB3B009539E7 /* AvailabilityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA23C322EEEB3B009539E7 /* AvailabilityAction.swift */; };
 		02BA23C622EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA23C522EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift */; };
+		02BC678E23696FA700BEB725 /* MediaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC678D23696FA700BEB725 /* MediaStore.swift */; };
+		02BC679023696FFE00BEB725 /* MediaAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC678F23696FFE00BEB725 /* MediaAction.swift */; };
+		02BC679723698B8F00BEB725 /* MediaImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679623698B8F00BEB725 /* MediaImportService.swift */; };
+		02BC679923698BD700BEB725 /* MediaImageExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679823698BD700BEB725 /* MediaImageExporter.swift */; };
+		02BC679B23698C4B00BEB725 /* ExportableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679A23698C4B00BEB725 /* ExportableAsset.swift */; };
+		02BC679D23698C9D00BEB725 /* MediaExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679C23698C9D00BEB725 /* MediaExport.swift */; };
+		02BC679F23698CC100BEB725 /* MediaFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679E23698CC100BEB725 /* MediaFileManager.swift */; };
+		02BC67A123698CF500BEB725 /* MediaSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A023698CF500BEB725 /* MediaSettings.swift */; };
+		02BC67A323698E5B00BEB725 /* MediaAssetExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */; };
+		02BC67A5236999C900BEB725 /* PHAsset+ExportableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */; };
 		02DA641B2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DA641A2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift */; };
 		0E67B79585034C4DD75C8117 /* Pods_Yosemite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C25501C7F936D2FD32FAF3F4 /* Pods_Yosemite.framework */; };
 		36941EA7B9242CAB1FF828BC /* Pods_YosemiteTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 991BBCE6E4A92F0A028885D8 /* Pods_YosemiteTests.framework */; };
@@ -161,6 +171,16 @@
 		02BA23C122EEEABC009539E7 /* AvailabilityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityStore.swift; sourceTree = "<group>"; };
 		02BA23C322EEEB3B009539E7 /* AvailabilityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityAction.swift; sourceTree = "<group>"; };
 		02BA23C522EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsV4AvailabilityStoreTests.swift; sourceTree = "<group>"; };
+		02BC678D23696FA700BEB725 /* MediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStore.swift; sourceTree = "<group>"; };
+		02BC678F23696FFE00BEB725 /* MediaAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAction.swift; sourceTree = "<group>"; };
+		02BC679623698B8F00BEB725 /* MediaImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaImportService.swift; sourceTree = "<group>"; };
+		02BC679823698BD700BEB725 /* MediaImageExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaImageExporter.swift; sourceTree = "<group>"; };
+		02BC679A23698C4B00BEB725 /* ExportableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAsset.swift; sourceTree = "<group>"; };
+		02BC679C23698C9D00BEB725 /* MediaExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaExport.swift; sourceTree = "<group>"; };
+		02BC679E23698CC100BEB725 /* MediaFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileManager.swift; sourceTree = "<group>"; };
+		02BC67A023698CF500BEB725 /* MediaSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSettings.swift; sourceTree = "<group>"; };
+		02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAssetExporter.swift; sourceTree = "<group>"; };
+		02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAsset+ExportableAsset.swift"; sourceTree = "<group>"; };
 		02DA641A2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettingsStoreTests+StatsVersion.swift"; sourceTree = "<group>"; };
 		35381AA86D039850A916E336 /* Pods-YosemiteTests.release-alpha.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YosemiteTests.release-alpha.xcconfig"; path = "../Pods/Target Support Files/Pods-YosemiteTests/Pods-YosemiteTests.release-alpha.xcconfig"; sourceTree = "<group>"; };
 		585B973F61632665297738A3 /* Pods-Yosemite.release-alpha.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yosemite.release-alpha.xcconfig"; path = "../Pods/Target Support Files/Pods-Yosemite/Pods-Yosemite.release-alpha.xcconfig"; sourceTree = "<group>"; };
@@ -361,6 +381,21 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
+		02BC679523698B8200BEB725 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				02BC679623698B8F00BEB725 /* MediaImportService.swift */,
+				02BC679823698BD700BEB725 /* MediaImageExporter.swift */,
+				02BC679A23698C4B00BEB725 /* ExportableAsset.swift */,
+				02BC679C23698C9D00BEB725 /* MediaExport.swift */,
+				02BC679E23698CC100BEB725 /* MediaFileManager.swift */,
+				02BC67A023698CF500BEB725 /* MediaSettings.swift */,
+				02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */,
+				02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
 		B52E002C2119E6C000700FDE /* Internal */ = {
 			isa = PBXGroup;
 			children = (
@@ -451,6 +486,7 @@
 		B56C1EBC20EABD1C00D749F9 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				02BC679523698B8200BEB725 /* Media */,
 				B52E002C2119E6C000700FDE /* Internal */,
 				B5631ECC2114DF8C008D3535 /* EntityListener.swift */,
 				B56C1EBD20EABD2B00D749F9 /* ResultsController.swift */,
@@ -477,6 +513,7 @@
 				D8C11A4F22DF2D9400D4A88D /* StatsStoreV4.swift */,
 				D87F614B22657B150031A13B /* AppSettingsStore.swift */,
 				02BA23C122EEEABC009539E7 /* AvailabilityStore.swift */,
+				02BC678D23696FA700BEB725 /* MediaStore.swift */,
 			);
 			path = Stores;
 			sourceTree = "<group>";
@@ -634,6 +671,7 @@
 				D8C11A5122DF2DA200D4A88D /* StatsActionV4.swift */,
 				D87F614922657A690031A13B /* AppSettingsAction.swift */,
 				02BA23C322EEEB3B009539E7 /* AvailabilityAction.swift */,
+				02BC678F23696FFE00BEB725 /* MediaAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -833,6 +871,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02BC67A323698E5B00BEB725 /* MediaAssetExporter.swift in Sources */,
+				02BC679F23698CC100BEB725 /* MediaFileManager.swift in Sources */,
 				7492FADD217FAF5C00ED2C69 /* SettingStore.swift in Sources */,
 				B52E0032211A440D00700FDE /* Order+ReadOnlyType.swift in Sources */,
 				B5C9DE152087FF0E006B910A /* Dispatcher.swift in Sources */,
@@ -841,11 +881,13 @@
 				7493750A22498700007D85D1 /* ProductCategory+ReadOnlyConvertible.swift in Sources */,
 				D8C11A5622DFB0BE00D4A88D /* OrderStatsV4Totals+ReadOnlyConvertible.swift in Sources */,
 				74685D4E20F7EFA7008958C1 /* OrderItem+ReadOnlyConvertible.swift in Sources */,
+				02BC678E23696FA700BEB725 /* MediaStore.swift in Sources */,
 				7471401121877668009A11CC /* NotificationAction.swift in Sources */,
 				CE4FD4522350FB5400A16B31 /* OrderItemTaxRefund+ReadOnlyConvertible.swift in Sources */,
 				CE4FD4562350FD4800A16B31 /* Refund+ReadOnlyConvertible.swift in Sources */,
 				74FD596F216FB6ED00A5AE83 /* OrderStatsItem+ReadOnlyConvertible.swift in Sources */,
 				CE3B7AD92229C3570050FE4B /* OrderStatus+ReadOnlyType.swift in Sources */,
+				02BC67A123698CF500BEB725 /* MediaSettings.swift in Sources */,
 				74B7D6B020F910AF002667AC /* OrderNote+ReadOnlyConvertible.swift in Sources */,
 				74B2601F2188A92A0041793A /* Note+ReadOnlyConvertible.swift in Sources */,
 				CE3B7AD72225ECA90050FE4B /* OrderStatusStore.swift in Sources */,
@@ -867,6 +909,7 @@
 				74A18C562113827E00DCF8A8 /* StatsStore.swift in Sources */,
 				D8C11A5022DF2D9400D4A88D /* StatsStoreV4.swift in Sources */,
 				D87F614A22657A690031A13B /* AppSettingsAction.swift in Sources */,
+				02BC679923698BD700BEB725 /* MediaImageExporter.swift in Sources */,
 				744A321B216D57D40051439B /* SiteVisitStats+ReadOnlyType.swift in Sources */,
 				7493750E224988DE007D85D1 /* ProductImage+ReadOnlyConvertible.swift in Sources */,
 				D80F758C223F74B6002F4A3B /* ShipmentTrackingProvider+ReadOnlyConvertible.swift in Sources */,
@@ -886,6 +929,7 @@
 				B53D89E520E6C22B00F90866 /* Model.swift in Sources */,
 				933A27352222352500C2143A /* Logging.swift in Sources */,
 				74685D5020F7F3CE008958C1 /* OrderCoupon+ReadOnlyConvertible.swift in Sources */,
+				02BC679023696FFE00BEB725 /* MediaAction.swift in Sources */,
 				74A7689020D45F9300F9D437 /* OrderAction.swift in Sources */,
 				74FD596E216FB6ED00A5AE83 /* OrderStats+ReadOnlyConvertible.swift in Sources */,
 				D8736B6F22F0CE5200A14A29 /* OrderCountItem+ReadOnlyConvertible.swift in Sources */,
@@ -894,8 +938,10 @@
 				749375042249691D007D85D1 /* Product+ReadOnlyConvertible.swift in Sources */,
 				CE43A90222A072D800A4FF29 /* ProductDownload+ReadOnlyConvertible.swift in Sources */,
 				B5C9DE182087FF0E006B910A /* Assert.swift in Sources */,
+				02BC67A5236999C900BEB725 /* PHAsset+ExportableAsset.swift in Sources */,
 				CE0DB6C0233EB3F300A27E7A /* OrderRefundCondensed+ReadOnlyConvertible.swift in Sources */,
 				0225512122FC2F3000D98613 /* OrderStatsV4Interval+Date.swift in Sources */,
+				02BC679B23698C4B00BEB725 /* ExportableAsset.swift in Sources */,
 				74D7F29B20F6A7FB0058B2F0 /* Order+ReadOnlyConvertible.swift in Sources */,
 				B52E002E211A3F5500700FDE /* ReadOnlyType.swift in Sources */,
 				B5C9DE162087FF0E006B910A /* Store.swift in Sources */,
@@ -916,10 +962,12 @@
 				7492FADF217FB11D00ED2C69 /* SettingAction.swift in Sources */,
 				D87F614C22657B150031A13B /* AppSettingsStore.swift in Sources */,
 				D8C11A5422DFAE9500D4A88D /* OrderStatsV4+ReadOnlyConvertible.swift in Sources */,
+				02BC679723698B8F00BEB725 /* MediaImportService.swift in Sources */,
 				749737672141CC8C0008C490 /* TopEarnerStats+ReadOnlyType.swift in Sources */,
 				7493751222498B2C007D85D1 /* ProductTag+ReadOnlyConvertible.swift in Sources */,
 				74A18C58211382A000DCF8A8 /* StatsAction.swift in Sources */,
 				7499936420EFBC1B00CF01CD /* OrderNoteAction.swift in Sources */,
+				02BC679D23698C9D00BEB725 /* MediaExport.swift in Sources */,
 				7455D4692141B59E00FA8C1F /* TopEarnerStatsItem+ReadOnlyConvertible.swift in Sources */,
 				D8C11A5222DF2DA200D4A88D /* StatsActionV4.swift in Sources */,
 				02BA23C422EEEB3B009539E7 /* AvailabilityAction.swift in Sources */,
