@@ -100,6 +100,25 @@ public class ProductsRemote: Remote {
 
         enqueue(request, mapper: mapper, completion: completion)
     }
+
+    /// Updates the images of a specific `Product`.
+    ///
+    /// - Parameters:
+    ///     - siteID: Site which hosts the Product.
+    ///     - productID: Identifier of the Product.
+    ///     - images: an ordered list of images. The first image is the main Product image.
+    ///     - completion: Closure to be executed upon completion.
+    ///
+    public func updateProductImages(for siteID: Int, productID: Int, images: [ProductImage], completion: @escaping (Product?, Error?) -> Void) {
+        let parameters = [
+            "images": images.map({ ["id": $0.imageID] })
+        ]
+        let path = "\(Path.products)/\(productID)"
+        let request = JetpackRequest(wooApiVersion: .mark3, method: .post, siteID: siteID, path: path, parameters: parameters)
+        let mapper = ProductMapper(siteID: siteID)
+
+        enqueue(request, mapper: mapper, completion: completion)
+    }
 }
 
 

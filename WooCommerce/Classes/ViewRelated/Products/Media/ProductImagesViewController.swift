@@ -8,6 +8,7 @@ class ProductImagesViewController: UIViewController {
 
     private let siteID: Int
     private let productID: Int
+    private var productImages: [ProductImage]
 
     private lazy var mediaPickingCoordinator: MediaLibraryMediaPickingCoordinator = {
         return MediaLibraryMediaPickingCoordinator(delegate: self, onCameraCaptureCompletion: self.onCameraCaptureCompletion)
@@ -16,6 +17,7 @@ class ProductImagesViewController: UIViewController {
     init(product: Product) {
         self.siteID = product.siteID
         self.productID = product.productID
+        self.productImages = product.images
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -59,9 +61,9 @@ private extension ProductImagesViewController {
 
 // MARK: - Image upload to WP Media Library and Product
 private extension ProductImagesViewController {
-    func uploadMediaToProduct(asset: ExportableAsset) {
+    func uploadMediaAssetToProduct(asset: ExportableAsset) {
         let onMediaUploadToMediaLibrary = { [weak self] (media: Media) in
-            self?.uploadMediaToProduct(mediaID: media.mediaID)
+            self?.uploadMediaToProduct(media: media)
         }
 
         let action = MediaAction.uploadMedia(siteID: siteID,
@@ -75,8 +77,24 @@ private extension ProductImagesViewController {
         ServiceLocator.stores.dispatch(action)
     }
 
-    func uploadMediaToProduct(mediaID: Int) {
-
+    func uploadMediaToProduct(media: Media) {
+        let newProductImage = ProductImage(imageID: media.mediaID,
+                                           dateCreated: Date(),
+                                           dateModified: nil,
+                                           src: media.src,
+                                           name: media.name,
+                                           alt: media.alt)
+        let images = productImages + [newProductImage]
+        let action = ProductAction.updateProductImages(siteID: siteID,
+                                                       productID: productID,
+                                                       images: images) { [weak self] (product, error) in
+                                                        guard let product = product else {
+                                                            self?.showErrorAlert(error: error)
+                                                            return
+                                                        }
+                                                        // Update product images
+        }
+        ServiceLocator.stores.dispatch(action)
     }
 }
 
@@ -89,7 +107,7 @@ private extension ProductImagesViewController {
             showErrorAlert(error: error)
             return
         }
-        uploadMediaToProduct(asset: mediaAsset)
+        uploadMediaAssetToProduct(asset: mediaAsset)
     }
 }
 
@@ -111,7 +129,7 @@ extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
             assets.count > 0 else { return }
 
         for asset in assets {
-            uploadMediaToProduct(asset: asset)
+            uploadMediaAssetToProduct(asset: asset)
         }
     }
 

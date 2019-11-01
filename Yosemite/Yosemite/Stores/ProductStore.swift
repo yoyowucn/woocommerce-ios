@@ -38,6 +38,8 @@ public class ProductStore: Store {
             synchronizeProducts(siteID: siteID, pageNumber: pageNumber, pageSize: pageSize, onCompletion: onCompletion)
         case .requestMissingProducts(let order, let onCompletion):
             requestMissingProducts(for: order, onCompletion: onCompletion)
+        case .updateProductImages(let siteID, let productID, let images, let onCompletion):
+            updateProductImages(siteID: siteID, productID: productID, images: images, onCompletion: onCompletion)
         }
     }
 }
@@ -154,6 +156,20 @@ private extension ProductStore {
                 if case NetworkError.notFound? = error {
                     self?.deleteStoredProduct(siteID: siteID, productID: productID)
                 }
+                onCompletion(nil, error)
+                return
+            }
+
+            self?.upsertStoredProductsInBackground(readOnlyProducts: [product]) {
+                onCompletion(product, nil)
+            }
+        }
+    }
+
+    func updateProductImages(siteID: Int, productID: Int, images: [ProductImage], onCompletion: @escaping (Product?, Error?) -> Void) {
+        let remote = ProductsRemote(network: network)
+        remote.updateProductImages(for: siteID, productID: productID, images: images) { [weak self] (product, error) in
+            guard let product = product else {
                 onCompletion(nil, error)
                 return
             }

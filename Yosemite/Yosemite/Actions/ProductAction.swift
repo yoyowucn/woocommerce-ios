@@ -29,4 +29,8 @@ public enum ProductAction: Action {
     /// Requests the Products found in a specified Order.
     ///
     case requestMissingProducts(for: Order, onCompletion: (Error?) -> Void)
+
+    /// Updates the images of a specified Product.
+    ///
+    case updateProductImages(siteID: Int, productID: Int, images: [ProductImage], onCompletion: (Product?, Error?) -> Void)
 }
