@@ -4,7 +4,7 @@ import WordPressKit
 import Storage
 
 public struct Media {
-    public let imageID: Int
+    public let mediaID: Int
     public let date: Date    // gmt
     public let src: String
     public let name: String?
@@ -16,7 +16,7 @@ public struct Media {
             let src = remoteMedia.url?.absoluteString else {
                 return nil
         }
-        self.imageID = imageID
+        self.mediaID = imageID
         self.date = date
         self.src = src
         self.name = remoteMedia.title

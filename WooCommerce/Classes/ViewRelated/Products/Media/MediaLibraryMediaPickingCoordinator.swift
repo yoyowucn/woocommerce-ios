@@ -4,11 +4,13 @@ import Yosemite
 
 /// Prepares the alert controller that will be presented when trying to add media to a site or Product.
 final class MediaLibraryMediaPickingCoordinator {
-    private let cameraCapture = CameraCaptureCoordinator()
-    private let mediaLibrary = MediaLibraryPicker()
+    private let cameraCapture: CameraCaptureCoordinator
+    private let mediaLibrary = DeviceMediaLibraryPicker()
 
-    init(delegate: WPMediaPickerViewControllerDelegate) {
+    init(delegate: WPMediaPickerViewControllerDelegate,
+         onCameraCaptureCompletion: @escaping CameraCaptureCoordinator.OnCompletion) {
         mediaLibrary.delegate = delegate
+        cameraCapture = CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
     }
 
     func present(context: MediaPickingContext) {

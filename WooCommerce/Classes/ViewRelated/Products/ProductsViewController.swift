@@ -300,7 +300,7 @@ extension ProductsViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let product = resultsController.object(at: indexPath)
-        let imagesViewController = ProductImagesViewController(siteID: product.siteID)
+        let imagesViewController = ProductImagesViewController(product: product)
         navigationController?.pushViewController(imagesViewController, animated: true)
         return
 

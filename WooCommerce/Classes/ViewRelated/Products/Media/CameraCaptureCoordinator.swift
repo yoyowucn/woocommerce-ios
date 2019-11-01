@@ -6,6 +6,13 @@ import Yosemite
 final class CameraCaptureCoordinator {
     private var capturePresenter: WPMediaCapturePresenter?
 
+    typealias OnCompletion = ((_ media: PHAsset?, _ error: Error?) -> Void)
+    private let onCompletion: OnCompletion
+
+    init(onCompletion: @escaping OnCompletion) {
+        self.onCompletion = onCompletion
+    }
+
     func presentMediaCapture(origin: UIViewController) {
         capturePresenter = WPMediaCapturePresenter(presenting: origin)
         capturePresenter!.completionBlock = { [weak self] mediaInfo in
@@ -19,16 +26,14 @@ final class CameraCaptureCoordinator {
     }
 
     private func processMediaCaptured(_ mediaInfo: NSDictionary) {
-//        , blog: Blog) {
-        let completionBlock: WPMediaAddedBlock = { media, error in
-            if error != nil || media == nil {
+        let completionBlock: WPMediaAddedBlock = { [weak self] media, error in
+            guard let media = media as? PHAsset else {
                 print("Adding media failed: ", error?.localizedDescription ?? "no media")
+                self?.onCompletion(nil, error)
                 return
             }
-            guard let media = media as? PHAsset else {
-                    return
-            }
 
+            self?.onCompletion(media, nil)
 //            let info = MediaAnalyticsInfo(origin: .mediaLibrary(.camera), selectionMethod: .fullScreenPicker)
 //            MediaCoordinator.shared.addMedia(from: media, to: blog, analyticsInfo: info)
         }
