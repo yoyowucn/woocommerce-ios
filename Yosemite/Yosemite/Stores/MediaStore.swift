@@ -3,7 +3,7 @@ import Networking
 import WordPressKit
 import Storage
 
-public struct Media {
+public final class Media: NSObject {
     public let mediaID: Int
     public let date: Date    // gmt
     public let src: String

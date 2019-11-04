@@ -77,6 +77,12 @@ class ProductImagesCollectionViewController: UICollectionViewController {
         collectionView.reloadData()
     }
 
+    func updateProductImages(_ productImages: [ProductImage]) {
+        self.productImages = productImages
+
+        collectionView.reloadData()
+    }
+
     /*
     // MARK: - Navigation
 

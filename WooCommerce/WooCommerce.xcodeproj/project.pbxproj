@@ -43,6 +43,8 @@
 		02565996236C05FC00D6EEA8 /* ProductImagesCollectionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02565994236C05FC00D6EEA8 /* ProductImagesCollectionViewController.xib */; };
 		02565999236C07CD00D6EEA8 /* ProductImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02565997236C07CD00D6EEA8 /* ProductImageCollectionViewCell.swift */; };
 		0256599A236C07CD00D6EEA8 /* ProductImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02565998236C07CD00D6EEA8 /* ProductImageCollectionViewCell.xib */; };
+		0256599D236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0256599B236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.swift */; };
+		0256599E236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0256599C236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.xib */; };
 		0257285C230ACC7E00A288C4 /* StoreStatsV4ChartAxisHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0257285B230ACC7E00A288C4 /* StoreStatsV4ChartAxisHelperTests.swift */; };
 		0260F40123224E8100EDA10A /* ProductsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0260F40023224E8100EDA10A /* ProductsViewController.swift */; };
 		02691780232600A6002AFC20 /* ProductsTabProductViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0269177F232600A6002AFC20 /* ProductsTabProductViewModelTests.swift */; };
@@ -72,7 +74,7 @@
 		02BC6784236943E400BEB725 /* CameraCaptureCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */; };
 		02BC67862369449100BEB725 /* DeviceMediaLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67852369449100BEB725 /* DeviceMediaLibraryPicker.swift */; };
 		02BC6788236944CB00BEB725 /* MediaPickingContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC6787236944CA00BEB725 /* MediaPickingContext.swift */; };
-		02BC678A2369541B00BEB725 /* MediaLibraryPickerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */; };
+		02BC678A2369541B00BEB725 /* WordPressMediaLibraryPickerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67892369541B00BEB725 /* WordPressMediaLibraryPickerDataSource.swift */; };
 		02D45647231CB1FB008CF0A9 /* UIImage+Dot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */; };
 		02D4564C231D05E2008CF0A9 /* BetaFeaturesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */; };
 		02E4FD7A230688BA0049610C /* OrderStatsV4Interval+Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */; };
@@ -510,6 +512,8 @@
 		02565994236C05FC00D6EEA8 /* ProductImagesCollectionViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductImagesCollectionViewController.xib; sourceTree = "<group>"; };
 		02565997236C07CD00D6EEA8 /* ProductImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		02565998236C07CD00D6EEA8 /* ProductImageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductImageCollectionViewCell.xib; sourceTree = "<group>"; };
+		0256599B236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPressMediaLibraryImagePickerViewController.swift; sourceTree = "<group>"; };
+		0256599C236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WordPressMediaLibraryImagePickerViewController.xib; sourceTree = "<group>"; };
 		0257285B230ACC7E00A288C4 /* StoreStatsV4ChartAxisHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreStatsV4ChartAxisHelperTests.swift; sourceTree = "<group>"; };
 		0260F40023224E8100EDA10A /* ProductsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsViewController.swift; sourceTree = "<group>"; };
 		0269177F232600A6002AFC20 /* ProductsTabProductViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsTabProductViewModelTests.swift; sourceTree = "<group>"; };
@@ -539,7 +543,7 @@
 		02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureCoordinator.swift; sourceTree = "<group>"; };
 		02BC67852369449100BEB725 /* DeviceMediaLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMediaLibraryPicker.swift; sourceTree = "<group>"; };
 		02BC6787236944CA00BEB725 /* MediaPickingContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPickingContext.swift; sourceTree = "<group>"; };
-		02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryPickerDataSource.swift; sourceTree = "<group>"; };
+		02BC67892369541B00BEB725 /* WordPressMediaLibraryPickerDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPressMediaLibraryPickerDataSource.swift; sourceTree = "<group>"; };
 		02D45646231CB1FB008CF0A9 /* UIImage+Dot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Dot.swift"; sourceTree = "<group>"; };
 		02D4564B231D05E1008CF0A9 /* BetaFeaturesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaFeaturesViewController.swift; sourceTree = "<group>"; };
 		02E4FD79230688BA0049610C /* OrderStatsV4Interval+Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrderStatsV4Interval+Chart.swift"; sourceTree = "<group>"; };
@@ -1087,12 +1091,14 @@
 				02BC6781236943B500BEB725 /* MediaLibraryMediaPickingCoordinator.swift */,
 				02BC6783236943E400BEB725 /* CameraCaptureCoordinator.swift */,
 				02BC67852369449100BEB725 /* DeviceMediaLibraryPicker.swift */,
-				02BC67892369541B00BEB725 /* MediaLibraryPickerDataSource.swift */,
+				02BC67892369541B00BEB725 /* WordPressMediaLibraryPickerDataSource.swift */,
 				02BC6787236944CA00BEB725 /* MediaPickingContext.swift */,
 				02565993236C05FC00D6EEA8 /* ProductImagesCollectionViewController.swift */,
 				02565994236C05FC00D6EEA8 /* ProductImagesCollectionViewController.xib */,
 				02565997236C07CD00D6EEA8 /* ProductImageCollectionViewCell.swift */,
 				02565998236C07CD00D6EEA8 /* ProductImageCollectionViewCell.xib */,
+				0256599B236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.swift */,
+				0256599C236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.xib */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -2319,6 +2325,7 @@
 				B5FD110E21D3CB8500560344 /* OrderTableViewCell.xib in Resources */,
 				D83C129F22250BF0004CA04C /* OrderTrackingTableViewCell.xib in Resources */,
 				B59D1EE121907304009D1978 /* ProductReviewTableViewCell.xib in Resources */,
+				0256599E236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.xib in Resources */,
 				B59D1EE821908A08009D1978 /* Noticons.ttf in Resources */,
 				D81F2D35225F0CF70084BF9C /* EmptyListMessageWithActionView.xib in Resources */,
 				B560D6882195BCC70027BB7E /* NoteDetailsHeaderTableViewCell.xib in Resources */,
@@ -2627,6 +2634,7 @@
 				B59D1EEC2190B08B009D1978 /* Age.swift in Sources */,
 				CE22709B228F362600C0626C /* ProductDetailsViewModel.swift in Sources */,
 				CE27257C21924A8C002B22EB /* HelpAndSupportViewController.swift in Sources */,
+				0256599D236C130F00D6EEA8 /* WordPressMediaLibraryImagePickerViewController.swift in Sources */,
 				B57C744720F55BC800EEFC87 /* UIView+Helpers.swift in Sources */,
 				B5A82EE221025C450053ADC8 /* FulfillViewController.swift in Sources */,
 				B55D4C0620B6027200D7A50F /* AuthenticationManager.swift in Sources */,
@@ -2773,7 +2781,7 @@
 				CE1CCB4B20570B1F000EE3AC /* OrderTableViewCell.swift in Sources */,
 				748AD087219F481B00023535 /* UIView+Animation.swift in Sources */,
 				748D34DF214828DD00E21A2F /* TopPerformersViewController.swift in Sources */,
-				02BC678A2369541B00BEB725 /* MediaLibraryPickerDataSource.swift in Sources */,
+				02BC678A2369541B00BEB725 /* WordPressMediaLibraryPickerDataSource.swift in Sources */,
 				B509FED321C05121000076A9 /* SupportManagerAdapter.swift in Sources */,
 				B5AA7B3D20ED5D15004DA14F /* SessionManager.swift in Sources */,
 				74C6FEA521C2F1FA009286B6 /* AboutViewController.swift in Sources */,

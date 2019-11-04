@@ -8,7 +8,11 @@ class ProductImagesViewController: UIViewController {
 
     private let siteID: Int
     private let productID: Int
-    private var productImages: [ProductImage]
+    private var productImages: [ProductImage] {
+        didSet {
+            imagesViewController.updateProductImages(productImages)
+        }
+    }
 
     // Child view controller.
     private lazy var imagesViewController: ProductImagesCollectionViewController = {
@@ -17,7 +21,10 @@ class ProductImagesViewController: UIViewController {
     }()
 
     private lazy var mediaPickingCoordinator: MediaLibraryMediaPickingCoordinator = {
-        return MediaLibraryMediaPickingCoordinator(delegate: self, onCameraCaptureCompletion: self.onCameraCaptureCompletion)
+        return MediaLibraryMediaPickingCoordinator(siteID: siteID,
+                                                   delegate: self,
+                                                   onCameraCaptureCompletion: self.onCameraCaptureCompletion,
+                                                   onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(assets:))
     }()
 
     init(product: Product) {
@@ -37,7 +44,6 @@ class ProductImagesViewController: UIViewController {
         configureNavigation()
         configureAddButton()
         configureImagesContainerView()
-
     }
 }
 
@@ -83,7 +89,7 @@ private extension ProductImagesViewController {
 private extension ProductImagesViewController {
     func uploadMediaAssetToProduct(asset: ExportableAsset) {
         let onMediaUploadToMediaLibrary = { [weak self] (media: Media) in
-            self?.uploadMediaToProduct(media: media)
+            self?.uploadMediaToProduct(mediaItems: [media])
         }
 
         let action = MediaAction.uploadMedia(siteID: siteID,
@@ -97,14 +103,16 @@ private extension ProductImagesViewController {
         ServiceLocator.stores.dispatch(action)
     }
 
-    func uploadMediaToProduct(media: Media) {
-        let newProductImage = ProductImage(imageID: media.mediaID,
-                                           dateCreated: Date(),
-                                           dateModified: nil,
-                                           src: media.src,
-                                           name: media.name,
-                                           alt: media.alt)
-        let images = productImages + [newProductImage]
+    func uploadMediaToProduct(mediaItems: [Media]) {
+        let productMediaItems = mediaItems.map({
+            ProductImage(imageID: $0.mediaID,
+            dateCreated: Date(),
+            dateModified: nil,
+            src: $0.src,
+            name: $0.name,
+            alt: $0.alt)
+        })
+        let images = productImages + productMediaItems
         let action = ProductAction.updateProductImages(siteID: siteID,
                                                        productID: productID,
                                                        images: images) { [weak self] (product, error) in
@@ -113,6 +121,7 @@ private extension ProductImagesViewController {
                                                             return
                                                         }
                                                         // Update product images
+                                                        self?.productImages = product.images
         }
         ServiceLocator.stores.dispatch(action)
     }
@@ -128,6 +137,18 @@ private extension ProductImagesViewController {
             return
         }
         uploadMediaAssetToProduct(asset: mediaAsset)
+    }
+}
+
+// MARK: - Action handling for camera capture
+//
+private extension ProductImagesViewController {
+
+    func onWPMediaPickerCompletion(assets: [WPMediaAsset]) {
+        guard let media = assets as? [Media] else {
+            return
+        }
+        uploadMediaToProduct(mediaItems: media)
     }
 }
 
