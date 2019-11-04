@@ -76,25 +76,12 @@ open class MediaImportService {
         case let asset as PHAsset:
             let exporter = MediaAssetExporter(asset: asset)
             exporter.imageOptions = self.exporterImageOptions
-//            exporter.videoOptions = self.exporterVideoOptions
             exporter.allowableFileExtensions = allowableFileExtensions.isEmpty ? MediaImportService.defaultAllowableFileExtensions : allowableFileExtensions
             return exporter
         case let image as UIImage:
             let exporter = MediaImageExporter(image: image, filename: nil)
             exporter.options = self.exporterImageOptions
             return exporter
-//        case let url as URL:
-//            let exporter = MediaURLExporter(url: url)
-//            exporter.imageOptions = self.exporterImageOptions
-//            exporter.videoOptions = self.exporterVideoOptions
-//            exporter.urlOptions = self.exporterURLOptions
-//            return exporter
-//        case let giphyMedia as GiphyMedia:
-//            let exporter = MediaExternalExporter(externalAsset: giphyMedia)
-//            return exporter
-//        case let stockPhotosMedia as StockPhotosMedia:
-//            let exporter = MediaExternalExporter(externalAsset: stockPhotosMedia)
-//            return exporter
         default:
             return nil
         }
@@ -110,10 +97,6 @@ open class MediaImportService {
             errorLogMessage.append(" with asset export error")
         case is MediaImageExporter.ImageExportError:
             errorLogMessage.append(" with image export error")
-//        case is MediaURLExporter.URLExportError:
-//            errorLogMessage.append(" with URL export error")
-//        case is MediaThumbnailExporter.ThumbnailExportError:
-//            errorLogMessage.append(" with thumbnail export error")
         case is MediaExportSystemError:
             errorLogMessage.append(" with system error")
         default:
@@ -139,37 +122,8 @@ open class MediaImportService {
 
     fileprivate var exporterImageOptions: MediaImageExporter.Options {
         var options = MediaImageExporter.Options()
-        options.maximumImageSize = self.exporterMaximumImageSize()
-//        options.stripsGeoLocationIfNeeded = MediaSettings().removeLocationSetting
         options.imageCompressionQuality = MediaImportService.preferredImageCompressionQuality
         return options
-    }
-
-//    fileprivate var exporterVideoOptions: MediaVideoExporter.Options {
-//        var options = MediaVideoExporter.Options()
-//        options.stripsGeoLocationIfNeeded = MediaSettings().removeLocationSetting
-//        options.exportPreset = MediaSettings().maxVideoSizeSetting.videoPreset
-//        return options
-//    }
-
-//    fileprivate var exporterURLOptions: MediaURLExporter.Options {
-//        var options = MediaURLExporter.Options()
-//        options.allowableFileExtensions = allowableFileExtensions
-//        options.stripsGeoLocationIfNeeded = MediaSettings().removeLocationSetting
-//        return options
-//    }
-
-    /// Helper method to return an optional value for a valid MediaSettings max image upload size.
-    ///
-    /// - Note: Eventually we'll rewrite MediaSettings.imageSizeForUpload to do this for us, but want to leave
-    ///   that class alone while implementing MediaExportService.
-    ///
-    fileprivate func exporterMaximumImageSize() -> CGFloat? {
-//        let maxUploadSize = MediaSettings().imageSizeForUpload
-//        if maxUploadSize < Int.max {
-//            return CGFloat(maxUploadSize)
-//        }
-        return nil
     }
 
     /// Configure Media with a MediaExport.
@@ -177,13 +131,8 @@ open class MediaImportService {
     private func configureMedia(_ media: RemoteMedia, withExport export: MediaExport) {
         media.localURL = export.url
         media.file = export.url.lastPathComponent
-//        media.mediaType = (export.url as NSURL).assetMediaType
 
         media.mimeType = mimeType(forPathExtension: export.url.lastPathComponent)
-
-        if let fileSize = export.fileSize {
-//            media.filesize = fileSize as NSNumber
-        }
 
         if let width = export.width {
             media.width = width as NSNumber
@@ -212,24 +161,4 @@ open class MediaImportService {
 
         return "application/octet-stream"
     }
-
-//    func mimeType(fileExtension: String) -> String {
-        
-//        - (NSString *)mimeType
-//        {
-//            NSString *unknown = @"application/octet-stream";
-//            NSString *extension = [self fileExtension];
-//            if (!extension.length) {
-//                return unknown;
-//            }
-//            NSString *fileUTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)extension, NULL);
-//            NSString *mimeType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)fileUTI, kUTTagClassMIMEType);
-//            if (!mimeType) {
-//                return unknown;
-//            } else {
-//                return mimeType;
-//            }
-//        }
-
-//    }
 }

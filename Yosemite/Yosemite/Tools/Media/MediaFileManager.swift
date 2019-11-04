@@ -146,92 +146,11 @@ class MediaFileManager: NSObject {
         return CGSize(width: width, height: height)
     }
 
-    /// Clear the local Media directory of any cached media files that are available remotely.
-    ///
-    @objc func clearFilesFromDirectory(onCompletion: (() -> Void)?, onError: ((Error) -> Void)?) {
-        do {
-            try purgeDirectory(exceptFiles: [])
-            onCompletion?()
-        } catch {
-            onError?(error)
-        }
-    }
-
     // MARK: - Class methods
 
     /// Helper method for getting the default upload directory URL.
     ///
     @objc class func uploadsDirectoryURL() throws -> URL {
         return try MediaFileManager.default.directoryURL()
-    }
-
-    // MARK: - Private
-
-//    /// Removes any local Media files, except any Media matching the predicate.
-//    ///
-//    fileprivate func purgeMediaFiles(exceptMedia predicate: NSPredicate, onCompletion: (() -> Void)?, onError: ((Error) -> Void)?) {
-//        let context = ContextManager.sharedInstance().newDerivedContext()
-//        context.perform {
-//            let fetch = NSFetchRequest<NSDictionary>(entityName: Media.classNameWithoutNamespaces())
-//            fetch.predicate = predicate
-//            fetch.resultType = .dictionaryResultType
-//            let localURLProperty = #selector(getter: Media.localURL).description
-//            let localThumbnailURLProperty = #selector(getter: Media.localThumbnailURL).description
-//            fetch.propertiesToFetch = [localURLProperty,
-//                                       localThumbnailURLProperty]
-//            do {
-//                let mediaToKeep = try context.fetch(fetch)
-//                var filesToKeep: Set<String> = []
-//                for dictionary in mediaToKeep {
-//                    if let localPath = dictionary[localURLProperty] as? String,
-//                        let localURL = URL(string: localPath) {
-//                        filesToKeep.insert(localURL.lastPathComponent)
-//                    }
-//                    if let localThumbnailPath = dictionary[localThumbnailURLProperty] as? String,
-//                        let localThumbnailURL = URL(string: localThumbnailPath) {
-//                        filesToKeep.insert(localThumbnailURL.lastPathComponent)
-//                    }
-//                }
-//                try self.purgeDirectory(exceptFiles: filesToKeep)
-//                if let onCompletion = onCompletion {
-//                    DispatchQueue.main.async {
-//                        onCompletion()
-//                    }
-//                }
-//            } catch {
-//                DDLogError("Error while attempting to clean local media: \(error.localizedDescription)")
-//                if let onError = onError {
-//                    DispatchQueue.main.async {
-//                        onError(error)
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    /// Removes files in the Media directory, except any files found in the set.
-    ///
-    fileprivate func purgeDirectory(exceptFiles: Set<String>) throws {
-        let fileManager = FileManager.default
-        let contents = try fileManager.contentsOfDirectory(at: try directoryURL(),
-                                                           includingPropertiesForKeys: nil,
-                                                           options: .skipsHiddenFiles)
-        var removedCount = 0
-        for url in contents {
-            if exceptFiles.contains(url.lastPathComponent) {
-                continue
-            }
-            if fileManager.fileExists(atPath: url.path) {
-                do {
-                    try fileManager.removeItem(at: url)
-                    removedCount += 1
-                } catch {
-                    DDLogError("Error while removing unused Media at path: \(error.localizedDescription) - \(url.path)")
-                }
-            }
-        }
-        if removedCount > 0 {
-            DDLogInfo("Media: removed \(removedCount) file(s) during cleanup.")
-        }
     }
 }
