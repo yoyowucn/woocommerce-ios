@@ -142,6 +142,16 @@ extension UIImage {
         return UIImage(named: "icon-jetpack-gray")!
     }
 
+    /// Image Icon
+    ///
+    static var imageImage: UIImage {
+        guard let image = Gridicon.iconOfType(.image, withSize: CGSize(width: 24, height: 24))
+            .imageWithTintColor(StyleManager.wooGreyTextMin) else {
+                fatalError()
+        }
+        return image
+    }
+
     /// Info Icon
     ///
     static var infoImage: UIImage {

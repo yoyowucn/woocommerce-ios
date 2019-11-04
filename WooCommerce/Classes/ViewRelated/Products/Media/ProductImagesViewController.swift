@@ -10,6 +10,12 @@ class ProductImagesViewController: UIViewController {
     private let productID: Int
     private var productImages: [ProductImage]
 
+    // Child view controller.
+    private lazy var imagesViewController: ProductImagesCollectionViewController = {
+        let viewController = ProductImagesCollectionViewController(images: productImages)
+        return viewController
+    }()
+
     private lazy var mediaPickingCoordinator: MediaLibraryMediaPickingCoordinator = {
         return MediaLibraryMediaPickingCoordinator(delegate: self, onCameraCaptureCompletion: self.onCameraCaptureCompletion)
     }()
@@ -28,20 +34,34 @@ class ProductImagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        configureNavigation()
         configureAddButton()
+        configureImagesContainerView()
 
-        let action = MediaAction.retrieveMediaLibrary(siteID: siteID) { (mediaItems, error) in
-        }
-        ServiceLocator.stores.dispatch(action)
     }
 }
 
 // MARK: - UI configurations
 private extension ProductImagesViewController {
+    func configureNavigation() {
+        title = NSLocalizedString("Photos", comment: "Product images (Product images page title)")
+    }
+
     func configureAddButton() {
         addButton.setTitle(NSLocalizedString("ADD PHOTOS", comment: ""), for: .normal)
         addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
         addButton.applyPrimaryButtonStyle()
+    }
+
+    func configureImagesContainerView() {
+        imagesContainerView.backgroundColor = StyleManager.wooWhite
+
+        addChild(imagesViewController)
+        imagesContainerView.addSubview(imagesViewController.view)
+        imagesViewController.didMove(toParent: self)
+
+        imagesViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        imagesContainerView.pinSubviewToSafeArea(imagesViewController.view)
     }
 }
 
