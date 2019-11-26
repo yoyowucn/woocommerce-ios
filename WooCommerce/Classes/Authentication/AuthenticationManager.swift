@@ -105,6 +105,9 @@ class AuthenticationManager: Authentication {
 // MARK: - WordPressAuthenticator Delegate
 //
 extension AuthenticationManager: WordPressAuthenticatorDelegate {
+    func userAuthenticatedWithAppleUserID(_ appleUserID: String) {
+    }
+    
 
     var allowWPComLogin: Bool {
         return true
