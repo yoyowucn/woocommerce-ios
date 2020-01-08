@@ -30,6 +30,7 @@ final class ProductFormViewController: UIViewController {
         self.viewModel = DefaultProductFormTableViewModel(product: product, currency: currency)
         self.tableViewDataSource = ProductFormTableViewDataSource(viewModel: viewModel)
         super.init(nibName: nil, bundle: nil)
+        tableViewDataSource.configureActions(onAddImage: showProductImages)
     }
 
     required init?(coder: NSCoder) {
@@ -117,6 +118,11 @@ private extension ProductFormViewController {
             self?.navigationController?.dismiss(animated: true, completion: nil)
         }
         ServiceLocator.stores.dispatch(action)
+    }
+
+    func showProductImages() {
+        let imagesViewController = ProductImagesViewController(product: product)
+        navigationController?.pushViewController(imagesViewController, animated: true)
     }
 
     func displayError(error: ProductUpdateError?) {

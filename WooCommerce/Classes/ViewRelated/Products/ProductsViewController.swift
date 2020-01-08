@@ -336,15 +336,9 @@ extension ProductsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let product = resultsController.object(at: indexPath)
-        let imagesViewController = ProductImagesViewController(product: product)
-        navigationController?.pushViewController(imagesViewController, animated: true)
-        return
-
-
         ServiceLocator.analytics.track(.productListProductTapped)
 
-
+        let product = resultsController.object(at: indexPath)
         let currencyCode = CurrencySettings.shared.currencyCode
         let currency = CurrencySettings.shared.symbol(from: currencyCode)
         let viewModel = ProductDetailsViewModel(product: product, currency: currency)
