@@ -115,6 +115,7 @@ public enum WooAnalyticsStat: String {
 
     case settingsBetaFeaturesButtonTapped       = "settings_beta_features_button_tapped"
     case settingsBetaFeaturesNewStatsUIToggled  = "settings_beta_features_new_stats_ui_toggled"
+    case settingsBetaFeaturesProductsToggled    = "settings_beta_features_products_toggled"
 
     case settingsPrivacySettingsTapped          = "settings_privacy_settings_button_tapped"
     case settingsCollectInfoToggled             = "privacy_settings_collect_info_toggled"
@@ -141,24 +142,27 @@ public enum WooAnalyticsStat: String {
     case orderDetailPulledToRefresh             = "order_detail_pulled_to_refresh"
     case orderNoteAddButtonTapped               = "add_order_note_add_button_tapped"
     case orderNoteEmailCustomerToggled          = "add_order_note_email_note_to_customer_toggled"
-    case orderDetailAddTrackingButtonTapped = "order_detail_tracking_add_tracking_button_tapped"
+    case orderDetailAddTrackingButtonTapped     = "order_detail_tracking_add_tracking_button_tapped"
     case orderDetailShowBillingTapped           = "order_detail_customer_info_show_billing_tapped"
     case orderDetailFulfillButtonTapped         = "order_detail_fulfill_order_button_tapped"
     case orderDetailCustomerEmailTapped         = "order_detail_customer_info_email_menu_email_tapped"
+    case orderDetailCustomerEmailMenuTapped     = "order_detail_customer_info_email_menu_tapped"
     case orderDetailCustomerPhoneMenuTapped     = "order_detail_customer_info_phone_menu_tapped"
     case orderDetailCustomerPhoneOptionTapped   = "order_detail_customer_info_phone_menu_phone_tapped"
     case orderDetailCustomerSMSOptionTapped     = "order_detail_customer_info_phone_menu_sms_tapped"
     case orderDetailOrderStatusEditButtonTapped = "order_detail_order_status_edit_button_tapped"
     case orderDetailProductDetailTapped         = "order_detail_product_detail_button_tapped"
+    case orderDetailRefundDetailTapped          = "order_detail_refund_detail_tapped"
+    case refundedProductsDetailTapped           = "order_detail_refunded_products_detail_tapped"
     case orderDetailTrackPackageButtonTapped    = "order_detail_track_package_button_tapped"
-    case orderDetailTrackingDeleteButtonTapped    = "order_detail_tracking_delete_button_tapped"
+    case orderDetailTrackingDeleteButtonTapped  = "order_detail_tracking_delete_button_tapped"
     case orderFulfillmentCompleteButtonTapped   = "order_fulfillment_mark_order_complete_button_tapped"
     case orderFulfillmentAddTrackingButtonTapped = "order_fulfillment_tracking_add_tracking_button_tapped"
     case orderFulfillmentDeleteTrackingButtonTapped = "order_fulfillment_tracking_delete_button_tapped"
     case orderMarkedCompleteUndoButtonTapped    = "snack_order_marked_complete_undo_button_tapped"
     case orderShareStoreButtonTapped            = "orders_list_share_your_store_button_tapped"
-    case orderShipmentTrackingAddButtonTapped = "order_shipment_tracking_add_button_tapped"
-    case orderShipmentTrackingCarrierSelected = "order_shipment_tracking_carrier_selected"
+    case orderShipmentTrackingAddButtonTapped   = "order_shipment_tracking_add_button_tapped"
+    case orderShipmentTrackingCarrierSelected   = "order_shipment_tracking_carrier_selected"
     case orderShipmentTrackingCustomProviderSelected = "order_shipment_tracking_custom_provider_selected"
     case orderStatusDialogApplyButtonTapped     = "set_order_status_dialog_apply_button_tapped"
 
@@ -247,6 +251,13 @@ public enum WooAnalyticsStat: String {
     case productListPulledToRefresh             = "product_list_pulled_to_refresh"
     case productListSearched                    = "product_list_searched"
     case productListMenuSearchTapped            = "product_list_menu_search_tapped"
+
+    // Readonly Product Variations Events
+    //
+    case productDetailsProductVariantsTapped    = "product_detail_view_product_variants_tapped"
+    case productVariationListLoaded             = "product_variants_loaded"
+    case productVariationListLoadError          = "product_variants_load_error"
+    case productVariationListPulledToRefresh    = "product_variants_pulled_to_refresh"
 
     // Jetpack Tunnel Events
     //

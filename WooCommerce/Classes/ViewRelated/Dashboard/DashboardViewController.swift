@@ -10,7 +10,7 @@ class DashboardViewController: UIViewController {
 
     // MARK: Properties
 
-    private var siteID: Int?
+    private var siteID: Int64?
 
     private var dashboardUIFactory: DashboardUIFactory?
     private var dashboardUI: DashboardUI?
@@ -22,10 +22,6 @@ class DashboardViewController: UIViewController {
     }()
 
     // MARK: View Lifecycle
-
-    deinit {
-        stopListeningToNotifications()
-    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -59,7 +55,7 @@ class DashboardViewController: UIViewController {
 private extension DashboardViewController {
 
     func configureView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
     }
 
     func configureNavigation() {
@@ -90,7 +86,6 @@ private extension DashboardViewController {
                                              style: .plain,
                                              target: self,
                                              action: #selector(settingsTapped))
-        rightBarButton.tintColor = .white
         rightBarButton.accessibilityLabel = NSLocalizedString("Settings", comment: "Accessibility label for the Settings button.")
         rightBarButton.accessibilityTraits = .button
         rightBarButton.accessibilityHint = NSLocalizedString(
@@ -177,12 +172,6 @@ extension DashboardViewController {
     func startListeningToNotifications() {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(defaultAccountWasUpdated), name: .defaultAccountWasUpdated, object: nil)
-    }
-
-    /// Stops listening to all related Notifications
-    ///
-    func stopListeningToNotifications() {
-        NotificationCenter.default.removeObserver(self)
     }
 
     /// Runs whenever the default Account is updated.

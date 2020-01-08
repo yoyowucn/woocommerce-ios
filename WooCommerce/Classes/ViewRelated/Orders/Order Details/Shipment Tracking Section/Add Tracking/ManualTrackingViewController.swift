@@ -24,6 +24,11 @@ final class ManualTrackingViewController: UIViewController {
         return noticePresenter
     }()
 
+    private lazy var keyboardFrameObserver: KeyboardFrameObserver = {
+        let keyboardFrameObserver = KeyboardFrameObserver(onKeyboardFrameUpdate: handleKeyboardFrameUpdate(keyboardFrame:))
+        return keyboardFrameObserver
+    }()
+
     init(viewModel: ManualTrackingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: type(of: self).nibName, bundle: nil)
@@ -38,6 +43,7 @@ final class ManualTrackingViewController: UIViewController {
         configureBackground()
         configureNavigation()
         configureTable()
+        startListeningToNotifications()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -52,7 +58,7 @@ final class ManualTrackingViewController: UIViewController {
 ///
 private extension ManualTrackingViewController {
     func configureBackground() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
     }
 
     func configureNavigation() {
@@ -73,7 +79,6 @@ private extension ManualTrackingViewController {
                                             style: .plain,
                                             target: self,
                                             action: #selector(dismissButtonTapped))
-        leftBarButton.tintColor = .white
         navigationItem.setLeftBarButton(leftBarButton, animated: false)
     }
 
@@ -100,7 +105,6 @@ private extension ManualTrackingViewController {
                                              style: .done,
                                              target: self,
                                              action: #selector(primaryButtonTapped))
-        rightBarButton.tintColor = .white
         navigationItem.setRightBarButton(rightBarButton, animated: false)
         navigationItem.rightBarButtonItem?.isEnabled = false
     }
@@ -154,7 +158,7 @@ private extension ManualTrackingViewController {
 
         table.estimatedRowHeight = Constants.rowHeight
         table.rowHeight = UITableView.automaticDimension
-        table.backgroundColor = StyleManager.tableViewBackgroundColor
+        table.backgroundColor = .listBackground
         table.dataSource = self
         table.delegate = self
     }
@@ -281,7 +285,7 @@ extension ManualTrackingViewController: UITableViewDataSource {
     private func configureSecondaryAction(cell: BasicTableViewCell) {
         cell.selectionStyle = .default
         cell.textLabel?.textAlignment = .center
-        cell.textLabel?.textColor = StyleManager.destructiveActionColor
+        cell.textLabel?.textColor = .error
         cell.textLabel?.text = viewModel.secondaryActionTitle
     }
 
@@ -366,8 +370,8 @@ private extension ManualTrackingViewController {
 
     func displayDatePicker(at indexPath: IndexPath) {
         datePickerVisible = true
-
         reloadDatePicker(at: indexPath)
+        table.scrollToRow(at: indexPath, at: .top, animated: true)
     }
 
     func showAllShipmentProviders() {
@@ -554,13 +558,28 @@ private extension ManualTrackingViewController {
 
 }
 
+// MARK: - Keyboard management
+//
+private extension ManualTrackingViewController {
+    /// Registers for all of the related Notifications
+    ///
+    func startListeningToNotifications() {
+        keyboardFrameObserver.startObservingKeyboardFrame()
+    }
+}
+
+extension ManualTrackingViewController: KeyboardScrollable {
+    var scrollable: UIScrollView {
+        return table
+    }
+}
 
 // MARK: - Error handling
 //
 private extension ManualTrackingViewController {
     /// Displays the `Unable to Add tracking` Notice.
     ///
-    func displayAddErrorNotice(orderID: Int) {
+    func displayAddErrorNotice(orderID: Int64) {
         let title = NSLocalizedString(
             "Unable to add tracking to order #\(orderID)",
             comment: "Content of error presented when Add Shipment Tracking Action Failed. It reads: Unable to add tracking to order #{order number}"

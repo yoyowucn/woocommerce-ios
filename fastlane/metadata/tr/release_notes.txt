@@ -1,1 +1,2 @@
-Daha iyi okunabilirlik ve kullanılabilirlik için Sipariş Ayrıntılarının bazı kısımlarını yeniden düzenledik: Müşteri ödemesi ayrıntıları daha belirgindir ve Sipariş Notları, daha iyi tarama için tarih başlıklarıyla gruplandırılır. Ek olarak, artık Fatura Ayrıntılarını görüntülerken tuhaf genişleme animasyonları yok!
+- Karanlık modu sevenler, sevinin! İşte karanlık mod.
+- Önizleme görüntülemeyi sevenleri de düşündük! Ürünler sekmesini herkesin heyecanla beklediğini biliyoruz. Bu özelliği içeren uygulama sürümünü yayımlamaya hazır olmasak da, şimdi yakında gelecek olan Ürünler sekmesinin önizlemesini görebilirsiniz - etkinleştirmek için uygulamadaki Ayarlar'a gidin.

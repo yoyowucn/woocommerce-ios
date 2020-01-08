@@ -2,6 +2,24 @@
 
 This file documents changes in the WCiOS Storage data model. Please explain any changes to the data model as well as any custom migrations.
 
+## Model 24 (Release 3.3.0.0)
+- @jaclync 2019-12-2
+- New `ProductShippingClass` entity
+- Add `dateOnSaleStart` attribute to `Product` entity
+- Add `dateOnSaleEnd` attribute to `Product` entity
+- New `TaxClass` entity
+
+## Model 23 (Release 3.2.0.0)
+- @jaclync 2019-11-15
+- New `Attribute` entity
+- New `ProductVariation` entity
+- New `Product.productVariations` relationship
+
+## Model 22 (Release 3.1.0.0)
+- @pmusolino 2019-11-4
+- New `ShippingLine` entity
+- New `Order.shippingLines` relationship
+
 ## Model 21 (Release 2.9.0.0)
 - @mindgraffiti 2019-10-11
 - New `OrderItemTax` entity

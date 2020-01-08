@@ -196,7 +196,7 @@ private extension StoreStatsAndTopPerformersViewController {
     ///
     func displayGhostContent() {
         view.isUserInteractionEnabled = false
-        buttonBarView.startGhostAnimation()
+        buttonBarView.startGhostAnimation(style: .wooDefaultGhostStyle)
         visibleChildViewController.displayGhostContent()
     }
 
@@ -211,7 +211,7 @@ private extension StoreStatsAndTopPerformersViewController {
     /// If the Ghost Content was previously onscreen, this method will restart the animations.
     ///
     func ensureGhostContentIsAnimated() {
-        view.restartGhostAnimation()
+        view.restartGhostAnimation(style: .wooDefaultGhostStyle)
     }
 }
 
@@ -222,9 +222,9 @@ private extension StoreStatsAndTopPerformersViewController {
     func createBorderView() -> UIView {
         let view = UIView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = StyleManager.wooGreyBorder
+        view.backgroundColor = .systemColor(.separator)
         NSLayoutConstraint.activate([
-            view.heightAnchor.constraint(equalToConstant: 1)
+            view.heightAnchor.constraint(equalToConstant: 0.5)
             ])
         return view
     }
@@ -239,7 +239,7 @@ private extension StoreStatsAndTopPerformersViewController {
     }
 
     func configureView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .systemColor(.systemGroupedBackground)
         configureButtonBarBottomBorder()
 
         // Disables any content inset adjustment since `XLPagerTabStrip` doesn't seem to support safe area insets.
@@ -266,12 +266,12 @@ private extension StoreStatsAndTopPerformersViewController {
     }
 
     func configureTabStrip() {
-        settings.style.buttonBarBackgroundColor = StyleManager.wooWhite
-        settings.style.buttonBarItemBackgroundColor = StyleManager.wooWhite
-        settings.style.selectedBarBackgroundColor = StyleManager.wooCommerceBrandColor
+        settings.style.buttonBarBackgroundColor = .systemColor(.secondarySystemGroupedBackground)
+        settings.style.buttonBarItemBackgroundColor = .systemColor(.secondarySystemGroupedBackground)
+        settings.style.selectedBarBackgroundColor = .primary
         settings.style.buttonBarItemFont = StyleManager.subheadlineFont
         settings.style.selectedBarHeight = TabStrip.selectedBarHeight
-        settings.style.buttonBarItemTitleColor = StyleManager.defaultTextColor
+        settings.style.buttonBarItemTitleColor = .textSubtle
         settings.style.buttonBarItemsShouldFillAvailableWidth = false
         settings.style.buttonBarItemLeftRightMargin = TabStrip.buttonLeftRightMargin
 
@@ -283,8 +283,8 @@ private extension StoreStatsAndTopPerformersViewController {
             animated: Bool) -> Void in
 
             guard changeCurrentIndex == true else { return }
-            oldCell?.label.textColor = StyleManager.defaultTextColor
-            newCell?.label.textColor = StyleManager.wooCommerceBrandColor
+            oldCell?.label.textColor = .textSubtle
+            newCell?.label.textColor = .primary
         }
     }
 }
@@ -292,7 +292,7 @@ private extension StoreStatsAndTopPerformersViewController {
 // MARK: - Sync'ing Helpers
 //
 private extension StoreStatsAndTopPerformersViewController {
-    func syncStats(for siteID: Int,
+    func syncStats(for siteID: Int64,
                    siteTimezone: TimeZone,
                    timeRange: StatsTimeRangeV4,
                    latestDateToInclude: Date,
@@ -313,7 +313,7 @@ private extension StoreStatsAndTopPerformersViewController {
         ServiceLocator.stores.dispatch(action)
     }
 
-    func syncSiteVisitStats(for siteID: Int,
+    func syncSiteVisitStats(for siteID: Int64,
                             siteTimezone: TimeZone,
                             timeRange: StatsTimeRangeV4,
                             latestDateToInclude: Date,
@@ -331,7 +331,7 @@ private extension StoreStatsAndTopPerformersViewController {
         ServiceLocator.stores.dispatch(action)
     }
 
-    func syncTopEarnersStats(for siteID: Int, timeRange: StatsTimeRangeV4, latestDateToInclude: Date, onCompletion: ((Error?) -> Void)? = nil) {
+    func syncTopEarnersStats(for siteID: Int64, timeRange: StatsTimeRangeV4, latestDateToInclude: Date, onCompletion: ((Error?) -> Void)? = nil) {
         let action = StatsActionV4.retrieveTopEarnerStats(siteID: siteID,
                                                           timeRange: timeRange,
                                                           latestDateToInclude: Date()) { error in

@@ -92,10 +92,6 @@ final class ReviewsViewController: UIViewController {
 
     // MARK: - View Lifecycle
 
-    deinit {
-        stopListeningToNotifications()
-    }
-
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
@@ -105,7 +101,7 @@ final class ReviewsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
 
         refreshTitle()
 
@@ -132,14 +128,14 @@ final class ReviewsViewController: UIViewController {
         }
     }
 
-    func presentDetails(for noteId: Int) {
+    func presentDetails(for noteID: Int64) {
         syncingCoordinator.synchronizeFirstPage()
-        viewModel.loadReview(for: noteId) { [weak self] in
+        viewModel.loadReview(for: noteID) { [weak self] in
             guard let self = self else {
                 return
             }
 
-            self.viewModel.delegate.presentReviewDetails(for: noteId, in: self)
+            self.viewModel.delegate.presentReviewDetails(for: noteID, in: self)
         }
     }
 }
@@ -172,7 +168,6 @@ private extension ReviewsViewController {
     /// Setup: NavigationBar Buttons
     ///
     func configureNavigationBarButtons() {
-        rightBarButton.tintColor = .white
         rightBarButton.accessibilityTraits = .button
         rightBarButton.accessibilityLabel = NSLocalizedString("Mark All as Read", comment: "Accessibility label for the Mark All Reviews as Read Button")
         rightBarButton.accessibilityHint = NSLocalizedString("Marks Every Review as Read",
@@ -183,8 +178,8 @@ private extension ReviewsViewController {
     /// Setup: TableView
     ///
     func configureTableView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
+        tableView.backgroundColor = .listBackground
         tableView.refreshControl = refreshControl
         tableView.dataSource = viewModel.dataSource
         tableView.tableFooterView = footerSpinnerView
@@ -250,7 +245,7 @@ private extension ReviewsViewController {
 
                 tracks.track(.reviewsMarkAllReadSuccess)
             }
-            
+
             self.updateMarkAllReadButtonState()
             self.tableView.reloadData()
         }
@@ -302,7 +297,7 @@ private extension ReviewsViewController {
     ///
     func reloadResultsController() {
         viewModel.refreshResults()
-        
+
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
         transitionToSyncingState()
@@ -330,7 +325,7 @@ private extension ReviewsViewController {
     ///
     func displayEmptyUnfilteredOverlay() {
         let overlayView: OverlayMessageView = OverlayMessageView.instantiateFromNib()
-        overlayView.messageImage = .waitingForCustomersImage
+        overlayView.messageImage = .emptyReviewsImage
         overlayView.messageText = NSLocalizedString("No Reviews Yet!", comment: "Empty Reviews List Message")
         overlayView.actionText = NSLocalizedString("Share your Store", comment: "Action: Opens the Store in a browser")
         overlayView.onAction = { [weak self] in
@@ -371,12 +366,6 @@ private extension ReviewsViewController {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(defaultSiteWasUpdated), name: .StoresManagerDidUpdateDefaultSite, object: nil)
         nc.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-    }
-
-    /// Tear down the Notifications Hooks
-    ///
-    func stopListeningToNotifications() {
-        NotificationCenter.default.removeObserver(self)
     }
 
     /// Default Site Updated Handler

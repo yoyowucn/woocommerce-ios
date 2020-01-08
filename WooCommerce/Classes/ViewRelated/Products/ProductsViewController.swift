@@ -31,10 +31,16 @@ final class ProductsViewController: UIViewController {
         return UIView(frame: .zero)
     }()
 
+    /// Top banner that shows that the Products feature is still work in progress.
+    ///
+    private lazy var topBannerView: TopBannerView = {
+        return createTopBannerView()
+    }()
+
     /// ResultsController: Surrounds us. Binds the galaxy together. And also, keeps the UITableView <> (Stored) Products in sync.
     ///
     private lazy var resultsController: ResultsController<StorageProduct> = {
-        let siteID = ServiceLocator.stores.sessionManager.defaultStoreID ?? Int.min
+        let siteID = ServiceLocator.stores.sessionManager.defaultStoreID ?? Int64.min
         let resultsController = createResultsController(siteID: siteID)
         configureResultsController(resultsController) { [weak self] in
             self?.tableView.reloadData()
@@ -56,8 +62,8 @@ final class ProductsViewController: UIViewController {
     ///
     private let syncingCoordinator = SyncingCoordinator()
 
-    private lazy var stateCoordinator: ProductsViewControllerStateCoordinator = {
-        let stateCoordinator = ProductsViewControllerStateCoordinator(onLeavingState: { [weak self] state in
+    private lazy var stateCoordinator: PaginatedListViewControllerStateCoordinator = {
+        let stateCoordinator = PaginatedListViewControllerStateCoordinator(onLeavingState: { [weak self] state in
             self?.didLeave(state: state)
             }, onEnteringState: { [weak self] state in
                 self?.didEnter(state: state)
@@ -65,11 +71,9 @@ final class ProductsViewController: UIViewController {
         return stateCoordinator
     }()
 
-    // MARK: - View Lifecycle
+    private let imageService: ImageService = ServiceLocator.imageService
 
-    deinit {
-        stopListeningToNotifications()
-    }
+    // MARK: - View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,6 +85,7 @@ final class ProductsViewController: UIViewController {
         registerTableViewCells()
 
         startListeningToNotifications()
+        syncingCoordinator.resynchronize()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -91,13 +96,17 @@ final class ProductsViewController: UIViewController {
             return
         }
         updateResultsController(siteID: siteID)
-        syncingCoordinator.synchronizeFirstPage()
 
         if AppRatingManager.shared.shouldPromptForAppReview() {
             displayRatingPrompt()
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        tableView.updateHeaderHeight()
+    }
 }
 
 // MARK: - Notifications
@@ -131,8 +140,10 @@ private extension ProductsViewController {
         guard let siteID = ServiceLocator.stores.sessionManager.defaultStoreID else {
             return
         }
+        navigationController?.popToRootViewController(animated: false)
         updateResultsController(siteID: siteID)
         tableView.reloadData()
+        syncingCoordinator.resynchronize()
     }
 }
 
@@ -172,7 +183,6 @@ private extension ProductsViewController {
                                          style: .plain,
                                          target: self,
                                          action: #selector(displaySearchProducts))
-            button.tintColor = StyleManager.wooWhite
             button.accessibilityTraits = .button
             button.accessibilityLabel = NSLocalizedString("Search products", comment: "Search Products")
             button.accessibilityHint = NSLocalizedString(
@@ -187,7 +197,7 @@ private extension ProductsViewController {
     /// Apply Woo styles.
     ///
     func configureMainView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
     }
 
     /// Configure common table properties.
@@ -201,16 +211,43 @@ private extension ProductsViewController {
         tableView.delegate = self
 
         tableView.cellLayoutMarginsFollowReadableWidth = true
-        tableView.estimatedRowHeight = Settings.estimatedRowHeight
+        tableView.estimatedRowHeight = Constants.estimatedRowHeight
         tableView.rowHeight = UITableView.automaticDimension
 
         // Removes extra header spacing in ghost content view.
         tableView.estimatedSectionHeaderHeight = 0
         tableView.sectionHeaderHeight = 0
 
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        tableView.backgroundColor = .listBackground
         tableView.refreshControl = refreshControl
         tableView.tableFooterView = footerSpinnerView
+
+        let headerContainer = UIView(frame: CGRect(x: 0, y: 0, width: Int(tableView.frame.width), height: Int(Constants.headerDefaultHeight)))
+        headerContainer.addSubview(topBannerView)
+        headerContainer.pinSubviewToAllEdges(topBannerView, insets: Constants.headerContainerInsets)
+        let bottomBorderView = UIView.createBorderView()
+        headerContainer.addSubview(bottomBorderView)
+        NSLayoutConstraint.activate([
+            bottomBorderView.constrainToSuperview(attribute: .leading),
+            bottomBorderView.constrainToSuperview(attribute: .trailing),
+            bottomBorderView.constrainToSuperview(attribute: .bottom)
+        ])
+        tableView.tableHeaderView = headerContainer
+    }
+
+    func createTopBannerView() -> TopBannerView {
+        let title = NSLocalizedString("Work in progress!",
+                                      comment: "The title of the Work In Progress top banner on the Products tab")
+        let infoText = NSLocalizedString("We’re hard at work on this new Products section, so you may see some changes as we get ready for launch 🚀",
+                                         comment: "The info of the Work In Progress top banner on the Products tab")
+        let viewModel = TopBannerViewModel(title: title,
+                                           infoText: infoText,
+                                           icon: .workInProgressBanner) { [weak self] in
+                                            self?.tableView.updateHeaderHeight()
+        }
+        let topBannerView = TopBannerView(viewModel: viewModel)
+        topBannerView.translatesAutoresizingMaskIntoConstraints = false
+        return topBannerView
     }
 
     /// Setup: Sync'ing Coordinator
@@ -229,17 +266,17 @@ private extension ProductsViewController {
 // MARK: - Updates
 //
 private extension ProductsViewController {
-    func updateResultsController(siteID: Int) {
+    func updateResultsController(siteID: Int64) {
         resultsController = createResultsController(siteID: siteID)
         configureResultsController(resultsController) { [weak self] in
             self?.tableView.reloadData()
         }
     }
 
-    func createResultsController(siteID: Int) -> ResultsController<StorageProduct> {
+    func createResultsController(siteID: Int64) -> ResultsController<StorageProduct> {
         let storageManager = ServiceLocator.storageManager
         let predicate = NSPredicate(format: "siteID == %lld", siteID)
-        let descriptor = NSSortDescriptor(key: "dateModified", ascending: true)
+        let descriptor = NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCompare(_:)))
 
         return ResultsController<StorageProduct>(storageManager: storageManager, matching: predicate, sortedBy: [descriptor])
     }
@@ -277,7 +314,7 @@ extension ProductsViewController: UITableViewDataSource {
 
         let product = resultsController.object(at: indexPath)
         let viewModel = ProductsTabProductViewModel(product: product)
-        cell.update(viewModel: viewModel)
+        cell.update(viewModel: viewModel, imageService: imageService)
 
         return cell
     }
@@ -289,7 +326,7 @@ extension ProductsViewController: UITableViewDataSource {
 extension ProductsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return estimatedRowHeights[indexPath] ?? Settings.estimatedRowHeight
+        return estimatedRowHeights[indexPath] ?? Constants.estimatedRowHeight
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -332,7 +369,7 @@ private extension ProductsViewController {
     @objc private func pullToRefresh(sender: UIRefreshControl) {
         ServiceLocator.analytics.track(.productListPulledToRefresh)
 
-        syncingCoordinator.synchronizeFirstPage {
+        syncingCoordinator.resynchronize {
             sender.endRefreshing()
         }
     }
@@ -345,8 +382,9 @@ private extension ProductsViewController {
     /// Renders the Placeholder Orders: For safety reasons, we'll also halt ResultsController <> UITableView glue.
     ///
     func displayPlaceholderProducts() {
-        let options = GhostOptions(reuseIdentifier: ProductsTabProductTableViewCell.reuseIdentifier, rowsPerSection: Settings.placeholderRowsPerSection)
-        tableView.displayGhostContent(options: options)
+        let options = GhostOptions(reuseIdentifier: ProductsTabProductTableViewCell.reuseIdentifier, rowsPerSection: Constants.placeholderRowsPerSection)
+        tableView.displayGhostContent(options: options,
+        style: .wooDefaultGhostStyle)
 
         resultsController.stopForwardingEvents()
     }
@@ -375,11 +413,20 @@ private extension ProductsViewController {
     ///
     func displayNoResultsOverlay() {
         let overlayView: OverlayMessageView = OverlayMessageView.instantiateFromNib()
-        overlayView.messageImage = nil
+        overlayView.messageImage = .emptyProductsImage
         overlayView.messageText = NSLocalizedString("No products yet",
                                                     comment: "The text on the placeholder overlay when there are no products on the Products tab")
         overlayView.actionVisible = false
-        overlayView.attach(to: view)
+
+        // Pins the overlay view to the bottom of the top banner view.
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(overlayView)
+        NSLayoutConstraint.activate([
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.topAnchor.constraint(equalTo: topBannerView.bottomAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     /// Removes all of the the OverlayMessageView instances in the view hierarchy.
@@ -403,7 +450,7 @@ extension ProductsViewController: SyncingCoordinatorDelegate {
             return
         }
 
-        transitionToSyncingState()
+        transitionToSyncingState(pageNumber: pageNumber)
 
         let action = ProductAction
             .synchronizeProducts(siteID: siteID,
@@ -433,22 +480,22 @@ extension ProductsViewController: SyncingCoordinatorDelegate {
 //
 private extension ProductsViewController {
 
-    func didEnter(state: ProductsViewControllerState) {
+    func didEnter(state: PaginatedListViewControllerState) {
         switch state {
         case .noResultsPlaceholder:
             displayNoResultsOverlay()
-        case .syncing(let withExistingData):
-            if withExistingData {
-                ensureFooterSpinnerIsStarted()
-            } else {
+        case .syncing(let pageNumber):
+            if pageNumber == SyncingCoordinator.Defaults.pageFirstIndex {
                 displayPlaceholderProducts()
+            } else {
+                ensureFooterSpinnerIsStarted()
             }
         case .results:
             break
         }
     }
 
-    func didLeave(state: ProductsViewControllerState) {
+    func didLeave(state: PaginatedListViewControllerState) {
         switch state {
         case .noResultsPlaceholder:
             removeAllOverlays()
@@ -460,8 +507,8 @@ private extension ProductsViewController {
         }
     }
 
-    func transitionToSyncingState() {
-        stateCoordinator.transitionToSyncingState(withExistingData: !isEmpty)
+    func transitionToSyncingState(pageNumber: Int) {
+        stateCoordinator.transitionToSyncingState(pageNumber: pageNumber)
     }
 
     func transitionToResultsUpdatedState() {
@@ -506,8 +553,10 @@ extension ProductsViewController {
 //
 private extension ProductsViewController {
 
-    enum Settings {
+    enum Constants {
         static let estimatedRowHeight = CGFloat(86)
         static let placeholderRowsPerSection = [3]
+        static let headerDefaultHeight = CGFloat(130)
+        static let headerContainerInsets = UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
     }
 }

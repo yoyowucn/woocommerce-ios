@@ -32,6 +32,18 @@ final class FulfillViewController: UIViewController {
     ///
     private let products: [Product]?
 
+    /// Shipping Lines from an Order
+    ///
+    private var shippingLines: [ShippingLine] {
+        return order.shippingLines
+    }
+
+    /// First Shipping method from an order
+    ///
+    private var shippingMethod: String {
+        return shippingLines.first?.methodTitle ?? String()
+    }
+
     /// ResultsController fetching ShipemntTracking data
     ///
     private lazy var trackingResultsController: ResultsController<StorageShipmentTracking> = {
@@ -54,6 +66,8 @@ final class FulfillViewController: UIViewController {
     /// https://github.com/woocommerce/woocommerce-ios/issues/852#issuecomment-482308373
     ///
     private var trackingIsReachable: Bool = false
+
+    private let imageService: ImageService = ServiceLocator.imageService
 
     /// Designated Initializer
     ///
@@ -86,7 +100,7 @@ final class FulfillViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        syncTrackingsHiddingAddButtonIfNecessary()
+        syncTrackingsHidingAddButtonIfNecessary()
     }
 
     override func viewDidLayoutSubviews() {
@@ -94,7 +108,7 @@ final class FulfillViewController: UIViewController {
         tableView.updateFooterHeight()
     }
 
-    private func syncTrackingsHiddingAddButtonIfNecessary() {
+    private func syncTrackingsHidingAddButtonIfNecessary() {
         syncTracking { [weak self] error in
             if error == nil {
                 self?.trackingIsReachable = true
@@ -120,8 +134,8 @@ private extension FulfillViewController {
     /// Setup: Main View
     ///
     func setupMainView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
+        tableView.backgroundColor = .listBackground
     }
 
     /// Setup: TableView
@@ -148,7 +162,9 @@ private extension FulfillViewController {
     func registerTableViewCells() {
         let cells = [
             CustomerInfoTableViewCell.self,
+            CustomerNoteTableViewCell.self,
             LeftImageTableViewCell.self,
+            TopLeftImageTableViewCell.self,
             EditableOrderTrackingTableViewCell.self,
             PickListTableViewCell.self
         ]
@@ -206,7 +222,7 @@ private extension FulfillViewController {
 
     /// Returns an Order Update Action that will result in the specified Order Status updated accordingly.
     ///
-    func updateOrderAction(siteID: Int, orderID: Int, statusKey: String) -> Action {
+    func updateOrderAction(siteID: Int64, orderID: Int64, statusKey: String) -> Action {
         return OrderAction.updateOrder(siteID: siteID, orderID: orderID, statusKey: statusKey, onCompletion: { error in
             guard let error = error else {
                 NotificationCenter.default.post(name: .ordersBadgeReloadRequired, object: nil)
@@ -233,7 +249,7 @@ private extension FulfillViewController {
 
     /// Displays the `Unable to Fulfill Order` Notice.
     ///
-    func displayErrorNotice(orderID: Int) {
+    func displayErrorNotice(orderID: Int64) {
         let title = NSLocalizedString(
             "Unable to fulfill order #\(orderID)",
             comment: "Content of error presented when Fullfill Order Action Failed. It reads: Unable to fulfill order #{order number}"
@@ -248,7 +264,7 @@ private extension FulfillViewController {
 
     /// Displays the product detail screen for the provided ProductID
     ///
-    func productWasPressed(for productID: Int) {
+    func productWasPressed(for productID: Int64) {
         let loaderViewController = ProductLoaderViewController(productID: productID,
                                                                siteID: order.siteID,
                                                                currency: order.currency)
@@ -311,9 +327,11 @@ private extension FulfillViewController {
         case .product(let item):
             setupProductCell(cell, with: item)
         case .note(let text):
-            setupNoteCell(cell, with: text)
+            setupCustomerNoteCell(cell, with: text)
         case .address(let shipping):
             setupAddressCell(cell, with: shipping)
+        case .shippingMethod:
+            setupShippingMethodCell(cell)
         case .tracking:
             setupTrackingCell(cell, at: indexPath)
         case .trackingAdd:
@@ -331,28 +349,21 @@ private extension FulfillViewController {
         let product = lookUpProduct(by: item.productID)
         let viewModel = OrderItemViewModel(item: item, currency: order.currency, product: product)
         cell.selectionStyle = .default
-        cell.configure(item: viewModel)
+        cell.configure(item: viewModel, imageService: imageService)
     }
 
-    /// Setup: Note Cell
+    /// Setup: Customer Note Cell
     ///
-    private func setupNoteCell(_ cell: UITableViewCell, with note: String) {
-        guard let cell = cell as? LeftImageTableViewCell else {
+    private func setupCustomerNoteCell(_ cell: UITableViewCell, with note: String) {
+        guard let cell = cell as? TopLeftImageTableViewCell else {
             fatalError()
         }
 
-        cell.leftImage = UIImage.quoteImage.imageWithTintColor(.black)
-        cell.labelText = note
+        cell.imageView?.image = UIImage.quoteImage.imageWithTintColor(.black)
+        cell.textLabel?.text = note
 
         cell.isAccessibilityElement = true
-
-        cell.accessibilityHint = NSLocalizedString(
-            "Adds a note to an order",
-            comment: "VoiceOver accessibility hint, informing the user that the button can be used to add an order note."
-        )
-
         cell.accessibilityLabel = note
-        cell.accessibilityTraits = .button
     }
 
     /// Setup: Address Cell
@@ -370,6 +381,17 @@ private extension FulfillViewController {
                 "No address specified.",
                 comment: "Order details > customer info > shipping details. This is where the address would normally display."
         )
+    }
+
+    func setupShippingMethodCell(_ cell: UITableViewCell) {
+        guard let cell = cell as? CustomerNoteTableViewCell else {
+            fatalError()
+        }
+
+        cell.headline = NSLocalizedString("Shipping Method",
+                                          comment: "Shipping method title for customer info cell")
+        cell.body = shippingMethod
+        cell.selectionStyle = .none
     }
 
     /// Setup: Shipment Tracking Cell
@@ -410,6 +432,7 @@ private extension FulfillViewController {
 
         let cellTextContent = NSLocalizedString("Add Tracking", comment: "Add Tracking row label")
         cell.leftImage = .addOutlineImage
+        cell.imageView?.tintColor = .accent
         cell.labelText = cellTextContent
 
         cell.isAccessibilityElement = true
@@ -465,7 +488,7 @@ private extension FulfillViewController {
         }
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.view.tintColor = StyleManager.wooCommerceBrandColor
+        actionSheet.view.tintColor = .text
         actionSheet.addCancelActionWithTitle(DeleteAction.cancel)
         actionSheet.addDestructiveActionWithTitle(DeleteAction.delete) { [weak self] _ in
             ServiceLocator.analytics.track(.orderFulfillmentDeleteTrackingButtonTapped)
@@ -509,7 +532,7 @@ private extension FulfillViewController {
                                                                     }
 
                                                                     ServiceLocator.analytics.track(.orderTrackingDeleteSuccess)
-                                                                    self?.syncTrackingsHiddingAddButtonIfNecessary()
+                                                                    self?.syncTrackingsHidingAddButtonIfNecessary()
         }
 
         ServiceLocator.stores.dispatch(deleteTrackingAction)
@@ -517,7 +540,7 @@ private extension FulfillViewController {
 
     /// Displays the `Unable to delete tracking` Notice.
     ///
-    func displayDeleteErrorNotice(orderID: Int, tracking: ShipmentTracking) {
+    func displayDeleteErrorNotice(orderID: Int64, tracking: ShipmentTracking) {
         let title = NSLocalizedString(
             "Unable to delete tracking for order #\(orderID)",
             comment: "Content of error presented when Delete Shipment Tracking Action Failed. It reads: Unable to delete tracking for order #{order number}"
@@ -579,17 +602,16 @@ private extension FulfillViewController {
         return orderTracking[orderIndex]
     }
 
-    func lookUpProduct(by productID: Int) -> Product? {
+    func lookUpProduct(by productID: Int64) -> Product? {
         return products?.filter({ $0.productID == productID }).first
     }
 }
-
 
 // MARK: - Table view sections
 //
 private extension FulfillViewController {
     func reloadSections() {
-        let products: Section = {
+        let productsSection: Section = {
             let title = NSLocalizedString("Product", comment: "Section header title for the product")
             let secondaryTitle = NSLocalizedString("Qty", comment: "Section header title - abbreviation for quantity")
             let rows = order.items.map { Row.product(item: $0) }
@@ -609,16 +631,23 @@ private extension FulfillViewController {
         }()
 
         let address: Section = {
+            var rows: [Row] = []
+
+            if shippingLines.count > 0 {
+                rows.append(.shippingMethod)
+            }
+
             let title = NSLocalizedString("Customer Information", comment: "Section title for the customer's billing and shipping address")
             if let shippingAddress = order.shippingAddress {
                 let row = Row.address(shipping: shippingAddress)
-
-                return Section(title: title, secondaryTitle: nil, rows: [row])
+                rows.insert(row, at: 0)
+                return Section(title: title, secondaryTitle: nil, rows: rows)
             }
 
             let row = Row.address(shipping: order.billingAddress)
+            rows.insert(row, at: 0)
 
-            return Section(title: title, secondaryTitle: nil, rows: [row])
+            return Section(title: title, secondaryTitle: nil, rows: rows)
         }()
 
         let tracking: Section? = {
@@ -644,7 +673,7 @@ private extension FulfillViewController {
             return Section(title: title, secondaryTitle: nil, rows: [row])
         }()
 
-        sections =  [products, note, address, tracking, addTracking].compactMap { $0 }
+        sections =  [productsSection, note, address, tracking, addTracking].compactMap { $0 }
     }
 }
 
@@ -665,6 +694,10 @@ private enum Row {
     /// Represents an Address Row
     ///
     case address(shipping: Address?)
+
+    /// Represents a Shipping Method Row
+    ///
+    case shippingMethod
 
     /// Represents an "Add Tracking" Row
     ///
@@ -687,8 +720,10 @@ private enum Row {
         switch self {
         case .address:
             return CustomerInfoTableViewCell.self
+        case .shippingMethod:
+            return CustomerNoteTableViewCell.self
         case .note:
-            return LeftImageTableViewCell.self
+            return TopLeftImageTableViewCell.self
         case .product:
             return PickListTableViewCell.self
         case .trackingAdd:

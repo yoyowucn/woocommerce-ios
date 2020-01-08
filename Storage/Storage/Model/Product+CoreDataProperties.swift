@@ -17,6 +17,8 @@ extension Product {
     @NSManaged public var permalink: String
     @NSManaged public var dateCreated: Date
     @NSManaged public var dateModified: Date?
+    @NSManaged public var dateOnSaleStart: Date?
+    @NSManaged public var dateOnSaleEnd: Date?
     @NSManaged public var statusKey: String
     @NSManaged public var featured: Bool
     @NSManaged public var catalogVisibilityKey: String
@@ -67,6 +69,8 @@ extension Product {
     @NSManaged public var images: Set<ProductImage>?
     @NSManaged public var tags: Set<ProductTag>?
     @NSManaged public var searchResults: Set<ProductSearchResults>?
+    @NSManaged public var productVariations: Set<ProductVariation>?
+    @NSManaged public var productShippingClass: ProductShippingClass?
 
 }
 
@@ -186,5 +190,22 @@ extension Product {
 
     @objc(removeSearchResults:)
     @NSManaged public func removeFromSearchResults(_ values: NSSet)
+
+}
+
+// MARK: Generated accessors for productVariations
+extension Product {
+
+    @objc(addProductVariationsObject:)
+    @NSManaged public func addToProductVariations(_ value: ProductVariation)
+
+    @objc(removeProductVariationsObject:)
+    @NSManaged public func removeFromProductVariations(_ value: ProductVariation)
+
+    @objc(addProductVariations:)
+    @NSManaged public func addToProductVariations(_ values: NSSet)
+
+    @objc(removeProductVariations:)
+    @NSManaged public func removeFromProductVariations(_ values: NSSet)
 
 }

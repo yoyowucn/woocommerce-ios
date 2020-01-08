@@ -3,9 +3,9 @@ import Foundation
 
 
 final class MockReviews {
-    let siteID          = 123
-    let reviewID        = 1234
-    let productID       = 12345
+    let siteID: Int64 = 123
+    let reviewID: Int64 = 1234
+    let productID: Int64 = 12345
     let productName     = "Book the Green Room"
     let dateCreated     = Date()
     let statusKey       = "hold"
@@ -16,7 +16,7 @@ final class MockReviews {
     let rating          = 4
     let verified        = true
 
-    let sampleVariationTypeProductID = 295
+    let sampleVariationTypeProductID: Int64 = 295
 
     func review() -> Networking.ProductReview {
         return ProductReview(siteID: siteID,
@@ -49,7 +49,7 @@ final class MockReviews {
 
 
 extension MockReviews {
-    func product(_ siteID: Int? = nil) -> Networking.Product {
+    func product(_ siteID: Int64? = nil) -> Networking.Product {
         let testSiteID = siteID ?? self.siteID
         return Product(siteID: testSiteID,
                        productID: productID,
@@ -58,6 +58,8 @@ extension MockReviews {
                        permalink: "https://example.com/product/book-the-green-room/",
                        dateCreated: date(with: "2019-02-19T17:33:31"),
                        dateModified: date(with: "2019-02-19T17:48:01"),
+                       dateOnSaleStart: date(with: "2019-10-15T21:30:00"),
+                       dateOnSaleEnd: date(with: "2019-10-27T21:29:59"),
                        productTypeKey: "booking",
                        statusKey: "publish",
                        featured: false,
@@ -97,6 +99,7 @@ extension MockReviews {
                        shippingTaxable: false,
                        shippingClass: "",
                        shippingClassID: 0,
+                       productShippingClass: nil,
                        reviewsAllowed: true,
                        averageRating: "4.30",
                        ratingCount: 23,
@@ -186,7 +189,7 @@ extension MockReviews {
         return [download1, download2, download3]
     }
 
-    func sampleProductMutated(_ siteID: Int? = nil) -> Networking.Product {
+    func sampleProductMutated(_ siteID: Int64? = nil) -> Networking.Product {
         let testSiteID = siteID ?? self.siteID
 
         return Product(siteID: testSiteID,
@@ -196,6 +199,8 @@ extension MockReviews {
                        permalink: "https://example.com/product/book-the-green-room/",
                        dateCreated: date(with: "2019-02-19T17:33:31"),
                        dateModified: date(with: "2019-02-19T17:48:01"),
+                       dateOnSaleStart: date(with: "2019-10-15T21:30:00"),
+                       dateOnSaleEnd: date(with: "2019-10-27T21:29:59"),
                        productTypeKey: "booking",
                        statusKey: "publish",
                        featured: false,
@@ -235,6 +240,7 @@ extension MockReviews {
                        shippingTaxable: false,
                        shippingClass: "",
                        shippingClassID: 0,
+                       productShippingClass: nil,
                        reviewsAllowed: false,
                        averageRating: "1.30",
                        ratingCount: 76,
@@ -306,7 +312,7 @@ extension MockReviews {
         return [defaultAttribute1]
     }
 
-    func sampleVariationTypeProduct(_ siteID: Int? = nil) -> Networking.Product {
+    func sampleVariationTypeProduct(_ siteID: Int64? = nil) -> Networking.Product {
         let testSiteID = siteID ?? self.siteID
         return Product(siteID: testSiteID,
                        productID: sampleVariationTypeProductID,
@@ -315,6 +321,8 @@ extension MockReviews {
                        permalink: "https://paperairplane.store/product/paper-airplane/?attribute_color=Black&attribute_length=Long",
                        dateCreated: date(with: "2019-04-04T22:06:45"),
                        dateModified: date(with: "2019-04-09T20:24:03"),
+                       dateOnSaleStart: date(with: "2019-10-15T21:30:00"),
+                       dateOnSaleEnd: date(with: "2019-10-27T21:29:59"),
                        productTypeKey: "variation",
                        statusKey: "publish",
                        featured: false,
@@ -349,6 +357,7 @@ extension MockReviews {
                        shippingTaxable: true,
                        shippingClass: "",
                        shippingClassID: 0,
+                       productShippingClass: nil,
                        reviewsAllowed: true,
                        averageRating: "0.00",
                        ratingCount: 0,
@@ -412,7 +421,7 @@ extension MockReviews {
 extension MockReviews {
     func emptyNotification() -> Note {
         let data = Data()
-        return Note(noteId: 0,
+        return Note(noteID: 0,
                     hash: 0,
                     read: false,
                     icon: nil,

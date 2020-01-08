@@ -52,6 +52,7 @@ class StoreStatsV4PeriodViewController: UIViewController {
 
     // MARK: - Subviews
 
+    @IBOutlet private weak var containerStackView: UIStackView!
     @IBOutlet private weak var visitorsStackView: UIStackView!
     @IBOutlet private weak var visitorsTitle: UILabel!
     @IBOutlet private weak var visitorsData: UILabel!
@@ -61,7 +62,6 @@ class StoreStatsV4PeriodViewController: UIViewController {
     @IBOutlet private weak var revenueData: UILabel!
     @IBOutlet private weak var barChartView: BarChartView!
     @IBOutlet private weak var lastUpdated: UILabel!
-    @IBOutlet private weak var borderView: UIView!
     @IBOutlet private weak var yAxisAccessibilityView: UIView!
     @IBOutlet private weak var xAxisAccessibilityView: UIView!
     @IBOutlet private weak var chartAccessibilityView: UIView!
@@ -188,7 +188,7 @@ extension StoreStatsV4PeriodViewController {
     ///
     func displayGhostContent() {
         ensurePlaceholderIsVisible()
-        placeholderChartsView.startGhostAnimation()
+        placeholderChartsView.startGhostAnimation(style: .wooDefaultGhostStyle)
     }
 
     /// Removes the Placeholder Content.
@@ -242,11 +242,13 @@ private extension StoreStatsV4PeriodViewController {
     }
 
     func configureView() {
-        view.backgroundColor = StyleManager.wooWhite
-        borderView.backgroundColor = StyleManager.wooGreyBorder
+        view.backgroundColor = .systemColor(.secondarySystemGroupedBackground)
+        containerStackView.backgroundColor = .systemColor(.secondarySystemGroupedBackground)
+        timeRangeBarView.backgroundColor = .systemColor(.secondarySystemGroupedBackground)
+        visitorsStackView.backgroundColor = .systemColor(.secondarySystemGroupedBackground)
 
         // Time range bar bottom border view
-        timeRangeBarBottomBorderView.backgroundColor = StyleManager.wooGreyBorder
+        timeRangeBarBottomBorderView.backgroundColor = .systemColor(.separator)
 
         // Titles
         visitorsTitle.text = NSLocalizedString("Visitors", comment: "Visitors stat label on dashboard - should be plural.")
@@ -263,7 +265,8 @@ private extension StoreStatsV4PeriodViewController {
 
         // Footer
         lastUpdated.font = UIFont.footnote
-        lastUpdated.textColor = StyleManager.wooGreyMid
+        lastUpdated.textColor = .textSubtle
+        lastUpdated.backgroundColor = .listForeground
 
         // Visibility
         updateSiteVisitStatsVisibility(shouldShowSiteVisitStats: shouldShowSiteVisitStats)
@@ -290,10 +293,11 @@ private extension StoreStatsV4PeriodViewController {
 
     func configureNoRevenueView() {
         noRevenueView.isHidden = true
+        noRevenueView.backgroundColor = .listForeground
         noRevenueLabel.text = NSLocalizedString("No revenue this period",
                                                 comment: "Text displayed when no order data are available for the selected time range.")
         noRevenueLabel.font = StyleManager.subheadlineFont
-        noRevenueLabel.textColor = StyleManager.defaultTextColor
+        noRevenueLabel.textColor = .text
     }
 
     func configureBarChart() {
@@ -306,7 +310,7 @@ private extension StoreStatsV4PeriodViewController {
         barChartView.drawValueAboveBarEnabled = true
         barChartView.noDataText = NSLocalizedString("No data available", comment: "Text displayed when no data is available for revenue chart.")
         barChartView.noDataFont = StyleManager.chartLabelFont
-        barChartView.noDataTextColor = StyleManager.wooSecondary
+        barChartView.noDataTextColor = .textSubtle
         barChartView.extraRightOffset = Constants.chartExtraRightOffset
         barChartView.extraTopOffset = Constants.chartExtraTopOffset
         barChartView.delegate = self
@@ -314,9 +318,9 @@ private extension StoreStatsV4PeriodViewController {
         let xAxis = barChartView.xAxis
         xAxis.labelPosition = .bottom
         xAxis.labelFont = StyleManager.chartLabelFont
-        xAxis.labelTextColor = StyleManager.wooSecondary
-        xAxis.axisLineColor = StyleManager.wooGreyBorder
-        xAxis.gridColor = StyleManager.wooGreyBorder
+        xAxis.labelTextColor = .textSubtle
+        xAxis.axisLineColor = .systemColor(.separator)
+        xAxis.gridColor = .systemColor(.separator)
         xAxis.drawLabelsEnabled = true
         xAxis.drawGridLinesEnabled = false
         xAxis.drawAxisLineEnabled = false
@@ -327,10 +331,10 @@ private extension StoreStatsV4PeriodViewController {
 
         let yAxis = barChartView.leftAxis
         yAxis.labelFont = StyleManager.chartLabelFont
-        yAxis.labelTextColor = StyleManager.wooSecondary
-        yAxis.axisLineColor = StyleManager.wooGreyBorder
-        yAxis.gridColor = StyleManager.wooGreyBorder
-        yAxis.zeroLineColor = StyleManager.wooGreyBorder
+        yAxis.labelTextColor = .textSubtle
+        yAxis.axisLineColor = .systemColor(.separator)
+        yAxis.gridColor = .systemColor(.separator)
+        yAxis.zeroLineColor = .systemColor(.separator)
         yAxis.drawLabelsEnabled = true
         yAxis.drawGridLinesEnabled = true
         yAxis.drawAxisLineEnabled = false
@@ -366,13 +370,11 @@ private extension StoreStatsV4PeriodViewController {
     }
 
     func updateBarChartAxisUI(hasRevenue: Bool) {
-        let labelTextColor = hasRevenue ? StyleManager.wooSecondary: StyleManager.wooGreyMid
-
         let xAxis = barChartView.xAxis
-        xAxis.labelTextColor = labelTextColor
+        xAxis.labelTextColor = .textSubtle
 
         let yAxis = barChartView.leftAxis
-        yAxis.labelTextColor = labelTextColor
+        yAxis.labelTextColor = .textSubtle
     }
 }
 
@@ -508,7 +510,8 @@ extension StoreStatsV4PeriodViewController: IAxisValueFormatter {
                 yAxisMaximum = value.humanReadableString()
                 return CurrencyFormatter().formatCurrency(using: yAxisMaximum,
                                                           at: CurrencySettings.shared.currencyPosition,
-                                                          with: currencySymbol)
+                                                          with: currencySymbol,
+                                                          isNegative: value.sign == .minus)
             }
         }
     }
@@ -708,7 +711,7 @@ private extension StoreStatsV4PeriodViewController {
                                                                                 with: currencyCode,
                                                                                 roundSmallNumbers: false) ?? String()
             entry.accessibilityValue = "\(formattedChartMarkerPeriodString(for: item)): \(formattedAmount)"
-            barColors.append(StyleManager.wooGreyMid)
+            barColors.append(.chartDataBar)
             dataEntries.append(entry)
             barCount += 1
         }
@@ -716,7 +719,7 @@ private extension StoreStatsV4PeriodViewController {
         let dataSet = BarChartDataSet(entries: dataEntries, label: "Data")
         dataSet.colors = barColors
         dataSet.highlightEnabled = true
-        dataSet.highlightColor = StyleManager.wooCommerceBrandColor
+        dataSet.highlightColor = .chartDataBarHighlighted
         dataSet.highlightAlpha = Constants.chartHighlightAlpha
         dataSet.drawValuesEnabled = false // Do not draw value labels on the top of the bars
         return BarChartData(dataSet: dataSet)

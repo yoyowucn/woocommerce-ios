@@ -1,1 +1,2 @@
-Reorganizamos partes dos Detalhes do pedido para melhor fluência e utilização: os detalhes do pagamento do cliente estão mais proeminentes, e as Observações do pedido estão organizadas por data para facilitar a leitura. Além disso, a animação esquisita de ampliação ao exibir os Detalhes de cobrança foi removida!
+- Fãs do modo noturno, podem comemorar! Ele está disponível.
+- Fãs de prévias, comemorem também! Sabemos que a guia "Produtos" é um dos principais pedidos. Enquanto a versão do aplicativo com essa guia não é lançada por completo, você pode já visualizar uma prévia. Acesse "Configurações" no aplicativo para ativá-la.

@@ -26,6 +26,9 @@ where Cell.SearchModel == Command.CellViewModel {
     ///
     @IBOutlet private var tableView: UITableView!
 
+
+    @IBOutlet private weak var bordersView: BordersView!
+
     /// Footer "Loading More" Spinner.
     ///
     private lazy var footerSpinnerView = {
@@ -42,7 +45,7 @@ where Cell.SearchModel == Command.CellViewModel {
 
     /// Search Store ID
     ///
-    private let storeID: Int
+    private let storeID: Int64
 
     /// Indicates if there are no results onscreen.
     ///
@@ -65,18 +68,17 @@ where Cell.SearchModel == Command.CellViewModel {
         }
     }
 
+    private lazy var keyboardFrameObserver: KeyboardFrameObserver = {
+        let keyboardFrameObserver = KeyboardFrameObserver(onKeyboardFrameUpdate: handleKeyboardFrameUpdate(keyboardFrame:))
+        return keyboardFrameObserver
+    }()
+
     private let searchUICommand: Command
 
 
-    /// Deinitializer
-    ///
-    deinit {
-        stopListeningToNotifications()
-    }
-
     /// Designated Initializer
     ///
-    init(storeID: Int,
+    init(storeID: Int64,
          command: Command,
          cellType: Cell.Type) {
         self.resultsController = command.createResultsController()
@@ -101,10 +103,12 @@ where Cell.SearchModel == Command.CellViewModel {
         registerTableViewCells()
 
         configureSyncingCoordinator()
+        configureCancelButton()
         configureActions()
         configureEmptyStateLabel()
         configureMainView()
         configureSearchBar()
+        configureSearchBarBordersView()
         configureTableView()
         configureResultsController()
 
@@ -116,6 +120,13 @@ where Cell.SearchModel == Command.CellViewModel {
 
         navigationController?.setNavigationBarHidden(true, animated: true)
         searchBar.becomeFirstResponder()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Note: configuring the search bar text color does not work in `viewDidLoad` and `viewWillAppear`.
+        configureSearchBar()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -170,27 +181,6 @@ where Cell.SearchModel == Command.CellViewModel {
         return true
     }
 
-    // MARK: - Notifications
-    //
-
-    /// Executed whenever `UIResponder.keyboardWillShowNotification` note is posted
-    ///
-    @objc func keyboardWillShow(_ note: Notification) {
-        let bottomInset = keyboardHeight(from: note)
-
-        tableView.contentInset.bottom = bottomInset
-        tableView.scrollIndicatorInsets.bottom = bottomInset
-    }
-
-    /// Returns the Keyboard Height from a (hopefully) Keyboard Notification.
-    ///
-    func keyboardHeight(from note: Notification) -> CGFloat {
-        let wrappedRect = note.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-        let keyboardRect = wrappedRect?.cgRectValue ?? .zero
-
-        return keyboardRect.height
-    }
-
     // MARK: - Actions
     //
 
@@ -200,6 +190,11 @@ where Cell.SearchModel == Command.CellViewModel {
     }
 }
 
+extension SearchViewController: KeyboardScrollable {
+    var scrollable: UIScrollView {
+        return tableView
+    }
+}
 
 // MARK: - User Interface Initialization
 //
@@ -208,13 +203,13 @@ private extension SearchViewController {
     /// Setup: Main View
     ///
     func configureMainView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
     }
 
     /// Setup: TableView
     ///
     func configureTableView() {
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        tableView.backgroundColor = .listBackground
         tableView.estimatedRowHeight = Settings.estimatedRowHeight
         tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = footerSpinnerView
@@ -224,7 +219,21 @@ private extension SearchViewController {
     ///
     func configureSearchBar() {
         searchBar.placeholder = searchUICommand.searchBarPlaceholder
-        searchBar.tintColor = .black
+        if #available(iOS 13.0, *) {
+            searchBar.searchTextField.textColor = .text
+        }
+    }
+
+    /// Setup: Search Bar Borders
+    ///
+    func configureSearchBarBordersView() {
+        bordersView.bottomColor = .systemColor(.separator)
+    }
+
+    /// Setup: Cancel Button
+    ///
+    func configureCancelButton() {
+        cancelButton.applyModalCancelButtonStyle()
     }
 
     /// Setup: Actions
@@ -232,14 +241,13 @@ private extension SearchViewController {
     func configureActions() {
         let title = NSLocalizedString("Cancel", comment: "")
         cancelButton.setTitle(title, for: .normal)
-        cancelButton.titleLabel?.font = UIFont.body
     }
 
     /// Setup: No Results
     ///
     func configureEmptyStateLabel() {
         emptyStateLabel.text = searchUICommand.emptyStateText
-        emptyStateLabel.textColor = StyleManager.wooGreyMid
+        emptyStateLabel.textColor = .textSubtle
         emptyStateLabel.font = .headline
         emptyStateLabel.adjustsFontForContentSizeCategory = true
         emptyStateLabel.numberOfLines = 0
@@ -267,14 +275,7 @@ private extension SearchViewController {
     /// Registers for all of the related Notifications
     ///
     func startListeningToNotifications() {
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-    }
-
-    /// Unregisters from the Notification Center
-    ///
-    func stopListeningToNotifications() {
-        NotificationCenter.default.removeObserver(self)
+        keyboardFrameObserver.startObservingKeyboardFrame()
     }
 }
 

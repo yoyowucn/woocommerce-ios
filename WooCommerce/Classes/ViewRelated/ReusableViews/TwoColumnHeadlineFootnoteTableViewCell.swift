@@ -6,6 +6,8 @@ import UIKit
 ///
 final class TwoColumnHeadlineFootnoteTableViewCell: UITableViewCell {
 
+    /// We want this reusable cell to be styled the same everywhere it's used, so the IBOutlets are made private.
+    ///
     @IBOutlet private weak var leftTitleLabel: UILabel!
     @IBOutlet private weak var rightTitleLabel: UILabel!
     @IBOutlet private weak var footnoteLabel: UILabel!
@@ -32,20 +34,80 @@ final class TwoColumnHeadlineFootnoteTableViewCell: UITableViewCell {
         }
     }
 
-    /// Footnote label text
+    /// Left Title Label: sets the style to the accent color,
+    /// to indicate that the cell is tappable.
     ///
-    var footnoteText: String? {
-        get {
-            return footnoteLabel?.text
+    func setLeftTitleToLinkStyle(_ active: Bool) {
+        if active {
+            leftTitleLabel.applyLinkHeadlineStyle()
+            return
         }
-        set {
-            footnoteLabel?.text = newValue
-        }
+
+        leftTitleLabel.applyBodyStyle()
     }
 
+    /// Right Title Label: sets the style to the accent color,
+    /// to indicate that the cell is tappable.
+    ///
+    func setRightTitleToLinkStyle(_ active: Bool) {
+        if active {
+            rightTitleLabel.applyLinkHeadlineStyle()
+            return
+        }
+
+        rightTitleLabel.applyBodyStyle()
+    }
+
+    /// Footnote: attributed text option
+    ///
+    func updateFootnoteAttributedText(_ attributedString: NSAttributedString?) {
+        footnoteLabel.attributedText = attributedString
+    }
+
+    /// Footnote: text option
+    ///
+    func updateFootnoteText(_ footnoteText: String?) {
+        footnoteLabel.text = footnoteText
+    }
+
+    /// Collapses the footnote inside the stack view
+    ///
+    func hideFootnote() {
+        footnoteLabel.isHidden = true
+    }
+
+    /// Cell equivalent to viewDidLoad
+    ///
     override func awakeFromNib() {
         super.awakeFromNib()
 
+        configureBackground()
+        configureLabels()
+    }
+
+    /// Reset the cell when it's recycled
+    ///
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        footnoteLabel.isHidden = false
+        configureLabels()
+    }
+}
+
+// MARK: - Private Methods
+//
+private extension TwoColumnHeadlineFootnoteTableViewCell {
+
+    /// Setup: Cell background
+    ///
+    func configureBackground() {
+        applyDefaultBackgroundStyle()
+    }
+
+    /// Setup: Style the labels
+    ///
+    func configureLabels() {
         leftTitleLabel.applyHeadlineStyle()
         rightTitleLabel.applyHeadlineStyle()
         footnoteLabel.applyFootnoteStyle()

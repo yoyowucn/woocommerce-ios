@@ -16,11 +16,11 @@ protocol ReviewsInteractionDelegate: UITableViewDelegate {
 
     /// Called when we want to present a review after receiving a push notification
     ///
-    func presentReviewDetails(for noteId: Int, in viewController: UIViewController)
+    func presentReviewDetails(for noteID: Int64, in viewController: UIViewController)
 }
 
 
-/// Abstracts the datasource used to render the Product Review list
+/// Abstracts the dataSource used to render the Product Review list
 protocol ReviewsDataSource: UITableViewDataSource, ReviewsInteractionDelegate {
 
     /// Boolean indicating if there are reviews
@@ -30,7 +30,7 @@ protocol ReviewsDataSource: UITableViewDataSource, ReviewsInteractionDelegate {
     /// Identifiers of the Products mentioned in the reviews.
     /// Guaranteed to be uniqued (does not contain duplicates)
     ///
-    var reviewsProductsIDs: [Int] { get }
+    var reviewsProductsIDs: [Int64] { get }
 
     /// Number of reviews in memory
     ///

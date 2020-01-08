@@ -4,14 +4,14 @@ import WordPressKit
 import Storage
 
 public final class Media: NSObject {
-    public let mediaID: Int
+    public let mediaID: Int64
     public let date: Date    // gmt
     public let src: String
     public let name: String?
     public let alt: String?
 
     init?(remoteMedia: RemoteMedia) {
-        guard let imageID = remoteMedia.mediaID?.intValue,
+        guard let imageID = remoteMedia.mediaID?.int64Value,
             let date = remoteMedia.date,
             let src = remoteMedia.url?.absoluteString else {
                 return nil
@@ -80,7 +80,7 @@ public final class MediaStore: Store {
 }
 
 private extension MediaStore {
-    func retrieveMediaLibrary(siteID: Int, onCompletion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
+    func retrieveMediaLibrary(siteID: Int64, onCompletion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
         let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
 
         let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
@@ -96,7 +96,7 @@ private extension MediaStore {
         }
     }
 
-    func uploadMedia(siteID: Int, media: RemoteMedia, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
+    func uploadMedia(siteID: Int64, media: RemoteMedia, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
         let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
 
         let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
@@ -116,7 +116,7 @@ private extension MediaStore {
         }
     }
 
-    func uploadMedia(siteID: Int, mediaAsset: ExportableAsset, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
+    func uploadMedia(siteID: Int64, mediaAsset: ExportableAsset, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
         let mediaImporter = MediaImportService()
         let remoteMedia = RemoteMedia()
         _ = mediaImporter.import(mediaAsset,

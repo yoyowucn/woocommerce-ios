@@ -26,17 +26,18 @@ target 'WooCommerce' do
 
   # To allow pod to pick up beta versions use -beta. E.g., 1.1.7-beta.1
   #pod 'WordPressAuthenticator', :git => 'https://github.com/wordpress-mobile/WordPressAuthenticator-iOS.git', :branch => 'task/wc-support-site-url-login'
-  pod 'WordPressAuthenticator', '~> 1.8.0'
+  pod 'WordPressAuthenticator', '~> 1.10.5'
 
   # pod 'WordPressShared', :git => 'https://github.com/wordpress-mobile/WordPress-iOS-Shared.git', :branch => 'task/support-swift-5'  
   pod 'WordPressShared', '~> 1.8.2'
   
-  pod 'WordPressUI', '~> 1.3.5'
+  pod 'WordPressUI', '~> 1.4'
 
   pod 'WPMediaPicker', '~> 1.6.0'
   ## while PR is in review:
   ## pod 'WPMediaPicker', :git => 'https://github.com/wordpress-mobile/MediaPicker-iOS.git', :commit => '7c3cb8f00400b9316a803640b42bb88a66bbc648'
 
+  pod 'WordPress-Editor-iOS', '~> 1.11.0'
 
   # External Libraries
   # ==================
@@ -47,7 +48,9 @@ target 'WooCommerce' do
   pod 'CocoaLumberjack/Swift', '~> 3.5'
   pod 'XLPagerTabStrip', '~> 9.0'
   pod 'Charts', '~> 3.3.0'
-  pod 'ZendeskSDK', '~> 3.0.2'
+  pod 'ZendeskSDK', '~> 4.0'
+  pod 'Kingfisher', '~> 5.11.0'
+  pod 'Wormholy', '~> 1.5.1', :configurations => ['Debug']
 
   # Unit Tests
   # ==========

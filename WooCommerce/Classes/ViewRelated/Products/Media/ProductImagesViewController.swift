@@ -6,8 +6,8 @@ class ProductImagesViewController: UIViewController {
     @IBOutlet private weak var addButton: UIButton!
     @IBOutlet private weak var imagesContainerView: UIView!
 
-    private let siteID: Int
-    private let productID: Int
+    private let siteID: Int64
+    private let productID: Int64
     private var productImages: [ProductImage] {
         didSet {
             imagesViewController.updateProductImages(productImages)
@@ -60,7 +60,7 @@ private extension ProductImagesViewController {
     }
 
     func configureImagesContainerView() {
-        imagesContainerView.backgroundColor = StyleManager.wooWhite
+        imagesContainerView.backgroundColor = .listBackground
 
         addChild(imagesViewController)
         imagesContainerView.addSubview(imagesViewController.view)

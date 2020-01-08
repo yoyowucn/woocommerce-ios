@@ -53,6 +53,7 @@ final class OrderDetailsViewController: UIViewController {
         super.viewWillAppear(animated)
         syncNotes()
         syncProducts()
+        syncRefunds()
         syncTrackingsHidingAddButtonIfNecessary()
     }
 
@@ -62,8 +63,7 @@ final class OrderDetailsViewController: UIViewController {
                 self?.viewModel.trackingIsReachable = true
             }
 
-            self?.reloadSections()
-            self?.tableView.reloadData()
+            self?.reloadTableViewSectionsAndData()
         }
     }
 }
@@ -76,10 +76,9 @@ private extension OrderDetailsViewController {
     /// Setup: TableView
     ///
     func configureTableView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
+        tableView.backgroundColor = .listBackground
         tableView.estimatedSectionHeaderHeight = Constants.sectionHeight
-        tableView.estimatedSectionFooterHeight = Constants.rowHeight
         tableView.estimatedRowHeight = Constants.rowHeight
         tableView.rowHeight = UITableView.automaticDimension
         tableView.refreshControl = refreshControl
@@ -104,7 +103,7 @@ private extension OrderDetailsViewController {
                 return
             }
             self.viewModel.updateOrderStatus(order: order)
-            self.tableView.reloadData()
+            self.reloadTableViewSectionsAndData()
         }
         entityListener.onDelete = { [weak self] in
             guard let self = self else {
@@ -125,7 +124,7 @@ private extension OrderDetailsViewController {
             self?.reloadTableViewSectionsAndData()
         }
 
-        viewModel.onCellAction = {[weak self] (actionType, indexPath) in
+        viewModel.onCellAction = { [weak self] (actionType, indexPath) in
             self?.handleCellAction(actionType, at: indexPath)
         }
     }
@@ -209,6 +208,11 @@ extension OrderDetailsViewController {
         }
 
         group.enter()
+        syncRefunds() { _ in
+            group.leave()
+        }
+
+        group.enter()
         syncNotes { _ in
             group.leave()
         }
@@ -252,6 +256,10 @@ private extension OrderDetailsViewController {
 
     func syncProducts(onCompletion: ((Error?) -> ())? = nil) {
         viewModel.syncProducts(onCompletion: onCompletion)
+    }
+
+    func syncRefunds(onCompletion: ((Error?) -> ())? = nil) {
+        viewModel.syncRefunds(onCompletion: onCompletion)
     }
 
     func deleteTracking(_ tracking: ShipmentTracking) {
@@ -336,7 +344,7 @@ extension OrderDetailsViewController: UITableViewDelegate {
             self?.viewModel.dataSource.copyText(at: indexPath)
             success(true)
         }
-        copyAction.backgroundColor = StyleManager.wooCommerceBrandColor
+        copyAction.backgroundColor = .primary
 
         return UISwipeActionsConfiguration(actions: [copyAction])
     }
@@ -363,7 +371,16 @@ extension OrderDetailsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Remove the first header
+        if section == 0 {
+            return CGFloat.leastNormalMagnitude
+        }
+
         return UITableView.automaticDimension
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return CGFloat.leastNormalMagnitude
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -398,7 +415,7 @@ private extension OrderDetailsViewController {
         }
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.view.tintColor = StyleManager.wooCommerceBrandColor
+        actionSheet.view.tintColor = .text
 
         actionSheet.addCancelActionWithTitle(TrackingAction.dismiss)
 

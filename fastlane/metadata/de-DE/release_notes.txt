@@ -1,1 +1,2 @@
-Wir haben einige Punkte der Bestelldetails neu angeordnet, um die Lesbarkeit und Benutzerfreundlichkeit zu verbessern: Zur leichteren Überprüfung sind die Zahlungsdetails für Kunden nun besser hervorgehoben und die Auftragsnotizen mit Datumsangaben überschrieben. Kein mühsames Ausklappen der Abrechnungsdetails mehr!
+- Freunde des dunklen Modus dürfen sich freuen! Hier ist er.
+- Auch wer sich gerne eine Vorschau ansieht, darf sich freuen! Viele wünschen sich einen Produkte-Tab. Zwar ist die Entwicklung der neuen App-Version mit einem solchen Tab noch nicht abgeschlossen, aber den künftigen Produkte-Tab kannst du dir jetzt schon in der Vorschau ansehen.

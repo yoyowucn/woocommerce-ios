@@ -54,6 +54,7 @@ final class ProductReviewTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        configureBackground()
         configureSubjectLabel()
         configureSnippetLabel()
         configureNoticonLabel()
@@ -97,7 +98,15 @@ private extension ProductReviewTableViewCell {
     /// Refreshes the Cell's Colors.
     ///
     func refreshColors() {
-        sidebarView.backgroundColor = read ? UIColor.clear : StyleManager.wooAccent
+        sidebarView.backgroundColor = read ? UIColor.clear : UIColor.accent
+    }
+
+    func configureBackground() {
+        applyDefaultBackgroundStyle()
+
+        //Background when selected
+        selectedBackgroundView = UIView()
+        selectedBackgroundView?.backgroundColor = .listBackground
     }
 
     func configureSubjectLabel() {
@@ -131,8 +140,8 @@ private extension ProductReviewTableViewCell {
 
     enum Star {
         static let size = Double(13)
-        static let filledImage = UIImage.starImage(size: Star.size, tintColor: StyleManager.yellowStarColor)
-        static let emptyImage = UIImage.starImage(size: Star.size, tintColor: .clear)
+        static let filledImage = UIImage.starImage(size: Star.size)
+        static let emptyImage = UIImage.starImage(size: Star.size).imageWithTintColor(.clear)
     }
 
     enum Constants {

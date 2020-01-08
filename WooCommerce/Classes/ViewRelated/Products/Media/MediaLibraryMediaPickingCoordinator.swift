@@ -7,9 +7,9 @@ final class MediaLibraryMediaPickingCoordinator {
     private let cameraCapture: CameraCaptureCoordinator
     private let mediaLibrary = DeviceMediaLibraryPicker()
     private let onWPMediaPickerCompletion: WordPressMediaLibraryImagePickerViewController.OnCompletion
-    private let siteID: Int
+    private let siteID: Int64
 
-    init(siteID: Int,
+    init(siteID: Int64,
          delegate: WPMediaPickerViewControllerDelegate,
          onCameraCaptureCompletion: @escaping CameraCaptureCoordinator.OnCompletion,
          onWPMediaPickerCompletion: @escaping WordPressMediaLibraryImagePickerViewController.OnCompletion) {

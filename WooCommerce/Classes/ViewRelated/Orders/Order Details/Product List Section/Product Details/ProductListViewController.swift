@@ -9,6 +9,8 @@ class ProductListViewController: UIViewController {
     var viewModel: OrderDetailsViewModel!
     var products: [Product]? = []
 
+    private let imageService: ImageService = ServiceLocator.imageService
+
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
@@ -29,7 +31,7 @@ private extension ProductListViewController {
     ///
     func configureMainView() {
         title = NSLocalizedString("Details Order #\(viewModel.order.number)", comment: "Screen title: Details Order number (number)")
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
 
         // Don't show the Order details title in the next-view's back button
         navigationItem.backBarButtonItem = UIBarButtonItem(title: String(), style: .plain, target: nil, action: nil)
@@ -38,7 +40,7 @@ private extension ProductListViewController {
     /// Setup: TableView
     ///
     func configureTableView() {
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        tableView.backgroundColor = .listBackground
         tableView.estimatedSectionHeaderHeight = Constants.sectionHeight
         tableView.sectionHeaderHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = Constants.rowHeight
@@ -76,7 +78,7 @@ extension ProductListViewController: UITableViewDataSource {
             fatalError()
         }
         cell.selectionStyle = .default
-        cell.configure(item: itemViewModel)
+        cell.configure(item: itemViewModel, imageService: imageService)
 
         return cell
     }
@@ -116,13 +118,13 @@ private extension ProductListViewController {
         return items[indexPath.row]
     }
 
-    func lookUpProduct(by productID: Int) -> Product? {
+    func lookUpProduct(by productID: Int64) -> Product? {
         return products?.filter({ $0.productID == productID }).first
     }
 
     /// Displays the product detail screen for the provided ProductID
     ///
-    func productWasPressed(for productID: Int) {
+    func productWasPressed(for productID: Int64) {
         let loaderViewController = ProductLoaderViewController(productID: productID,
                                                                siteID: viewModel.order.siteID,
                                                                currency: viewModel.order.currency)

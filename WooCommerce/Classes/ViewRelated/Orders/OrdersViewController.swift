@@ -14,6 +14,10 @@ class OrdersViewController: UIViewController {
     ///
     @IBOutlet private var tableView: UITableView!
 
+    /// Ghostable TableView.
+    ///
+    private(set) var ghostableTableView = UITableView()
+
     /// Pull To Refresh Support.
     ///
     private lazy var refreshControl: UIRefreshControl = {
@@ -104,10 +108,6 @@ class OrdersViewController: UIViewController {
 
     // MARK: - View Lifecycle
 
-    deinit {
-        stopListeningToNotifications()
-    }
-
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError()
     }
@@ -130,6 +130,7 @@ class OrdersViewController: UIViewController {
         configureSyncingCoordinator()
         configureNavigation()
         configureTableView()
+        configureGhostableTableView()
         configureResultsControllers()
 
         startListeningToNotifications()
@@ -217,7 +218,6 @@ private extension OrdersViewController {
                                          style: .plain,
                                          target: self,
                                          action: #selector(displaySearchOrders))
-            button.tintColor = .white
             button.accessibilityTraits = .button
             button.accessibilityLabel = NSLocalizedString("Search orders", comment: "Search Orders")
             button.accessibilityHint = NSLocalizedString(
@@ -233,7 +233,6 @@ private extension OrdersViewController {
                                                  style: .plain,
                                                  target: self,
                                                  action: #selector(displayFiltersAlert))
-            button.tintColor = .white
             button.accessibilityTraits = .button
             button.accessibilityLabel = NSLocalizedString("Filter orders", comment: "Filter the orders list.")
             button.accessibilityHint = NSLocalizedString(
@@ -275,10 +274,29 @@ private extension OrdersViewController {
     /// Setup: TableView
     ///
     func configureTableView() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
-        tableView.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
+        tableView.backgroundColor = .listBackground
         tableView.refreshControl = refreshControl
         tableView.tableFooterView = footerSpinnerView
+    }
+
+    /// Setup: Ghostable TableView
+    ///
+    func configureGhostableTableView() {
+        view.addSubview(ghostableTableView)
+        ghostableTableView.isHidden = true
+
+        ghostableTableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            ghostableTableView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ghostableTableView.heightAnchor.constraint(equalTo: tableView.heightAnchor),
+            ghostableTableView.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
+            ghostableTableView.topAnchor.constraint(equalTo: tableView.topAnchor)
+        ])
+
+        view.backgroundColor = .listBackground
+        ghostableTableView.backgroundColor = .listBackground
+        ghostableTableView.isScrollEnabled = false
     }
 
     /// Registers all of the available TableViewCells
@@ -288,6 +306,7 @@ private extension OrdersViewController {
 
         for cell in cells {
             tableView.register(cell.loadNib(), forCellReuseIdentifier: cell.reuseIdentifier)
+            ghostableTableView.register(cell.loadNib(), forCellReuseIdentifier: cell.reuseIdentifier)
         }
     }
 }
@@ -321,6 +340,23 @@ extension OrdersViewController {
 }
 
 
+// MARK: - Push Notification Handling
+//
+extension OrdersViewController {
+    /// Presents the Details for the Notification with the specified Identifier.
+    ///
+    func presentDetails(for note: Note) {
+        guard let orderID = note.meta.identifier(forKey: .order), let siteID = note.meta.identifier(forKey: .site) else {
+            DDLogError("## Notification with [\(note.noteID)] lacks its OrderID!")
+            return
+        }
+
+        let loaderViewController = OrderLoaderViewController(note: note, orderID: Int64(orderID), siteID: Int64(siteID))
+        navigationController?.pushViewController(loaderViewController, animated: true)
+    }
+}
+
+
 // MARK: - Actions
 //
 extension OrdersViewController {
@@ -343,7 +379,7 @@ extension OrdersViewController {
     @IBAction func displayFiltersAlert() {
         ServiceLocator.analytics.track(.ordersListFilterTapped)
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.view.tintColor = StyleManager.wooCommerceBrandColor
+        actionSheet.view.tintColor = .text
 
         actionSheet.addCancelActionWithTitle(FilterAction.dismiss)
         actionSheet.addDefaultActionWithTitle(FilterAction.displayAll) { [weak self] _ in
@@ -447,7 +483,7 @@ extension OrdersViewController: SyncingCoordinatorDelegate {
                                                    statusKey: statusFilter?.slug,
                                                    pageNumber: pageNumber,
                                                    pageSize: pageSize) { [weak self] error in
-            guard let `self` = self else {
+            guard let self = self else {
                 return
             }
 
@@ -519,24 +555,30 @@ extension OrdersViewController {
 }
 
 
-// MARK: - Placeholders
+// MARK: - Placeholders & Ghostable Table
 //
 private extension OrdersViewController {
 
-    /// Renders the Placeholder Orders: For safety reasons, we'll also halt ResultsController <> UITableView glue.
+    /// Renders the Placeholder Orders
     ///
     func displayPlaceholderOrders() {
         let options = GhostOptions(reuseIdentifier: OrderTableViewCell.reuseIdentifier, rowsPerSection: Settings.placeholderRowsPerSection)
-        tableView.displayGhostContent(options: options)
 
-        resultsController.stopForwardingEvents()
+        // If the ghostable table view gets stuck for any reason,
+        // let's reset the state before using it again
+        ghostableTableView.removeGhostContent()
+        ghostableTableView.displayGhostContent(options: options,
+                                               style: .wooDefaultGhostStyle)
+        ghostableTableView.startGhostAnimation()
+        ghostableTableView.isHidden = false
     }
 
     /// Removes the Placeholder Orders (and restores the ResultsController <> UITableView link).
     ///
     func removePlaceholderOrders() {
-        tableView.removeGhostContent()
-        resultsController.startForwardingEvents(to: self.tableView)
+        ghostableTableView.isHidden = true
+        ghostableTableView.stopGhostAnimation()
+        ghostableTableView.removeGhostContent()
         tableView.reloadData()
     }
 

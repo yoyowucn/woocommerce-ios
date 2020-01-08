@@ -36,11 +36,13 @@ final class ShipmentProvidersViewController: UIViewController {
         return FooterSpinnerView(tableViewStyle: table.style)
     }()
 
+    private lazy var keyboardFrameObserver: KeyboardFrameObserver = {
+        let keyboardFrameObserver = KeyboardFrameObserver(onKeyboardFrameUpdate: handleKeyboardFrameUpdate(keyboardFrame:))
+        return keyboardFrameObserver
+    }()
+
     /// Deinitializer
     ///
-    deinit {
-        stopListeningToNotifications()
-    }
 
     init(viewModel: ShippingProvidersViewModel, delegate: ShipmentProviderListDelegate) {
         self.viewModel = viewModel
@@ -102,7 +104,7 @@ private extension ShipmentProvidersViewController {
 //
 private extension ShipmentProvidersViewController {
     func configureBackground() {
-        view.backgroundColor = StyleManager.tableViewBackgroundColor
+        view.backgroundColor = .listBackground
     }
 
     func configureNavigation() {
@@ -114,7 +116,7 @@ private extension ShipmentProvidersViewController {
     }
 
     func configureSearchController() {
-        searchController.searchBar.textField?.backgroundColor = StyleManager.tableViewBackgroundColor
+        searchController.searchBar.textField?.backgroundColor = .listBackground
 
         guard table.tableHeaderView == nil else {
             return
@@ -147,7 +149,7 @@ private extension ShipmentProvidersViewController {
     func styleTableView() {
         table.estimatedRowHeight = Constants.rowHeight
         table.rowHeight = UITableView.automaticDimension
-        table.backgroundColor = StyleManager.tableViewBackgroundColor
+        table.backgroundColor = .listBackground
     }
 }
 
@@ -158,40 +160,13 @@ private extension ShipmentProvidersViewController {
     /// Registers for all of the related Notifications
     ///
     func startListeningToNotifications() {
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        nc.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        keyboardFrameObserver.startObservingKeyboardFrame()
     }
+}
 
-    /// Unregisters from the Notification Center
-    ///
-    func stopListeningToNotifications() {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    /// Executed whenever `UIResponder.keyboardWillShowNotification` note is posted
-    ///
-    @objc func keyboardWillShow(_ note: Notification) {
-        let bottomInset = keyboardHeight(from: note)
-
-        table.contentInset.bottom = bottomInset
-        table.scrollIndicatorInsets.bottom = bottomInset
-    }
-
-    /// Executed whenever `UIResponder.keyboardWillhideNotification` note is posted
-    ///
-    @objc func keyboardWillHide(_ note: Notification) {
-        table.contentInset.bottom = .zero
-        table.scrollIndicatorInsets.bottom = .zero
-    }
-
-    /// Returns the Keyboard Height from a (hopefully) Keyboard Notification.
-    ///
-    func keyboardHeight(from note: Notification) -> CGFloat {
-        let wrappedRect = note.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
-        let keyboardRect = wrappedRect?.cgRectValue ?? .zero
-
-        return keyboardRect.height
+extension ShipmentProvidersViewController: KeyboardScrollable {
+    var scrollable: UIScrollView {
+        return table
     }
 }
 

@@ -1,1 +1,2 @@
-Vi har arrangerat om vissa delar av skärmen Orderdetaljer för bättre läsbarhet och användbarhet: Betalningsinformationen för kunder är mer framträdande och orderanteckningar grupperas med datumrubriker för enklare skanning. Och den besvärliga expanderande animeringen när du visar faktureringsinformationen är borta!
+– Alla som älskar dark-mode kan glädja sig! Det är här.
+– Alla som älskar att förhandsgranska saker kan också glädja sig! Vi vet att Produkter-fliken ligger högt på allas önskelistor. Även om vi inte är helt klara att släppa en version av appen som har den så kan du förhandsgranska den kommande Produkter-fliken redan nu. Gå till Inställningar i appen för att aktivera den.

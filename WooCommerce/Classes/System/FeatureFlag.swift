@@ -10,6 +10,14 @@ enum FeatureFlag: Int {
     ///
     case productList
 
+    /// Edit products
+    ///
+    case editProducts
+
+    /// Readonly Product variants
+    ///
+    case readonlyProductVariants
+
     /// Store stats
     ///
     case stats
@@ -21,19 +29,4 @@ enum FeatureFlag: Int {
     /// Refunds
     ///
     case refunds
-
-    /// Returns a boolean indicating if the feature is enabled
-    ///
-    var enabled: Bool {
-        switch self {
-        case .stats:
-            return BuildConfiguration.current == .localDeveloper
-        case .reviews:
-            return false
-        case .refunds:
-            return BuildConfiguration.current == .localDeveloper
-        default:
-            return true
-        }
-    }
 }

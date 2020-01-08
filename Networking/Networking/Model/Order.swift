@@ -4,10 +4,10 @@ import Foundation
 /// Represents an Order Entity.
 ///
 public struct Order: Decodable {
-    public let siteID: Int
-    public let orderID: Int
-    public let parentID: Int
-    public let customerID: Int
+    public let siteID: Int64
+    public let orderID: Int64
+    public let parentID: Int64
+    public let customerID: Int64
 
     public let number: String
     public let statusKey: String
@@ -29,15 +29,16 @@ public struct Order: Decodable {
     public let items: [OrderItem]
     public let billingAddress: Address?
     public let shippingAddress: Address?
+    public let shippingLines: [ShippingLine]
     public let coupons: [OrderCouponLine]
     public let refunds: [OrderRefundCondensed]
 
     /// Order struct initializer.
     ///
-    public init(siteID: Int,
-                orderID: Int,
-                parentID: Int,
-                customerID: Int,
+    public init(siteID: Int64,
+                orderID: Int64,
+                parentID: Int64,
+                customerID: Int64,
                 number: String,
                 statusKey: String,
                 currency: String,
@@ -55,6 +56,7 @@ public struct Order: Decodable {
                 items: [OrderItem],
                 billingAddress: Address?,
                 shippingAddress: Address?,
+                shippingLines: [ShippingLine],
                 coupons: [OrderCouponLine],
                 refunds: [OrderRefundCondensed]) {
 
@@ -83,6 +85,7 @@ public struct Order: Decodable {
         self.items = items
         self.billingAddress = billingAddress
         self.shippingAddress = shippingAddress
+        self.shippingLines = shippingLines
         self.coupons = coupons
         self.refunds = refunds
     }
@@ -91,15 +94,15 @@ public struct Order: Decodable {
     /// The public initializer for Order.
     ///
     public init(from decoder: Decoder) throws {
-        guard let siteID = decoder.userInfo[.siteID] as? Int else {
+        guard let siteID = decoder.userInfo[.siteID] as? Int64 else {
             throw OrderDecodingError.missingSiteID
         }
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        let orderID = try container.decode(Int.self, forKey: .orderID)
-        let parentID = try container.decode(Int.self, forKey: .parentID)
-        let customerID = try container.decode(Int.self, forKey: .customerID)
+        let orderID = try container.decode(Int64.self, forKey: .orderID)
+        let parentID = try container.decode(Int64.self, forKey: .parentID)
+        let customerID = try container.decode(Int64.self, forKey: .customerID)
 
         let number = try container.decode(String.self, forKey: .number)
         let statusKey = try container.decode(String.self, forKey: .status)
@@ -123,6 +126,7 @@ public struct Order: Decodable {
 
         let shippingAddress = try? container.decode(Address.self, forKey: .shippingAddress)
         let billingAddress = try? container.decode(Address.self, forKey: .billingAddress)
+        let shippingLines = try container.decodeIfPresent([ShippingLine].self, forKey: .shippingLines) ?? []
 
         let coupons = try container.decode([OrderCouponLine].self, forKey: .couponLines)
 
@@ -150,6 +154,7 @@ public struct Order: Decodable {
                   items: items,
                   billingAddress: billingAddress,
                   shippingAddress: shippingAddress,
+                  shippingLines: shippingLines,
                   coupons: coupons,
                   refunds: refunds)
     }
@@ -185,6 +190,7 @@ private extension Order {
         case items              = "line_items"
         case shippingAddress    = "shipping"
         case billingAddress     = "billing"
+        case shippingLines      = "shipping_lines"
         case couponLines        = "coupon_lines"
         case refunds            = "refunds"
     }
@@ -213,6 +219,8 @@ extension Order: Comparable {
             lhs.paymentMethodTitle == rhs.paymentMethodTitle &&
             lhs.billingAddress == rhs.billingAddress &&
             lhs.shippingAddress == rhs.shippingAddress &&
+            lhs.shippingLines.count == rhs.shippingLines.count &&
+            lhs.shippingLines.sorted() == rhs.shippingLines.sorted() &&
             lhs.coupons.count == rhs.coupons.count &&
             lhs.coupons.sorted() == rhs.coupons.sorted() &&
             lhs.refunds.count == rhs.refunds.count &&

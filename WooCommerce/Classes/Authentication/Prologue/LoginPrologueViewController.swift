@@ -24,6 +24,7 @@ final class LoginPrologueViewController: UIViewController {
     ///
     @IBOutlet var disclaimerTextView: UITextView!
 
+    @IBOutlet private var slantedRectangle: UIImageView!
     /// Jetpack Logo ImageVIew
     ///
     @IBOutlet var jetpackImageView: UIImageView!
@@ -48,6 +49,7 @@ final class LoginPrologueViewController: UIViewController {
         setupMainView()
         setupBackgroundView()
         setupContainerView()
+        setupSlantedRectangle()
         setupJetpackImage()
 
         setupLabels()
@@ -71,22 +73,27 @@ final class LoginPrologueViewController: UIViewController {
 private extension LoginPrologueViewController {
 
     func setupMainView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .basicBackground
     }
 
     func setupBackgroundView() {
-        backgroundView.backgroundColor = StyleManager.wooCommerceBrandColor
+        backgroundView.backgroundColor = .init(light: .brand, dark: .withColorStudio(.brand, shade: .shade80))
     }
 
     func setupContainerView() {
-        containerView.backgroundColor = StyleManager.wooCommerceBrandColor
+        containerView.backgroundColor = .init(light: .brand, dark: .withColorStudio(.brand, shade: .shade80))
     }
 
     func setupUpperLabel() {
         upperLabel.text = NSLocalizedString("Manage orders, track sales and monitor store activity with real-time alerts.", comment: "Login Prologue Legend")
         upperLabel.adjustsFontForContentSizeCategory = true
         upperLabel.font = StyleManager.subheadlineBoldFont
-        upperLabel.textColor = StyleManager.wooCommerceBrandColor
+        upperLabel.textColor = .text
+    }
+
+    func setupSlantedRectangle() {
+        slantedRectangle.image = UIImage.slantedRectangle.withRenderingMode(.alwaysTemplate)
+        slantedRectangle.tintColor = .init(light: .brand, dark: .withColorStudio(.brand, shade: .shade80))
     }
 
     func setupJetpackImage() {
@@ -108,10 +115,11 @@ private extension LoginPrologueViewController {
         let title = NSLocalizedString("Log in with Jetpack", comment: "Authentication Login Button")
         loginButton.titleLabel?.adjustsFontForContentSizeCategory = true
         loginButton.setTitle(title, for: .normal)
-        loginButton.setTitleColor(StyleManager.wooSecondary, for: .normal)
-        loginButton.titleLabel?.font = StyleManager.headlineSemiBold
-        loginButton.backgroundColor = .white
-        loginButton.layer.cornerRadius = Settings.buttonCornerRadius
+        loginButton.applySecondaryButtonStyle()
+        // This is an exception where we always show the Log In button in the Light color scheme to have a better constrast to the background.
+        if #available(iOS 13.0, *) {
+            loginButton.overrideUserInterfaceStyle = .light
+        }
     }
 }
 

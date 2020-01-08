@@ -1,1 +1,2 @@
-Kami telah menyusun ulang beberapa bagian Detail Pesanan agar lebih mudah dibaca dan digunakan: Tampilan detail pembayaran pelanggan kini lebih mencolok, dan Catatan Pesanan dikelompokkan dengan judul tanggal agar pemindaian lebih mudah. Dan tidak ada lagi animasi menyebalkan yang memenuhi tampilan saat Anda melihat Detail Tagihan!
+- Penggemar mode gelap, bergembiralah! Mode ini sudah tersedia.
+- Penggemar pratinjau, Anda juga bisa bergembira! Kami tahu bahwa tab Produk merupakan keinginan dari banyak pihak. Meskipun kami belum siap untuk sepenuhnya merilis versi aplikasi yang menyertakannya, Anda masih bisa mempratinjau tab Produk yang akan hadir sekarang — buka Pengaturan di aplikasi untuk mengaktifkannya.

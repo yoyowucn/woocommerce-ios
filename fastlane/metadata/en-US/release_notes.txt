@@ -1,1 +1,2 @@
-We’ve rearranged some parts of Order Details for better readability and usability: Customer payment details are more prominent, and Order Notes are grouped with date headings for easier scanning. And no more awkward expanding animation when you view the Billing Details!
+- Fans of dark mode, rejoice! It’s here.
+- Fans of previewing things, you can rejoice too! We know a Products tab is high on people’s wish lists. While we’re not ready to fully release a version of the app that includes it, you can preview the coming-soon Products tab right now — head to Settings in the app to enable it.

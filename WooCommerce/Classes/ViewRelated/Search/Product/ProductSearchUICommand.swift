@@ -8,18 +8,18 @@ final class ProductSearchUICommand: SearchUICommand {
 
     let searchBarPlaceholder = NSLocalizedString("Search all products", comment: "Products Search Placeholder")
 
-    let emptyStateText = NSLocalizedString("No products yet", comment: "Search Products (Empty State)")
+    let emptyStateText = NSLocalizedString("No products found", comment: "Search Products (Empty State)")
 
-    private let siteID: Int
+    private let siteID: Int64
 
-    init(siteID: Int) {
+    init(siteID: Int64) {
         self.siteID = siteID
     }
 
     func createResultsController() -> ResultsController<ResultsControllerModel> {
         let storageManager = ServiceLocator.storageManager
         let predicate = NSPredicate(format: "siteID == %lld", siteID)
-        let descriptor = NSSortDescriptor(key: "dateModified", ascending: true)
+        let descriptor = NSSortDescriptor(key: "name", ascending: true)
 
         return ResultsController<StorageProduct>(storageManager: storageManager, matching: predicate, sortedBy: [descriptor])
     }
@@ -30,7 +30,7 @@ final class ProductSearchUICommand: SearchUICommand {
 
     /// Synchronizes the Products matching a given Keyword
     ///
-    func synchronizeModels(siteID: Int, keyword: String, pageNumber: Int, pageSize: Int, onCompletion: ((Bool) -> Void)?) {
+    func synchronizeModels(siteID: Int64, keyword: String, pageNumber: Int, pageSize: Int, onCompletion: ((Bool) -> Void)?) {
         let action = ProductAction.searchProducts(siteID: siteID,
                                                   keyword: keyword,
                                                   pageNumber: pageNumber,

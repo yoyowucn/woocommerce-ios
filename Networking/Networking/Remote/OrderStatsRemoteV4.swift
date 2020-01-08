@@ -15,7 +15,7 @@ public final class OrderStatsRemoteV4: Remote {
     ///
     /// Note: by limiting the return values with the `_fields` param, we shrink the response size by over 90%! (~40kb to ~3kb)
     ///
-    public func loadOrderStats(for siteID: Int,
+    public func loadOrderStats(for siteID: Int64,
                                unit: StatsGranularityV4,
                                earliestDateToInclude: String,
                                latestDateToInclude: String,
@@ -29,7 +29,7 @@ public final class OrderStatsRemoteV4: Remote {
                           ParameterKeys.before: latestDateToInclude,
                           ParameterKeys.quantity: String(randomQuantity)]
 
-        let request = JetpackRequest(wooApiVersion: .mark4, method: .get, siteID: siteID, path: Constants.orderStatsPath, parameters: parameters)
+        let request = JetpackRequest(wooApiVersion: .wcAnalytics, method: .get, siteID: siteID, path: Constants.orderStatsPath, parameters: parameters)
         let mapper = OrderStatsV4Mapper(siteID: siteID, granularity: unit)
         enqueue(request, mapper: mapper, completion: completion)
     }

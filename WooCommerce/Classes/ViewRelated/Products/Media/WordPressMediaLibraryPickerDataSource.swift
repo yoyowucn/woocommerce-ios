@@ -99,13 +99,13 @@ final class WordPressMediaLibraryPickerDataSource: NSObject {
     private var onDataChange: WPMediaChangesBlock?
 
     private var mediaItems: [Media]
-    private let siteID: Int
+    private let siteID: Int64
 
     private lazy var mediaGroup: WPMediaGroup = {
         return WordPressMediaLibraryMediaGroup(mediaItems: mediaItems)
     }()
 
-    init(siteID: Int, loadMedia: @escaping LoadMedia) {
+    init(siteID: Int64, loadMedia: @escaping LoadMedia) {
         self.siteID = siteID
         self.mediaItems = []
         self.loadMedia = loadMedia

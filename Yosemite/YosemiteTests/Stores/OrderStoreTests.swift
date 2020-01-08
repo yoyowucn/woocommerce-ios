@@ -28,11 +28,11 @@ class OrderStoreTests: XCTestCase {
 
     /// Testing SiteID
     ///
-    private let sampleSiteID = 123
+    private let sampleSiteID: Int64 = 123
 
     /// Testing OrderID
     ///
-    private let sampleOrderID = 963
+    private let sampleOrderID: Int64 = 963
 
     /// Testing Page Number
     ///
@@ -68,7 +68,8 @@ class OrderStoreTests: XCTestCase {
         network.simulateResponse(requestUrlSuffix: "orders", filename: "orders-load-all")
         let action = OrderAction.synchronizeOrders(siteID: sampleSiteID, statusKey: nil, pageNumber: defaultPageNumber, pageSize: defaultPageSize) { error in
             XCTAssertNil(error)
-            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.Order.self), 3)
+            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.Order.self), 4)
+            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.OrderRefundCondensed.self), 2)
 
             expectation.fulfill()
         }
@@ -85,9 +86,11 @@ class OrderStoreTests: XCTestCase {
 
         network.simulateResponse(requestUrlSuffix: "orders", filename: "orders-load-all")
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 0)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderRefundCondensed.self), 0)
 
         let action = OrderAction.synchronizeOrders(siteID: sampleSiteID, statusKey: nil, pageNumber: defaultPageNumber, pageSize: defaultPageSize) { error in
-            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.Order.self), 3)
+            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.Order.self), 4)
+            XCTAssertEqual(self.viewStorage.countObjects(ofType: Storage.OrderRefundCondensed.self), 2)
             XCTAssertNil(error)
 
             expectation.fulfill()
@@ -107,6 +110,7 @@ class OrderStoreTests: XCTestCase {
 
         network.simulateResponse(requestUrlSuffix: "orders", filename: "orders-load-all")
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 0)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderRefundCondensed.self), 0)
 
         let action = OrderAction.synchronizeOrders(siteID: sampleSiteID, statusKey: nil, pageNumber: defaultPageNumber, pageSize: defaultPageSize) { error in
             XCTAssertNil(error)
@@ -216,6 +220,7 @@ class OrderStoreTests: XCTestCase {
 
         network.simulateResponse(requestUrlSuffix: "orders", filename: "orders-load-all")
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 0)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderRefundCondensed.self), 0)
 
         let action = OrderAction.searchOrders(siteID: sampleSiteID,
                                               keyword: defaultSearchKeyword,
@@ -253,7 +258,7 @@ class OrderStoreTests: XCTestCase {
                 XCTAssertEqual(order.searchResults?.first?.keyword, self.defaultSearchKeyword)
             }
 
-            XCTAssertEqual(context.firstObject(ofType: OrderSearchResults.self)?.orders?.count, 3)
+            XCTAssertEqual(context.firstObject(ofType: OrderSearchResults.self)?.orders?.count, 4)
             XCTAssertEqual(context.countObjects(ofType: OrderSearchResults.self), 1)
             XCTAssertNil(error)
 
@@ -332,11 +337,13 @@ class OrderStoreTests: XCTestCase {
 
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 0)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItem.self), 0)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItemTax.self), 0)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderCoupon.self), 0)
 
         orderStore.upsertStoredOrder(readOnlyOrder: sampleOrder(), in: viewStorage)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 1)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItem.self), 2)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItemTax.self), 0)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderCoupon.self), 1)
 
         orderStore.upsertStoredOrder(readOnlyOrder: sampleOrderMutated(), in: viewStorage)
@@ -344,6 +351,7 @@ class OrderStoreTests: XCTestCase {
         XCTAssertEqual(storageOrder1?.toReadOnly(), sampleOrderMutated())
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 1)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItem.self), 3)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItemTax.self), 3)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderCoupon.self), 2)
 
         orderStore.upsertStoredOrder(readOnlyOrder: sampleOrderMutated2(), in: viewStorage)
@@ -351,6 +359,7 @@ class OrderStoreTests: XCTestCase {
         XCTAssertEqual(storageOrder2?.toReadOnly(), sampleOrderMutated2())
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.Order.self), 1)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItem.self), 1)
+        XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderItemTax.self), 5)
         XCTAssertEqual(viewStorage.countObjects(ofType: Storage.OrderCoupon.self), 0)
     }
 
@@ -432,7 +441,7 @@ class OrderStoreTests: XCTestCase {
 
         XCTAssertEqual(storageSearchResults?.keyword, defaultSearchKeyword)
         XCTAssertEqual(storageSearchResults?.orders?.count, 1)
-        XCTAssertEqual(storageSearchResults?.orders?.first?.orderID, Int64(remoteOrder.orderID))
+        XCTAssertEqual(storageSearchResults?.orders?.first?.orderID, remoteOrder.orderID)
         XCTAssertEqual(storageOrder?.searchResults?.first?.keyword, defaultSearchKeyword)
     }
 
@@ -693,6 +702,7 @@ private extension OrderStoreTests {
                      items: sampleItems(),
                      billingAddress: sampleAddress(),
                      shippingAddress: sampleAddress(),
+                     shippingLines: sampleShippingLines(),
                      coupons: sampleCoupons(),
                      refunds: [])
     }
@@ -719,6 +729,7 @@ private extension OrderStoreTests {
                      items: sampleItemsMutated(),
                      billingAddress: sampleAddress(),
                      shippingAddress: sampleAddress(),
+                     shippingLines: sampleShippingLines(),
                      coupons: sampleCouponsMutated(),
                      refunds: [])
     }
@@ -745,6 +756,7 @@ private extension OrderStoreTests {
                      items: sampleItemsMutated2(),
                      billingAddress: sampleAddress(),
                      shippingAddress: sampleAddress(),
+                     shippingLines: sampleShippingLines(),
                      coupons: [],
                      refunds: [])
     }
@@ -761,6 +773,14 @@ private extension OrderStoreTests {
                        country: "US",
                        phone: "333-333-3333",
                        email: "scrambled@scrambled.com")
+    }
+
+    func sampleShippingLines() -> [Networking.ShippingLine] {
+        return [ShippingLine(shippingID: 123,
+        methodTitle: "International Priority Mail Express Flat Rate",
+        methodID: "usps",
+        total: "133.00",
+        totalTax: "0.00")]
     }
 
     func sampleCoupons() -> [Networking.OrderCouponLine] {
@@ -796,7 +816,7 @@ private extension OrderStoreTests {
                               subtotal: "50.00",
                               subtotalTax: "2.00",
                               taxClass: "",
-                              taxes: taxes(),
+                              taxes: [],
                               total: "30.00",
                               totalTax: "1.20")
 
@@ -810,7 +830,7 @@ private extension OrderStoreTests {
                               subtotal: "10.00",
                               subtotalTax: "0.40",
                               taxClass: "",
-                              taxes: taxes(),
+                              taxes: [],
                               total: "0.00",
                               totalTax: "0.00")
 
@@ -874,7 +894,7 @@ private extension OrderStoreTests {
                               subtotal: "60.00",
                               subtotalTax: "4.00",
                               taxClass: "",
-                              taxes: taxes(),
+                              taxes: taxesMutated(),
                               total: "64.00",
                               totalTax: "4.00")
 
@@ -889,6 +909,11 @@ private extension OrderStoreTests {
     }
 
     func taxes() -> [Networking.OrderItemTax] {
-        return [Networking.OrderItemTax]()
+        return [Networking.OrderItemTax(taxID: 75, subtotal: "0.45", total: "0.45")]
+    }
+
+    func taxesMutated() -> [Networking.OrderItemTax] {
+        return [Networking.OrderItemTax(taxID: 75, subtotal: "0.45", total: "0.45"),
+                Networking.OrderItemTax(taxID: 73, subtotal: "0.9", total: "0.9")]
     }
 }

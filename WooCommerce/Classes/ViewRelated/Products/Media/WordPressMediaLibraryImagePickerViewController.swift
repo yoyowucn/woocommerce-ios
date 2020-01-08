@@ -23,9 +23,9 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
 
     private var picker: WPNavigationMediaPickerViewController!
 
-    private let siteID: Int
+    private let siteID: Int64
 
-    init(siteID: Int, onCompletion: @escaping OnCompletion) {
+    init(siteID: Int64, onCompletion: @escaping OnCompletion) {
         self.siteID = siteID
         self.onCompletion = onCompletion
         super.init(nibName: nil, bundle: nil)

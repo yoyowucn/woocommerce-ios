@@ -1,16 +1,35 @@
 import Foundation
 import Yosemite
 
+private extension ProductStatus {
+    var descriptionColor: UIColor {
+        switch self {
+        case .draft:
+            return .blue
+        case .pending:
+            return .orange
+        default:
+            assertionFailure("Color for \(self) is not specified")
+            return .textSubtle
+        }
+    }
+}
+
 /// Converts the input product model to properties ready to be shown on `ProductsTabProductTableViewCell`.
 struct ProductsTabProductViewModel {
     let imageUrl: String?
     let name: String
     let detailsAttributedString: NSAttributedString
 
-    init(product: Product) {
+    // Dependency for configuring the view.
+    let imageService: ImageService
+
+    init(product: Product, imageService: ImageService = ServiceLocator.imageService) {
         imageUrl = product.images.first?.src
         name = product.name
         detailsAttributedString = product.createDetailsAttributedString()
+
+        self.imageService = imageService
     }
 }
 
@@ -26,11 +45,11 @@ private extension Product {
 
         let attributedString = NSMutableAttributedString(string: detailsText,
                                                          attributes: [
-                                                            .foregroundColor: StyleManager.wooGreyMid,
+                                                            .foregroundColor: UIColor.textSubtle,
                                                             .font: StyleManager.footerLabelFont
             ])
         if let statusText = statusText {
-            attributedString.addAttributes([.foregroundColor: StyleManager.highlightTextColor],
+            attributedString.addAttributes([.foregroundColor: productStatus.descriptionColor],
                                            range: NSRange(location: 0, length: statusText.count))
         }
         return attributedString

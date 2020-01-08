@@ -87,8 +87,12 @@ final class OrderDetailsViewModel {
         return dataSource.lookUpOrderStatus(for: order)
     }
 
-    func lookUpProduct(by productID: Int) -> Product? {
+    func lookUpProduct(by productID: Int64) -> Product? {
         return dataSource.lookUpProduct(by: productID)
+    }
+
+    func lookUpRefund(by refundID: Int64) -> Refund? {
+        return dataSource.lookUpRefund(by: refundID)
     }
 }
 
@@ -98,7 +102,6 @@ final class OrderDetailsViewModel {
 extension OrderDetailsViewModel {
     func configureResultsControllers(onReload: @escaping () -> Void) {
         dataSource.configureResultsControllers(onReload: onReload)
-        //configureOrderListener()
     }
 
     func updateOrderStatus(order: Order) {
@@ -115,13 +118,14 @@ extension OrderDetailsViewModel {
     ///
     func registerTableViewCells(_ tableView: UITableView) {
         let cells = [
+            TopLeftImageTableViewCell.self,
             LeftImageTableViewCell.self,
             CustomerNoteTableViewCell.self,
             CustomerInfoTableViewCell.self,
             WooBasicTableViewCell.self,
             OrderNoteHeaderTableViewCell.self,
             OrderNoteTableViewCell.self,
-            PaymentTableViewCell.self,
+            LedgerTableViewCell.self,
             TwoColumnHeadlineFootnoteTableViewCell.self,
             ProductDetailsTableViewCell.self,
             OrderTrackingTableViewCell.self,
@@ -191,6 +195,20 @@ extension OrderDetailsViewModel {
         case .details:
             ServiceLocator.analytics.track(.orderDetailProductDetailTapped)
             viewController.performSegue(withIdentifier: Constants.productDetailsSegue, sender: nil)
+        case .refund:
+            ServiceLocator.analytics.track(.orderDetailRefundDetailTapped)
+            guard let refund = dataSource.refund(at: indexPath) else {
+                DDLogError("No refund details found.")
+                return
+            }
+
+            let viewModel = RefundDetailsViewModel(order: order, refund: refund)
+            let refundDetailsViewController = RefundDetailsViewController(viewModel: viewModel)
+            viewController.navigationController?.pushViewController(refundDetailsViewController, animated: true)
+        case .refundedProducts:
+            ServiceLocator.analytics.track(.refundedProductsDetailTapped)
+            let refundedProductsDetailViewController = RefundedProductsViewController(order: order, refunds: dataSource.refunds)
+            viewController.navigationController?.pushViewController(refundedProductsDetailViewController, animated: true)
         default:
             break
         }
@@ -255,6 +273,22 @@ extension OrderDetailsViewModel {
         let action = ProductAction.requestMissingProducts(for: order) { (error) in
             if let error = error {
                 DDLogError("⛔️ Error synchronizing Products: \(error)")
+                onCompletion?(error)
+
+                return
+            }
+
+            onCompletion?(nil)
+        }
+
+        ServiceLocator.stores.dispatch(action)
+    }
+
+    func syncRefunds(onCompletion: ((Error?) -> ())? = nil) {
+        let refundIDs = order.refunds.map { $0.refundID }
+        let action = RefundAction.retrieveRefunds(siteID: order.siteID, orderID: order.orderID, refundIDs: refundIDs) { (error) in
+            if let error = error {
+                DDLogError("⛔️ Error synchronizing detailed Refunds: \(error)")
                 onCompletion?(error)
 
                 return

@@ -99,11 +99,17 @@ class ProductDetailsTableViewCell: UITableViewCell {
 private extension ProductDetailsTableViewCell {
     func configureBackground() {
         applyDefaultBackgroundStyle()
+
+        //Background when selected
+        selectedBackgroundView = UIView()
+        selectedBackgroundView?.backgroundColor = .listBackground
     }
 
     func configureProductImageView() {
         productImageView.image = .productPlaceholderImage
-        productImageView.tintColor = StyleManager.wooGreyBorder
+        productImageView.tintColor = .listSmallIcon
+        productImageView.contentMode = .scaleAspectFill
+        productImageView.clipsToBounds = true
     }
 
     func configureNameLabel() {
@@ -135,15 +141,31 @@ private extension ProductDetailsTableViewCell {
 // MARK: - Public Methods
 //
 extension ProductDetailsTableViewCell {
-    func configure(item: OrderItemViewModel) {
-        if item.productHasImage {
-            if let imageURL = item.imageURL {
-                productImageView.downloadImage(from: imageURL,
-                                               placeholderImage: UIImage.productPlaceholderImage)
-            }
-        } else {
-            productImageView.image = .productPlaceholderImage
-        }
+    /// Configure an Order Item
+    ///
+    func configure(item: OrderItemViewModel, imageService: ImageService) {
+
+        imageService.downloadAndCacheImageForImageView(productImageView,
+                                                       with: item.imageURL?.absoluteString,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil,
+                                                       completion: nil)
+
+        name = item.name
+        quantity = item.quantity
+        price = item.price
+        sku = item.sku
+    }
+
+    /// Configure a refunded Order Item
+    ///
+    func configure(item: OrderItemRefundViewModel, imageService: ImageService) {
+
+        imageService.downloadAndCacheImageForImageView(productImageView,
+                                                       with: item.imageURL?.absoluteString,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil,
+                                                       completion: nil)
 
         name = item.name
         quantity = item.quantity

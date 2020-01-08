@@ -12,11 +12,11 @@ final class OrdersRemoteTests: XCTestCase {
 
     /// Dummy Site ID
     ///
-    let sampleSiteID = 1234
+    let sampleSiteID: Int64 = 1234
 
     /// Dummy Order ID
     ///
-    let sampleOrderID = 1467
+    let sampleOrderID: Int64 = 1467
 
     /// Dummy author string
     ///
@@ -50,7 +50,7 @@ final class OrdersRemoteTests: XCTestCase {
         remote.loadAllOrders(for: sampleSiteID) { orders, error in
             XCTAssertNil(error)
             XCTAssertNotNil(orders)
-            XCTAssert(orders!.count == 3)
+            XCTAssert(orders!.count == 4)
             expectation.fulfill()
         }
 
@@ -121,7 +121,7 @@ final class OrdersRemoteTests: XCTestCase {
         remote.searchOrders(for: sampleSiteID, keyword: String()) { (orders, error) in
             XCTAssertNil(error)
             XCTAssertNotNil(orders)
-            XCTAssert(orders!.count == 3)
+            XCTAssert(orders!.count == 4)
             expectation.fulfill()
         }
 

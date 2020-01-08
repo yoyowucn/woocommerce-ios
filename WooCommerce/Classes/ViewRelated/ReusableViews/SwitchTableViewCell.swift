@@ -77,10 +77,11 @@ private extension SwitchTableViewCell {
 
         detailTextLabel?.text = String()
         detailTextLabel?.applyFootnoteStyle()
+        detailTextLabel?.numberOfLines = 0
     }
 
     func setupSwitch() {
-        toggleSwitch.onTintColor = StyleManager.wooCommerceBrandColor
+        toggleSwitch.onTintColor = .primary
         toggleSwitch.addTarget(self, action: #selector(toggleSwitchWasPressed), for: .touchUpInside)
         accessoryView = toggleSwitch
     }

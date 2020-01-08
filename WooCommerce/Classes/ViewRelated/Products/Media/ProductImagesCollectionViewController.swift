@@ -40,8 +40,11 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
     private var productImages: [ProductImage]
     private let reuseIdentifier = "Cell"
 
-    init(images: [ProductImage]) {
+    private let imageService: ImageService
+
+    init(images: [ProductImage], imageService: ImageService = ServiceLocator.imageService) {
         self.productImages = images
+        self.imageService = imageService
         let columnLayout = ColumnFlowLayout(
             cellsPerRow: 2,
             minimumInteritemSpacing: 16,
@@ -58,7 +61,7 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collectionView.backgroundColor = StyleManager.wooWhite
+        collectionView.backgroundColor = .listBackground
 
         collectionView.register(ProductImageCollectionViewCell.loadNib(), forCellWithReuseIdentifier: reuseIdentifier)
 
@@ -90,7 +93,20 @@ extension ProductImagesCollectionViewController {
         }
 
         let productImage = productImages[indexPath.row]
-        cell.update(imageURL: productImage.src)
+
+        imageService.downloadAndCacheImageForImageView(cell.imageView,
+                                                       with: productImage.src,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil) { (image, error) in
+                                                        let success = image != nil && error == nil
+                                                        if success {
+                                                            cell.imageView.contentMode = .scaleAspectFit
+                                                        }
+                                                        else {
+                                                            cell.imageView.contentMode = .center
+                                                        }
+        }
+
         return cell
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import CocoaLumberjack
 import Storage
+import Yosemite
 
 /// Provides global depedencies.
 ///
@@ -24,6 +25,10 @@ final class ServiceLocator {
     ///
     private static var _featureFlagService: FeatureFlagService = DefaultFeatureFlagService()
 
+    /// ImageService
+    ///
+    private static var _imageService: ImageService = DefaultImageService()
+
     /// In-App Notifications Presenter
     ///
     private static var _noticePresenter: NoticePresenter = DefaultNoticePresenter()
@@ -31,6 +36,10 @@ final class ServiceLocator {
     /// Push Notifications Manager
     ///
     private static var _pushNotesManager: PushNotesManager = PushNotificationsManager()
+
+    /// Shipping Settings
+    ///
+    private static var _shippingSettingsService: ShippingSettingsService?
 
     /// CoreData Stack
     ///
@@ -55,6 +64,12 @@ final class ServiceLocator {
         return _featureFlagService
     }
 
+    /// Provides the access point to the image service.
+    /// - Returns: An implementation of the ImageService protocol. It defaults to DefaultImageService
+    static var imageService: ImageService {
+        return _imageService
+    }
+
     /// Provides the access point to the stores.
     /// - Returns: An implementation of the StoresManager protocol. It defaults to DefaultStoresManager
     static var stores: StoresManager {
@@ -77,6 +92,19 @@ final class ServiceLocator {
     /// - Returns: An implementation of the AuthenticationManager protocol. It defaults to DefaultAuthenticationManager
     static var authenticationManager: Authentication {
         return _authenticationManager
+    }
+
+    /// Shipping Settings
+    ///
+    static var shippingSettingsService: ShippingSettingsService {
+        guard let shippingSettingsService = _shippingSettingsService else {
+            let siteID = stores.sessionManager.defaultStoreID ?? Int64.min
+            let service = StorageShippingSettingsService(siteID: siteID,
+                                                         storageManager: storageManager)
+            _shippingSettingsService = service
+            return service
+        }
+        return shippingSettingsService
     }
 
     /// Provides the access point to the StorageManager.
@@ -145,6 +173,14 @@ extension ServiceLocator {
         }
 
         _authenticationManager = mock
+    }
+
+    static func setShippingSettingsService(_ mock: ShippingSettingsService) {
+        guard isRunningTests() else {
+            return
+        }
+
+        _shippingSettingsService = mock
     }
 
     static func setStorageManager(_ mock: CoreDataManager) {

@@ -2,7 +2,7 @@ import XCTest
 @testable import Yosemite
 @testable import Storage
 
-class AppSettingsStoreTests_StatsVersion: XCTestCase {
+final class AppSettingsStoreTests_StatsVersion: XCTestCase {
     /// Mockup Dispatcher!
     ///
     private var dispatcher: Dispatcher!
@@ -36,7 +36,7 @@ class AppSettingsStoreTests_StatsVersion: XCTestCase {
     }
 
     func testStatsVersionLastShownActions() {
-        let siteID = 134
+        let siteID: Int64 = 134
 
         let initialReadAction = AppSettingsAction.loadInitialStatsVersionToShow(siteID: siteID) { statsVersionLastShown in
             // Before any write actions, the stats version should be nil.
@@ -55,8 +55,8 @@ class AppSettingsStoreTests_StatsVersion: XCTestCase {
     }
 
     func testStatsVersionLastShownWithTwoSites() {
-        let siteID1 = 134
-        let siteID2 = 268
+        let siteID1: Int64 = 134
+        let siteID2: Int64 = 268
 
         let statsVersionForSite1 = StatsVersion.v4
         let statsVersionForSite2 = StatsVersion.v3
@@ -77,7 +77,7 @@ class AppSettingsStoreTests_StatsVersion: XCTestCase {
     }
 
     func testStatsVersionEligibleActions() {
-        let siteID = 134
+        let siteID: Int64 = 134
 
         let initialReadAction = AppSettingsAction.loadStatsVersionEligible(siteID: siteID) { eligibleStatsVersion in
             // Before any write actions, the stats version should be nil.
@@ -139,40 +139,5 @@ class AppSettingsStoreTests_StatsVersion: XCTestCase {
         let action = AppSettingsAction.resetStatsVersionStates
         subject.onAction(action)
         XCTAssertTrue(fileStorage!.deleteIsHit)
-    }
-}
-
-// MARK: - Mock data
-
-/// Mock implementation of the FileStorage protocol.
-/// It reads and writes the data from and to an object in memory.
-///
-private final class MockInMemoryStorage: FileStorage {
-    private let loader = PListFileStorage()
-
-    /// A boolean value to test if a write to disk is requested
-    ///
-    var dataWriteIsHit: Bool = false
-
-    /// A boolean value to test if a file deletion is requested
-    ///
-    var deleteIsHit: Bool = false
-
-    private var data: Data?
-
-    func data(for fileURL: URL) throws -> Data {
-        guard let data = data else {
-            throw AppSettingsStoreErrors.deletePreselectedProvider
-        }
-        return data
-    }
-
-    func write(_ data: Data, to fileURL: URL) throws {
-        self.data = data
-    }
-
-    func deleteFile(at fileURL: URL) throws {
-        data = nil
-        deleteIsHit = true
     }
 }

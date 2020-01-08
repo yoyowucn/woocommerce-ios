@@ -72,16 +72,77 @@ final class PickListTableViewCell: UITableViewCell {
         super.awakeFromNib()
 
         selectionStyle = .none
-
+        configureBackground()
         setupImageView()
         setupNameLabel()
         setupQuantityLabel()
         setupSkuLabel()
     }
 
+    override func prepareForReuse() {
+        setupSkuLabel()
+    }
+}
+
+
+/// MARK: - Public Methods
+///
+extension PickListTableViewCell {
+    func configure(item: OrderItemViewModel, imageService: ImageService) {
+        imageService.downloadAndCacheImageForImageView(productImageView,
+                                                       with: item.imageURL?.absoluteString,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil,
+                                                       completion: nil)
+
+        name = item.name
+        quantity = item.quantity
+
+        guard let skuText = item.sku else {
+            skuLabel.isHidden = true
+            return
+        }
+
+        sku = skuText
+    }
+
+    /// Configure a refunded order item
+    ///
+    func configure(item: OrderItemRefundViewModel, imageService: ImageService) {
+        imageService.downloadAndCacheImageForImageView(productImageView,
+                                                       with: item.imageURL?.absoluteString,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil,
+                                                       completion: nil)
+        name = item.name
+        quantity = item.quantity
+
+        guard let skuText = item.sku else {
+            skuLabel.isHidden = true
+            return
+        }
+
+        sku = skuText
+    }
+}
+
+/// MARK: - Private Methods
+///
+private extension PickListTableViewCell {
+
+    func configureBackground() {
+        applyDefaultBackgroundStyle()
+
+        // Background when selected
+        selectedBackgroundView = UIView()
+        selectedBackgroundView?.backgroundColor = .listBackground
+    }
+
     func setupImageView() {
         productImageView.image = .productImage
-        productImageView.tintColor = StyleManager.wooGreyBorder
+        productImageView.tintColor = .listSmallIcon
+        productImageView.contentMode = .scaleAspectFill
+        productImageView.clipsToBounds = true
     }
 
     func setupNameLabel() {
@@ -96,25 +157,7 @@ final class PickListTableViewCell: UITableViewCell {
 
     func setupSkuLabel() {
         skuLabel.applySecondaryFootnoteStyle()
+        skuLabel?.isHidden = false
         skuLabel?.text = ""
-    }
-}
-
-
-// MARK: - Public Methods
-//
-extension PickListTableViewCell {
-    func configure(item: OrderItemViewModel) {
-        if item.productHasImage,
-        let imageURL = item.imageURL {
-                productImageView.downloadImage(from: imageURL,
-                                               placeholderImage: UIImage.productPlaceholderImage)
-        } else {
-            productImageView.image = .productPlaceholderImage
-        }
-
-        name = item.name
-        quantity = item.quantity
-        sku = item.sku
     }
 }
