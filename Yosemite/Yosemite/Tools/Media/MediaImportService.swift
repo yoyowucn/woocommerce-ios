@@ -3,6 +3,7 @@ import CocoaLumberjack
 import CoreServices
 import Photos
 import WordPressKit
+import Networking
 
 /// Encapsulates importing assets such as PHAssets, images, videos, or files at URLs to Media objects.
 ///
@@ -30,7 +31,7 @@ open class MediaImportService {
 
     /// Completion handler for a created Media object.
     ///
-    public typealias MediaCompletion = (RemoteMedia) -> Void
+    public typealias MediaCompletion = (MediaUploadable) -> Void
 
     /// Error handler.
     ///
@@ -48,7 +49,7 @@ open class MediaImportService {
     ///
     /// - Returns: a progress object that report the current state of the import process.
     ///
-    func `import`(_ exportable: ExportableAsset, to media: RemoteMedia, onCompletion: @escaping MediaCompletion, onError: @escaping OnError) -> Progress? {
+    func `import`(_ exportable: ExportableAsset, onCompletion: @escaping MediaCompletion, onError: @escaping OnError) -> Progress? {
         let progress: Progress = Progress.discreteProgress(totalUnitCount: 1)
         importQueue.async {
             guard let exporter = self.makeExporter(for: exportable) else {
@@ -56,7 +57,7 @@ open class MediaImportService {
             }
             let exportProgress = exporter.export(onCompletion: { export in
 //                self.managedObjectContext.perform {
-                self.configureMedia(media, withExport: export)
+                let media = self.createMediaUploadable(from: export)
                 onCompletion(media)
 //                    ContextManager.sharedInstance().save(self.managedObjectContext, withCompletionBlock: {
 //                        onCompletion(media)
@@ -126,30 +127,39 @@ open class MediaImportService {
         return options
     }
 
+    private func createMediaUploadable(from export: MediaExport) -> MediaUploadable {
+        let type = mimeType(forPathExtension: export.url.lastPathComponent)
+        return MediaUploadable(localURL: export.url,
+                               filename: export.url.lastPathComponent,
+                               mimeType: type,
+                               caption: export.caption
+        )
+    }
+
     /// Configure Media with a MediaExport.
     ///
-    private func configureMedia(_ media: RemoteMedia, withExport export: MediaExport) {
-        media.localURL = export.url
-        media.file = export.url.lastPathComponent
-
-        media.mimeType = mimeType(forPathExtension: export.url.lastPathComponent)
-
-        if let width = export.width {
-            media.width = width as NSNumber
-        }
-
-        if let height = export.height {
-            media.height = height as NSNumber
-        }
-
-        if let duration = export.duration {
-            media.length = duration as NSNumber
-        }
-
-        if let caption = export.caption {
-            media.caption = caption
-        }
-    }
+//    private func configureMedia(_ media: MediaUploadable, withExport export: MediaExport) {
+//        media.localURL = export.url
+//        media.file = export.url.lastPathComponent
+//
+//        media.mimeType = mimeType(forPathExtension: export.url.lastPathComponent)
+//
+//        if let width = export.width {
+//            media.width = width as NSNumber
+//        }
+//
+//        if let height = export.height {
+//            media.height = height as NSNumber
+//        }
+//
+//        if let duration = export.duration {
+//            media.length = duration as NSNumber
+//        }
+//
+//        if let caption = export.caption {
+//            media.caption = caption
+//        }
+//    }
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
         if

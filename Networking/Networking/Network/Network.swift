@@ -1,6 +1,9 @@
 import Foundation
 import Alamofire
 
+public protocol MultipartFormData {
+    func append(_ fileURL: URL, withName name: String, fileName: String, mimeType: String)
+}
 
 /// Defines all of the Network Operations we'll be performing. This allows us to swap the actual Wrapper in our
 /// Unit Testing target, and inject mocked up responses.
@@ -21,4 +24,8 @@ public protocol Network {
     ///     - completion: Closure to be executed upon completion.
     ///
     func responseData(for request: URLRequestConvertible, completion: @escaping (Data?, Error?) -> Void)
+
+    func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void,
+                                 to request: URLRequestConvertible,
+                                 completion: @escaping (Data?, Error?) -> Void)
 }

@@ -3,27 +3,6 @@ import Networking
 import WordPressKit
 import Storage
 
-public final class Media: NSObject {
-    public let mediaID: Int64
-    public let date: Date    // gmt
-    public let src: String
-    public let name: String?
-    public let alt: String?
-
-    init?(remoteMedia: RemoteMedia) {
-        guard let imageID = remoteMedia.mediaID?.int64Value,
-            let date = remoteMedia.date,
-            let src = remoteMedia.url?.absoluteString else {
-                return nil
-        }
-        self.mediaID = imageID
-        self.date = date
-        self.src = src
-        self.name = remoteMedia.title
-        self.alt = remoteMedia.alt
-    }
-}
-
 extension Media {
     func toRemoteMedia() -> RemoteMedia {
         let remoteMedia = RemoteMedia()
@@ -81,46 +60,37 @@ public final class MediaStore: Store {
 
 private extension MediaStore {
     func retrieveMediaLibrary(siteID: Int64, onCompletion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
-        let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
-
-        let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
-        remote.getMediaLibrary(success: { (data) in
-            guard let mediaItems = data as? [RemoteMedia] else {
-//                let error = Error()
-                onCompletion([], nil)
-                return
-            }
-            onCompletion(mediaItems.compactMap({ Media(remoteMedia: $0) }), nil)
-        }) { (error) in
-            onCompletion([], error)
-        }
+//        let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
+//
+//        let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
+//        remote.getMediaLibrary(success: { (data) in
+//            guard let mediaItems = data as? [RemoteMedia] else {
+////                let error = Error()
+//                onCompletion([], nil)
+//                return
+//            }
+//            onCompletion(mediaItems.compactMap({ Media(remoteMedia: $0) }), nil)
+//        }) { (error) in
+//            onCompletion([], error)
+//        }
     }
 
-    func uploadMedia(siteID: Int64, media: RemoteMedia, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
-        let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
-
-        let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
-        var progress: Progress? = Progress()
-
-        // TODO-jc: error handling
-        remote.uploadMedia(media, progress: &progress, success: { (data) in
-            guard let data = data,
-            let media = Media(remoteMedia: data) else {
-            //                let error = Error()
-                            onCompletion(nil, nil)
-                            return
-                        }
-            onCompletion(media, nil)
-        }) { (error) in
-            onCompletion(nil, error)
+    func uploadMedia(siteID: Int64, media: MediaUploadable, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
+        
+        let remote = MediaRemote(network: network)
+        remote.uploadMedia(for: siteID,
+                           mediaItems: [media]) { (uploadedMediaItems, error) in
+                            guard let uploadedMedia = uploadedMediaItems?.first, uploadedMediaItems?.count == 1 && error == nil else {
+                                onCompletion(nil, error)
+                                return
+                            }
+                            onCompletion(uploadedMedia, nil)
         }
     }
 
     func uploadMedia(siteID: Int64, mediaAsset: ExportableAsset, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
         let mediaImporter = MediaImportService()
-        let remoteMedia = RemoteMedia()
         _ = mediaImporter.import(mediaAsset,
-                             to: remoteMedia,
                              onCompletion: { [weak self] (remoteMedia) in
                                 self?.uploadMedia(siteID: siteID,
                                                   media: remoteMedia,

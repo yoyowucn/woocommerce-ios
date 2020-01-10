@@ -1,7 +1,7 @@
 import Foundation
 import Alamofire
 
-
+extension Alamofire.MultipartFormData: MultipartFormData {}
 
 /// AlamofireWrapper: Encapsulates all of the Alamofire OP's
 ///
@@ -40,6 +40,25 @@ public class AlamofireNetwork: Network {
             .responseData { response in
                 completion(response.value, response.networkingError)
             }
+    }
+
+    public func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void, to request: URLRequestConvertible, completion: @escaping (Data?, Error?) -> Void) {
+        let authenticated = AuthenticatedRequest(credentials: credentials, request: request)
+
+        Alamofire.upload(multipartFormData: multipartFormData, with: authenticated) { (encodingResult) in
+            switch encodingResult {
+            case .success(let upload, _, _):
+                upload.responseData { response in
+                    completion(response.value, response.networkingError)
+                }
+                upload.uploadProgress(closure: {
+                    progress in
+                    print(progress.fractionCompleted)
+                })
+            case .failure(let encodingError):
+                print(encodingError)
+            }
+        }
     }
 }
 

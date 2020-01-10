@@ -187,6 +187,11 @@ private extension ProductImagesViewController {
         let alertController = UIAlertController(title: title,
                                                 message: error?.localizedDescription,
                                                 preferredStyle: .alert)
+        let cancel = UIAlertAction(title: NSLocalizedString(
+            "OK",
+            comment: "Dismiss button on the alert when there is an error updating the product"
+        ), style: .cancel, handler: nil)
+        alertController.addAction(cancel)
         present(alertController, animated: true)
     }
 }
