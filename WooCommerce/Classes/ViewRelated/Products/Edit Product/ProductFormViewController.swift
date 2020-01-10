@@ -10,6 +10,7 @@ final class ProductFormViewController: UIViewController {
         didSet {
             viewModel = DefaultProductFormTableViewModel(product: product, currency: currency)
             tableViewDataSource = ProductFormTableViewDataSource(viewModel: viewModel)
+            tableViewDataSource.configureActions(onAddImage: showProductImages)
             tableView.dataSource = tableViewDataSource
             tableView.reloadData()
         }

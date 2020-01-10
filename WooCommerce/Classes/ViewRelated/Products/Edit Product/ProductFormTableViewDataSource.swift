@@ -15,8 +15,8 @@ private extension ProductFormSection.SettingsRow.ViewModel {
 ///
 final class ProductFormTableViewDataSource: NSObject {
     private let viewModel: ProductFormTableViewModel
-    private var onAddImage: (() -> Void)?
     private let canEditImages: Bool
+    private var onAddImage: (() -> Void)?
 
     init(viewModel: ProductFormTableViewModel,
          canEditImages: Bool = ServiceLocator.featureFlagService.isFeatureFlagEnabled(.editProductsRelease2)) {
