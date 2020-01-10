@@ -3,6 +3,8 @@ import WPMediaPicker
 import Yosemite
 
 class ProductImagesViewController: UIViewController {
+    typealias Completion = (_ images: [ProductImage]) -> Void
+
     @IBOutlet private weak var addButton: UIButton!
     @IBOutlet private weak var imagesContainerView: UIView!
 
@@ -27,10 +29,13 @@ class ProductImagesViewController: UIViewController {
                                                    onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(assets:))
     }()
 
-    init(product: Product) {
+    private let onCompletion: Completion
+
+    init(product: Product, completion: @escaping Completion) {
         self.siteID = product.siteID
         self.productID = product.productID
         self.productImages = product.images
+        self.onCompletion = completion
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -51,6 +56,7 @@ class ProductImagesViewController: UIViewController {
 private extension ProductImagesViewController {
     func configureNavigation() {
         title = NSLocalizedString("Photos", comment: "Product images (Product images page title)")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(completeEditing))
     }
 
     func configureAddButton() {
@@ -79,6 +85,10 @@ private extension ProductImagesViewController {
         showOptionsMenu()
     }
 
+    @objc func completeEditing() {
+        onCompletion(productImages)
+    }
+
     private func showOptionsMenu() {
         let pickingContext = MediaPickingContext(origin: self, view: addButton, barButtonItem: nil)
         mediaPickingCoordinator.present(context: pickingContext)
@@ -89,7 +99,7 @@ private extension ProductImagesViewController {
 private extension ProductImagesViewController {
     func uploadMediaAssetToProduct(asset: ExportableAsset) {
         let onMediaUploadToMediaLibrary = { [weak self] (media: Media) in
-            self?.uploadMediaToProduct(mediaItems: [media])
+            self?.addMediaToProduct(mediaItems: [media])
         }
 
         let action = MediaAction.uploadMedia(siteID: siteID,
@@ -103,7 +113,7 @@ private extension ProductImagesViewController {
         ServiceLocator.stores.dispatch(action)
     }
 
-    func uploadMediaToProduct(mediaItems: [Media]) {
+    func addMediaToProduct(mediaItems: [Media]) {
         let productMediaItems = mediaItems.map({
             ProductImage(imageID: $0.mediaID,
             dateCreated: Date(),
@@ -112,18 +122,7 @@ private extension ProductImagesViewController {
             name: $0.name,
             alt: $0.alt)
         })
-        let images = productImages + productMediaItems
-        let action = ProductAction.updateProductImages(siteID: siteID,
-                                                       productID: productID,
-                                                       images: images) { [weak self] (product, error) in
-                                                        guard let product = product else {
-                                                            self?.showErrorAlert(error: error)
-                                                            return
-                                                        }
-                                                        // Update product images
-                                                        self?.productImages = product.images
-        }
-        ServiceLocator.stores.dispatch(action)
+        self.productImages = productImages + productMediaItems
     }
 }
 
@@ -148,7 +147,7 @@ private extension ProductImagesViewController {
         guard let media = assets as? [Media] else {
             return
         }
-        uploadMediaToProduct(mediaItems: media)
+        addMediaToProduct(mediaItems: media)
     }
 }
 

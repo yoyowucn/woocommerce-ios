@@ -121,8 +121,20 @@ private extension ProductFormViewController {
     }
 
     func showProductImages() {
-        let imagesViewController = ProductImagesViewController(product: product)
+        let imagesViewController = ProductImagesViewController(product: product) { [weak self] images in
+            self?.onEditProductImagesCompletion(images: images)
+        }
         navigationController?.pushViewController(imagesViewController, animated: true)
+    }
+
+    func onEditProductImagesCompletion(images: [ProductImage]) {
+        defer {
+            navigationController?.popViewController(animated: true)
+        }
+        guard images != product.images else {
+            return
+        }
+        self.product = productUpdater.imagesUpdated(images: images)
     }
 
     func displayError(error: ProductUpdateError?) {
