@@ -1511,7 +1511,7 @@
 			path = Search;
 			sourceTree = "<group>";
 		};
-		0286B27523C704FC003D784B /* Images */ = {
+		0286B27523C704FC003D784B /* Media */ = {
 			isa = PBXGroup;
 			children = (
 				024C0B3C23C876B300374BD4 /* CameraCaptureCoordinator.swift */,
@@ -1526,7 +1526,7 @@
 				024C0B3723C876B200374BD4 /* WordPressMediaLibraryImagePickerViewController.xib */,
 				024C0B3D23C876B300374BD4 /* WordPressMediaLibraryPickerDataSource.swift */,
 			);
-			path = Images;
+			path = Media;
 			sourceTree = "<group>";
 		};
 		028BAC4322F3AE3B008BB4AF /* Stats v4 */ = {
@@ -1823,7 +1823,7 @@
 		74EC34A3225FE1F3004BBC2E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0286B27523C704FC003D784B /* Images */,
+				0286B27523C704FC003D784B /* Media */,
 				026CF637237E9AA5009563D4 /* Variations */,
 				021627232379637E000208D2 /* Edit Product */,
 				020DD48B2322A5F9005822B1 /* View Models */,
