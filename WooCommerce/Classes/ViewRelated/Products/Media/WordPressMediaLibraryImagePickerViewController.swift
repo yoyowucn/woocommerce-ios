@@ -13,9 +13,9 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
         options.filter = [.image]
         options.allowCaptureOfMedia = false
         options.showSearchBar = true
+        options.showActionBar = false
         options.badgedUTTypes = [String(kUTTypeGIF)]
         options.allowMultipleSelection = true
-        options.preferredStatusBarStyle = .lightContent
         return options
     }()
 
@@ -47,19 +47,14 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
         picker.dataSource = mediaLibraryDataSource
         picker.startOnGroupSelector = false
         picker.showGroupSelector = false
-//        picker.selectionActionTitle = Constants.mediaPickerInsertText
-//        mediaPickerOptions.filter = filter
-//        mediaPickerOptions.allowMultipleSelection = allowMultipleSelection
         picker.mediaPicker.options = mediaPickerOptions
         picker.delegate = self
         picker.modalPresentationStyle = .currentContext
+        picker.mediaPicker.collectionView?.backgroundColor = .listBackground
+        picker.mediaPicker.defaultEmptyView.text = NSLocalizedString("No images yet", comment: "Placeholder text shown when there are no images for the Media Library yet")
         self.picker = picker
 
         picker.view.translatesAutoresizingMaskIntoConstraints = false
-
-        if #available(iOS 13.0, *) {
-            picker.overrideUserInterfaceStyle = .light
-        }
 
         add(picker)
         view.pinSubviewToSafeArea(picker.view)

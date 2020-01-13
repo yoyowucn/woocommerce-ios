@@ -7,11 +7,13 @@ extension Media: WPMediaAsset {
         guard let url = URL(string: src) else {
             return 0
         }
-        WPImageSource.shared()?.downloadImage(for: url, withSuccess: { (image) in
+        ServiceLocator.imageService.retrieveImageFromCache(with: url) { (image) in
             completionHandler(image, nil)
-        }, failure: { (error) in
-            completionHandler(nil, error)
-        })
+        }
+
+        ServiceLocator.imageService.downloadImage(with: url, shouldCacheImage: true) { (image, error) in
+            completionHandler(image, error)
+        }
         return Int32(mediaID)
     }
 

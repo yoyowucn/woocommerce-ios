@@ -60,23 +60,17 @@ public final class MediaStore: Store {
 
 private extension MediaStore {
     func retrieveMediaLibrary(siteID: Int64, onCompletion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
-//        let dotComRestApi = WordPressComRestApi(oAuthToken: credentials.authToken, userAgent: Settings.userAgent)
-//
-//        let remote = MediaServiceRemoteREST(wordPressComRestApi: dotComRestApi, siteID: NSNumber(value: siteID))
-//        remote.getMediaLibrary(success: { (data) in
-//            guard let mediaItems = data as? [RemoteMedia] else {
-////                let error = Error()
-//                onCompletion([], nil)
-//                return
-//            }
-//            onCompletion(mediaItems.compactMap({ Media(remoteMedia: $0) }), nil)
-//        }) { (error) in
-//            onCompletion([], error)
-//        }
+        let remote = MediaRemote(network: network)
+        remote.retrieveMediaLibrary(for: siteID) { (mediaItems, error) in
+            guard let mediaItems = mediaItems, error == nil else {
+                onCompletion([], error)
+                return
+            }
+            onCompletion(mediaItems, nil)
+        }
     }
 
     func uploadMedia(siteID: Int64, media: MediaUploadable, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
-        
         let remote = MediaRemote(network: network)
         remote.uploadMedia(for: siteID,
                            mediaItems: [media]) { (uploadedMediaItems, error) in
