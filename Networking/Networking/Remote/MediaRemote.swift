@@ -13,6 +13,7 @@ public class MediaRemote: Remote {
             ParameterKey.contextKey: context ?? Default.context,
             ParameterKey.perPage: 100,
             ParameterKey.fields: "ID,date,URL,title,alt",
+            ParameterKey.mimeType: "image"
         ]
         if pageHandle?.isEmpty == false {
             parameters[ParameterKey.page] = pageHandle
@@ -98,5 +99,6 @@ public extension MediaRemote {
         static let perPage: String    = "number"
         static let contextKey: String = "context"
         static let fields: String     = "fields"
+        static let mimeType: String   = "mime_type"
     }
 }
