@@ -34,12 +34,14 @@ extension Media: WPMediaAsset {
         guard let url = URL(string: src) else {
             return 0
         }
-        ServiceLocator.imageService.retrieveImageFromCache(with: url) { (image) in
-            completionHandler(image, nil)
-        }
+        DispatchQueue.global().async {
+            ServiceLocator.imageService.retrieveImageFromCache(with: url) { (image) in
+                completionHandler(image, nil)
+            }
 
-        ServiceLocator.imageService.downloadImage(with: url, shouldCacheImage: true) { (image, error) in
-            completionHandler(image, error)
+            ServiceLocator.imageService.downloadImage(with: url, size: size, shouldCacheImage: true) { (image, error) in
+                completionHandler(image, error)
+            }
         }
         return Int32(mediaID)
     }

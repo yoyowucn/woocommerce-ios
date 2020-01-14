@@ -12,7 +12,7 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
         options.showMostRecentFirst = true
         options.filter = [.image]
         options.allowCaptureOfMedia = false
-        options.showSearchBar = true
+        options.showSearchBar = false
         options.showActionBar = false
         options.badgedUTTypes = [String(kUTTypeGIF)]
         options.allowMultipleSelection = true
@@ -57,7 +57,7 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
         picker.view.translatesAutoresizingMaskIntoConstraints = false
 
         add(picker)
-        view.pinSubviewToSafeArea(picker.view)
+        view.pinSubviewToAllEdges(picker.view)
     }
 }
 
