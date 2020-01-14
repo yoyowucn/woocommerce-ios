@@ -36,8 +36,18 @@ struct DefaultImageService: ImageService {
     }
 
     func downloadImage(with url: URL, shouldCacheImage: Bool, completion: ImageDownloadCompletion?) {
+        downloadImage(with: url, size: nil, shouldCacheImage: shouldCacheImage, completion: completion)
+    }
+
+    func downloadImage(with url: URL, size: CGSize?, shouldCacheImage: Bool, completion: ImageDownloadCompletion?) {
+        let options: KingfisherOptionsInfo
+        if let size = size {
+            options = [.processor(DownsamplingImageProcessor(size: size))]
+        } else {
+            options = []
+        }
         imageDownloader.downloadImage(with: url,
-                                      options: nil) { result in
+                                      options: options) { result in
                                         switch result {
                                         case .success(let imageResult):
                                             let image = imageResult.image

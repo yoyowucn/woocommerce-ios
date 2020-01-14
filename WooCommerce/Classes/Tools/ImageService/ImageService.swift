@@ -17,6 +17,14 @@ protocol ImageService {
     /// Downloads an image given a URL.
     /// - Parameters:
     ///   - url: url of the image.
+    ///   - size: size of the image to be rendered. Optional.
+    ///   - shouldCacheImage: whether the downloaded image should be stored in the cache for faster access in the future.
+    ///   - completion: called when the image download completes.
+    func downloadImage(with url: URL, size: CGSize?, shouldCacheImage: Bool, completion: ImageDownloadCompletion?)
+
+    /// Downloads an image given a URL.
+    /// - Parameters:
+    ///   - url: url of the image.
     ///   - shouldCacheImage: whether the downloaded image should be stored in the cache for faster access in the future.
     ///   - completion: called when the image download completes.
     func downloadImage(with url: URL, shouldCacheImage: Bool, completion: ImageDownloadCompletion?)
