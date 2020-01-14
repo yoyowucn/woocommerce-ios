@@ -2,6 +2,33 @@ import Foundation
 import WPMediaPicker
 import Yosemite
 
+extension Media {
+    var mediaType: MediaType {
+        if mimeType.isEmpty == false {
+            return MediaType(mimeType: mimeType)
+        } else if fileExtension.isEmpty == false {
+            return MediaType(fileExtension: fileExtension)
+        } else {
+            return .other
+        }
+    }
+}
+
+extension MediaType {
+    var toWPMediaType: WPMediaType {
+        switch self {
+        case .image:
+            return .image
+        case .video:
+            return .video
+        case .audio:
+            return .audio
+        default:
+            return .other
+        }
+    }
+}
+
 extension Media: WPMediaAsset {
     public func image(with size: CGSize, completionHandler: @escaping WPMediaImageBlock) -> WPMediaRequestID {
         guard let url = URL(string: src) else {
@@ -24,7 +51,7 @@ extension Media: WPMediaAsset {
     }
 
     public func assetType() -> WPMediaType {
-        return .image
+        return mediaType.toWPMediaType
     }
 
     public func duration() -> TimeInterval {
