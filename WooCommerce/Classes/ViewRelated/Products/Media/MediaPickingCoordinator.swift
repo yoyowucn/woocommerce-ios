@@ -5,18 +5,26 @@ import Yosemite
 /// Prepares the alert controller that will be presented when trying to add media to a site or Product.
 ///
 final class MediaPickingCoordinator: NSObject {
-    private let cameraCapture: CameraCaptureCoordinator
-    private let deviceMediaLibraryPicker: DeviceMediaLibraryPicker
-    private let onWPMediaPickerCompletion: WordPressMediaLibraryImagePickerViewController.Completion
+    private lazy var cameraCapture: CameraCaptureCoordinator = {
+        return CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
+    }()
+
+    private lazy var deviceMediaLibraryPicker: DeviceMediaLibraryPicker = {
+        return DeviceMediaLibraryPicker(onCompletion: onDeviceMediaLibraryPickerCompletion)
+    }()
+
     private let siteID: Int64
+    private let onCameraCaptureCompletion: CameraCaptureCoordinator.Completion
+    private let onDeviceMediaLibraryPickerCompletion: DeviceMediaLibraryPicker.Completion
+    private let onWPMediaPickerCompletion: WordPressMediaLibraryImagePickerViewController.Completion
 
     init(siteID: Int64,
          onCameraCaptureCompletion: @escaping CameraCaptureCoordinator.Completion,
          onDeviceMediaLibraryPickerCompletion: @escaping DeviceMediaLibraryPicker.Completion,
          onWPMediaPickerCompletion: @escaping WordPressMediaLibraryImagePickerViewController.Completion) {
         self.siteID = siteID
-        self.cameraCapture = CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
-        self.deviceMediaLibraryPicker = DeviceMediaLibraryPicker(onCompletion: onDeviceMediaLibraryPickerCompletion)
+        self.onCameraCaptureCompletion = onCameraCaptureCompletion
+        self.onDeviceMediaLibraryPickerCompletion = onDeviceMediaLibraryPickerCompletion
         self.onWPMediaPickerCompletion = onWPMediaPickerCompletion
     }
 
