@@ -27,15 +27,6 @@ extension Media: WPMediaAsset {
 
     public func assetType() -> WPMediaType {
         return .image
-//        if (self.mediaType == MediaTypeImage) {
-//            return WPMediaTypeImage;
-//        } else if (self.mediaType == MediaTypeVideo) {
-//            return WPMediaTypeVideo;
-//        } else if (self.mediaType == MediaTypeAudio) {
-//            return WPMediaTypeAudio;
-//        } else {
-//            return WPMediaTypeOther;
-//        }
     }
 
     public func duration() -> TimeInterval {

@@ -38,7 +38,6 @@
 		02BC679B23698C4B00BEB725 /* ExportableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679A23698C4B00BEB725 /* ExportableAsset.swift */; };
 		02BC679D23698C9D00BEB725 /* MediaExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679C23698C9D00BEB725 /* MediaExport.swift */; };
 		02BC679F23698CC100BEB725 /* MediaFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679E23698CC100BEB725 /* MediaFileManager.swift */; };
-		02BC67A123698CF500BEB725 /* MediaSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A023698CF500BEB725 /* MediaSettings.swift */; };
 		02BC67A323698E5B00BEB725 /* MediaAssetExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */; };
 		02BC67A5236999C900BEB725 /* PHAsset+ExportableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */; };
 		02DA641B2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DA641A2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift */; };
@@ -222,7 +221,6 @@
 		02BC679A23698C4B00BEB725 /* ExportableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAsset.swift; sourceTree = "<group>"; };
 		02BC679C23698C9D00BEB725 /* MediaExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaExport.swift; sourceTree = "<group>"; };
 		02BC679E23698CC100BEB725 /* MediaFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileManager.swift; sourceTree = "<group>"; };
-		02BC67A023698CF500BEB725 /* MediaSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSettings.swift; sourceTree = "<group>"; };
 		02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAssetExporter.swift; sourceTree = "<group>"; };
 		02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAsset+ExportableAsset.swift"; sourceTree = "<group>"; };
 		02DA641A2313D6D200284168 /* AppSettingsStoreTests+StatsVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppSettingsStoreTests+StatsVersion.swift"; sourceTree = "<group>"; };
@@ -470,7 +468,6 @@
 				02BC679A23698C4B00BEB725 /* ExportableAsset.swift */,
 				02BC679C23698C9D00BEB725 /* MediaExport.swift */,
 				02BC679E23698CC100BEB725 /* MediaFileManager.swift */,
-				02BC67A023698CF500BEB725 /* MediaSettings.swift */,
 				02BC67A223698E5B00BEB725 /* MediaAssetExporter.swift */,
 				02BC67A4236999C900BEB725 /* PHAsset+ExportableAsset.swift */,
 			);
@@ -606,8 +603,6 @@
 			isa = PBXGroup;
 			children = (
 				B5BC736420D1A98500B5B6FA /* AccountStore.swift */,
-				D87F614B22657B150031A13B /* AppSettingsStore.swift */,
-				02BA23C122EEEABC009539E7 /* AvailabilityStore.swift */,
 				741F34812195EA71005F5BD9 /* CommentStore.swift */,
 				7471401221877A8B009A11CC /* NotificationStore.swift */,
 				74A7688B20D45EBA00F9D437 /* OrderStore.swift */,
@@ -779,8 +774,6 @@
 			isa = PBXGroup;
 			children = (
 				B5DC3CB020D1B8720063AC41 /* AccountAction.swift */,
-				D87F614922657A690031A13B /* AppSettingsAction.swift */,
-				02BA23C322EEEB3B009539E7 /* AvailabilityAction.swift */,
 				741F347F2195EA62005F5BD9 /* CommentAction.swift */,
 				7471401021877668009A11CC /* NotificationAction.swift */,
 				74A7688F20D45F9300F9D437 /* OrderAction.swift */,
@@ -1018,7 +1011,6 @@
 				CE4FD4562350FD4800A16B31 /* Refund+ReadOnlyConvertible.swift in Sources */,
 				74FD596F216FB6ED00A5AE83 /* OrderStatsItem+ReadOnlyConvertible.swift in Sources */,
 				CE3B7AD92229C3570050FE4B /* OrderStatus+ReadOnlyType.swift in Sources */,
-				02BC67A123698CF500BEB725 /* MediaSettings.swift in Sources */,
 				026CF62C237D92DC009563D4 /* ProductVariationAttribute+ReadOnlyConvertible.swift in Sources */,
 				74B7D6B020F910AF002667AC /* OrderNote+ReadOnlyConvertible.swift in Sources */,
 				74B2601F2188A92A0041793A /* Note+ReadOnlyConvertible.swift in Sources */,
