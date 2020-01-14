@@ -2,57 +2,6 @@ import WPMediaPicker
 import Yosemite
 import WordPressShared
 
-extension Media: WPMediaAsset {
-    public func image(with size: CGSize, completionHandler: @escaping WPMediaImageBlock) -> WPMediaRequestID {
-        guard let url = URL(string: src) else {
-            return 0
-        }
-        ServiceLocator.imageService.retrieveImageFromCache(with: url) { (image) in
-            completionHandler(image, nil)
-        }
-
-        ServiceLocator.imageService.downloadImage(with: url, shouldCacheImage: true) { (image, error) in
-            completionHandler(image, error)
-        }
-        return Int32(mediaID)
-    }
-
-    public func cancelImageRequest(_ requestID: WPMediaRequestID) {
-
-    }
-
-    public func videoAsset(completionHandler: @escaping WPMediaAssetBlock) -> WPMediaRequestID {
-        return 0
-    }
-
-    public func assetType() -> WPMediaType {
-        return .image
-    }
-
-    public func duration() -> TimeInterval {
-        return 0
-    }
-
-    public func baseAsset() -> Any {
-        return self
-    }
-
-    public func identifier() -> String {
-        return "\(mediaID)"
-    }
-
-    public func date() -> Date {
-        return date
-    }
-
-    public func pixelSize() -> CGSize {
-        // TODO
-        return CGSize(width: 30, height: 30)
-    }
-}
-
-import WPMediaPicker
-
 final class WordPressMediaLibraryMediaGroup: NSObject, WPMediaGroup {
     private var mediaItems: [Media]
     init(mediaItems: [Media]) {
@@ -68,9 +17,7 @@ final class WordPressMediaLibraryMediaGroup: NSObject, WPMediaGroup {
         return 0
     }
 
-    func cancelImageRequest(_ requestID: WPMediaRequestID) {
-        //
-    }
+    func cancelImageRequest(_ requestID: WPMediaRequestID) {}
 
     func baseGroup() -> Any {
         return ""
@@ -125,9 +72,7 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
         return mediaGroup
     }
 
-    func setSelectedGroup(_ group: WPMediaGroup) {
-
-    }
+    func setSelectedGroup(_ group: WPMediaGroup) {}
 
     func numberOfAssets() -> Int {
         return mediaItems.count
@@ -148,7 +93,8 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
     }
 
     func registerGroupChangeObserverBlock(_ callback: @escaping WPMediaGroupChangesBlock) -> NSObjectProtocol {
-        return NSString()
+        // The group never changes
+        return NSNull()
     }
 
     func unregisterChangeObserver(_ blockKey: NSObjectProtocol) {
@@ -156,7 +102,7 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
     }
 
     func unregisterGroupChangeObserver(_ blockKey: NSObjectProtocol) {
-
+        // The group never changes
     }
 
     func loadData(with options: WPMediaLoadOptions, success successBlock: WPMediaSuccessBlock?, failure failureBlock: WPMediaFailureBlock? = nil) {
@@ -170,25 +116,17 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
         }
     }
 
-    func add(_ image: UIImage, metadata: [AnyHashable : Any]?, completionBlock: WPMediaAddedBlock? = nil) {
+    func add(_ image: UIImage, metadata: [AnyHashable : Any]?, completionBlock: WPMediaAddedBlock? = nil) {}
 
-    }
+    func addVideo(from url: URL, completionBlock: WPMediaAddedBlock? = nil) {}
 
-    func addVideo(from url: URL, completionBlock: WPMediaAddedBlock? = nil) {
-
-    }
-
-    func setMediaTypeFilter(_ filter: WPMediaType) {
-
-    }
+    func setMediaTypeFilter(_ filter: WPMediaType) {}
 
     func mediaTypeFilter() -> WPMediaType {
         return .all
     }
 
-    func setAscendingOrdering(_ ascending: Bool) {
-
-    }
+    func setAscendingOrdering(_ ascending: Bool) {}
 
     func ascendingOrdering() -> Bool {
         return true
