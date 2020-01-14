@@ -6,10 +6,10 @@ import Yosemite
 final class CameraCaptureCoordinator {
     private var capturePresenter: WPMediaCapturePresenter?
 
-    typealias OnCompletion = ((_ media: PHAsset?, _ error: Error?) -> Void)
-    private let onCompletion: OnCompletion
+    typealias Completion = ((_ media: PHAsset?, _ error: Error?) -> Void)
+    private let onCompletion: Completion
 
-    init(onCompletion: @escaping OnCompletion) {
+    init(onCompletion: @escaping Completion) {
         self.onCompletion = onCompletion
     }
 

@@ -4,8 +4,8 @@ import CoreServices
 import Yosemite
 
 final class WordPressMediaLibraryImagePickerViewController: UIViewController {
-    typealias OnCompletion = ((_ selectedMediaItems: [WPMediaAsset]) -> Void)
-    private let onCompletion: OnCompletion
+    typealias Completion = ((_ selectedMediaItems: [WPMediaAsset]) -> Void)
+    private let onCompletion: Completion
 
     private lazy var mediaPickerOptions: WPMediaPickerOptions = {
         let options = WPMediaPickerOptions()
@@ -25,7 +25,7 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
 
     private let siteID: Int64
 
-    init(siteID: Int64, onCompletion: @escaping OnCompletion) {
+    init(siteID: Int64, onCompletion: @escaping Completion) {
         self.siteID = siteID
         self.onCompletion = onCompletion
         super.init(nibName: nil, bundle: nil)

@@ -25,11 +25,11 @@ final class ProductImagesViewController: UIViewController {
         return viewController
     }()
 
-    private lazy var mediaPickingCoordinator: MediaLibraryMediaPickingCoordinator = {
-        return MediaLibraryMediaPickingCoordinator(siteID: siteID,
-                                                   delegate: self,
-                                                   onCameraCaptureCompletion: self.onCameraCaptureCompletion,
-                                                   onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(assets:))
+    private lazy var mediaPickingCoordinator: MediaPickingCoordinator = {
+        return MediaPickingCoordinator(siteID: siteID,
+                                       onCameraCaptureCompletion: self.onCameraCaptureCompletion,
+                                       onDeviceMediaLibraryPickerCompletion: self.onDeviceMediaLibraryPickerCompletion(assets:),
+                                       onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(assets:))
     }()
 
     private let onCompletion: Completion
@@ -107,8 +107,9 @@ private extension ProductImagesViewController {
 }
 
 // MARK: - Image upload to WP Media Library and Product
+// TODO-jc: move these to a Product Images service
 private extension ProductImagesViewController {
-    func uploadMediaAssetToProduct(asset: ExportableAsset) {
+    func uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: ExportableAsset) {
         let onMediaUploadToMediaLibrary = { [weak self] (media: Media) in
             self?.addMediaToProduct(mediaItems: [media])
         }
@@ -140,52 +141,40 @@ private extension ProductImagesViewController {
 // MARK: - Action handling for camera capture
 //
 private extension ProductImagesViewController {
-
     func onCameraCaptureCompletion(mediaAsset: PHAsset?, error: Error?) {
         guard let mediaAsset = mediaAsset else {
             showErrorAlert(error: error)
             return
         }
-        uploadMediaAssetToProduct(asset: mediaAsset)
+        uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: mediaAsset)
     }
 }
 
-// MARK: - Action handling for camera capture
+// MARK: Action handling for device media library picker
 //
 private extension ProductImagesViewController {
+    func onDeviceMediaLibraryPickerCompletion(assets: [WPMediaAsset]) {
+        defer {
+            dismiss(animated: true, completion: nil)
+        }
+        guard let assets = assets as? [ExportableAsset], assets.isEmpty == false else {
+            return
+        }
+        assets.forEach { asset in
+            uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: asset)
+        }
+    }
+}
 
+
+// MARK: - Action handling for WordPress Media Library
+//
+private extension ProductImagesViewController {
     func onWPMediaPickerCompletion(assets: [WPMediaAsset]) {
         guard let media = assets as? [Media] else {
             return
         }
         addMediaToProduct(mediaItems: media)
-    }
-}
-
-// MARK: - WPMediaPickerViewControllerDelegate - action handling for device media library picker
-//
-extension ProductImagesViewController: WPMediaPickerViewControllerDelegate {
-
-    func emptyViewController(forMediaPickerController picker: WPMediaPickerViewController) -> UIViewController? {
-        return nil
-    }
-
-    func mediaPickerController(_ picker: WPMediaPickerViewController, didFinishPicking assets: [WPMediaAsset]) {
-        // We're only interested in the upload picker
-        guard picker != self else { return }
-
-        picker.dismiss(animated: true)
-
-        guard let assets = assets as? [PHAsset],
-            assets.count > 0 else { return }
-
-        for asset in assets {
-            uploadMediaAssetToProduct(asset: asset)
-        }
-    }
-
-    func mediaPickerControllerDidCancel(_ picker: WPMediaPickerViewController) {
-        dismiss(animated: true)
     }
 }
 

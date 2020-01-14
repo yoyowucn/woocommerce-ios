@@ -3,19 +3,20 @@ import WPMediaPicker
 import Yosemite
 
 /// Prepares the alert controller that will be presented when trying to add media to a site or Product.
-final class MediaLibraryMediaPickingCoordinator {
+///
+final class MediaPickingCoordinator: NSObject {
     private let cameraCapture: CameraCaptureCoordinator
-    private let mediaLibrary = DeviceMediaLibraryPicker()
-    private let onWPMediaPickerCompletion: WordPressMediaLibraryImagePickerViewController.OnCompletion
+    private let deviceMediaLibraryPicker: DeviceMediaLibraryPicker
+    private let onWPMediaPickerCompletion: WordPressMediaLibraryImagePickerViewController.Completion
     private let siteID: Int64
 
     init(siteID: Int64,
-         delegate: WPMediaPickerViewControllerDelegate,
-         onCameraCaptureCompletion: @escaping CameraCaptureCoordinator.OnCompletion,
-         onWPMediaPickerCompletion: @escaping WordPressMediaLibraryImagePickerViewController.OnCompletion) {
+         onCameraCaptureCompletion: @escaping CameraCaptureCoordinator.Completion,
+         onDeviceMediaLibraryPickerCompletion: @escaping DeviceMediaLibraryPicker.Completion,
+         onWPMediaPickerCompletion: @escaping WordPressMediaLibraryImagePickerViewController.Completion) {
         self.siteID = siteID
-        mediaLibrary.delegate = delegate
-        cameraCapture = CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
+        self.cameraCapture = CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
+        self.deviceMediaLibraryPicker = DeviceMediaLibraryPicker(onCompletion: onDeviceMediaLibraryPickerCompletion)
         self.onWPMediaPickerCompletion = onWPMediaPickerCompletion
     }
 
@@ -24,15 +25,15 @@ final class MediaLibraryMediaPickingCoordinator {
         let fromView = context.view
         let buttonItem = context.barButtonItem
 
-        let menuAlert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let menuAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         if WPMediaCapturePresenter.isCaptureAvailable() {
-            menuAlert.addAction(cameraAction(origin: origin, product: nil))
+            menuAlert.addAction(cameraAction(origin: origin))
         }
 
-        menuAlert.addAction(photoLibraryAction(origin: origin, product: nil))
+        menuAlert.addAction(photoLibraryAction(origin: origin))
 
-        menuAlert.addAction(siteMediaLibraryAction(origin: origin, product: nil))
+        menuAlert.addAction(siteMediaLibraryAction(origin: origin))
 
         menuAlert.addAction(cancelAction())
 
@@ -46,20 +47,20 @@ final class MediaLibraryMediaPickingCoordinator {
 
 // MARK: Alert Actions
 //
-private extension MediaLibraryMediaPickingCoordinator {
-    func cameraAction(origin: UIViewController, product: Product?) -> UIAlertAction {
+private extension MediaPickingCoordinator {
+    func cameraAction(origin: UIViewController) -> UIAlertAction {
         return UIAlertAction(title: NSLocalizedString("Take Photo or Video", comment: "Menu option for taking an image or video with the device's camera."), style: .default, handler: { [weak self] action in
-            self?.showCameraCapture(origin: origin, product: product)
+            self?.showCameraCapture(origin: origin)
         })
     }
 
-    func photoLibraryAction(origin: UIViewController, product: Product?) -> UIAlertAction {
+    func photoLibraryAction(origin: UIViewController) -> UIAlertAction {
         return UIAlertAction(title: NSLocalizedString("Choose from My Device", comment: "Menu option for selecting media from the device's photo library."), style: .default, handler: { [weak self] action in
-            self?.showMediaPicker(origin: origin)
+            self?.showDeviceMediaLibraryPicker(origin: origin)
         })
     }
 
-    func siteMediaLibraryAction(origin: UIViewController, product: Product?) -> UIAlertAction {
+    func siteMediaLibraryAction(origin: UIViewController) -> UIAlertAction {
         return UIAlertAction(title: NSLocalizedString("WordPress Media Library", comment: "Menu option for selecting media from the site's media library."), style: .default, handler: { [weak self] action in
             self?.showSiteMediaPicker(origin: origin)
         })
@@ -72,13 +73,13 @@ private extension MediaLibraryMediaPickingCoordinator {
 
 // MARK: Alert Action Handlers
 //
-private extension MediaLibraryMediaPickingCoordinator {
-    func showCameraCapture(origin: UIViewController, product: Product?) {
+private extension MediaPickingCoordinator {
+    func showCameraCapture(origin: UIViewController) {
         cameraCapture.presentMediaCapture(origin: origin)
     }
 
-    func showMediaPicker(origin: UIViewController) {
-        mediaLibrary.presentPicker(origin: origin)
+    func showDeviceMediaLibraryPicker(origin: UIViewController) {
+        deviceMediaLibraryPicker.presentPicker(origin: origin)
     }
 
     func showSiteMediaPicker(origin: UIViewController) {
