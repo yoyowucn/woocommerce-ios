@@ -61,6 +61,8 @@ final class ProductImagesViewController: UIViewController {
 private extension ProductImagesViewController {
     func configureNavigation() {
         title = NSLocalizedString("Photos", comment: "Product images (Product images page title)")
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(completeEditing))
     }
 
     func configureAddButton() {
