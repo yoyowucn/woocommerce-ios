@@ -38,8 +38,6 @@ public class ProductStore: Store {
             synchronizeProducts(siteID: siteID, pageNumber: pageNumber, pageSize: pageSize, onCompletion: onCompletion)
         case .requestMissingProducts(let order, let onCompletion):
             requestMissingProducts(for: order, onCompletion: onCompletion)
-        case .updateProductImages(let siteID, let productID, let images, let onCompletion):
-            updateProductImages(siteID: siteID, productID: productID, images: images, onCompletion: onCompletion)
         case .updateProduct(let product, let onCompletion):
             updateProduct(product: product, onCompletion: onCompletion)
         case .validateProductSKU(let sku, let siteID, let onCompletion):
@@ -178,19 +176,6 @@ private extension ProductStore {
         }
     }
 
-    func updateProductImages(siteID: Int64, productID: Int64, images: [ProductImage], onCompletion: @escaping (Product?, Error?) -> Void) {
-        let remote = ProductsRemote(network: network)
-        remote.updateProductImages(for: siteID, productID: productID, images: images) { [weak self] (product, error) in
-            guard let product = product else {
-                onCompletion(nil, error)
-                return
-            }
-
-            self?.upsertStoredProductsInBackground(readOnlyProducts: [product]) {
-                onCompletion(product, nil)
-            }
-        }
-    }
     /// Updates the product.
     ///
     func updateProduct(product: Product, onCompletion: @escaping (Product?, ProductUpdateError?) -> Void) {
