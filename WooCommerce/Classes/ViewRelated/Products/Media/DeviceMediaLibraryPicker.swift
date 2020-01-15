@@ -4,7 +4,7 @@ import MobileCoreServices
 /// Encapsulates launching and customization of a media picker to import media from the Photos Library.
 ///
 final class DeviceMediaLibraryPicker: NSObject {
-    typealias Completion = ((_ selectedMediaItems: [WPMediaAsset]) -> Void)
+    typealias Completion = ((_ selectedMediaItems: [PHAsset]) -> Void)
     private let onCompletion: Completion
     private let dataSource = WPPHAssetDataSource()
 
@@ -14,15 +14,18 @@ final class DeviceMediaLibraryPicker: NSObject {
 
     func presentPicker(origin: UIViewController) {
         let options = WPMediaPickerOptions()
+        options.showActionBar = false
+        options.showSearchBar = false
         options.showMostRecentFirst = true
-        options.filter = [.all]
+        options.filter = [.image]
         options.allowCaptureOfMedia = false
         options.badgedUTTypes = [String(kUTTypeGIF)]
-        options.preferredStatusBarStyle = .lightContent
 
         let picker = WPNavigationMediaPickerViewController(options: options)
         picker.dataSource = dataSource
         picker.delegate = self
+
+        picker.mediaPicker.collectionView?.backgroundColor = .listBackground
 
         origin.present(picker, animated: true)
     }
@@ -37,9 +40,6 @@ extension DeviceMediaLibraryPicker: WPMediaPickerViewControllerDelegate {
     }
 
     func mediaPickerController(_ picker: WPMediaPickerViewController, didFinishPicking assets: [WPMediaAsset]) {
-        // We're only interested in the upload picker
-        guard picker != self else { return }
-
         picker.dismiss(animated: true)
 
         guard let assets = assets as? [PHAsset],

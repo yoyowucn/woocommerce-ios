@@ -4,7 +4,7 @@ import Yosemite
 
 /// Prepares the alert controller that will be presented when trying to add media to a site or Product.
 ///
-final class MediaPickingCoordinator: NSObject {
+final class MediaPickingCoordinator {
     private lazy var cameraCapture: CameraCaptureCoordinator = {
         return CameraCaptureCoordinator(onCompletion: onCameraCaptureCompletion)
     }()
@@ -34,6 +34,7 @@ final class MediaPickingCoordinator: NSObject {
         let buttonItem = context.barButtonItem
 
         let menuAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        menuAlert.view.tintColor = .text
 
         if WPMediaCapturePresenter.isCaptureAvailable() {
             menuAlert.addAction(cameraAction(origin: origin))
