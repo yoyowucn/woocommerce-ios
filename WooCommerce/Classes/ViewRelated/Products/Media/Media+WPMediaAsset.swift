@@ -31,7 +31,8 @@ extension MediaType {
 
 extension Media: WPMediaAsset {
     public func image(with size: CGSize, completionHandler: @escaping WPMediaImageBlock) -> WPMediaRequestID {
-        guard let url = URL(string: src) else {
+        let imageURL = thumbnailURL ?? src
+        guard let url = URL(string: imageURL) else {
             return 0
         }
         DispatchQueue.global().async {

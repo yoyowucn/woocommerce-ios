@@ -6,6 +6,7 @@ public final class Media: NSObject, Decodable {
     public let fileExtension: String
     public let mimeType: String
     public let src: String
+    public let thumbnailURL: String?
     public let name: String?
     public let alt: String?
     public let height: Double?
@@ -18,6 +19,7 @@ public final class Media: NSObject, Decodable {
                 fileExtension: String,
                 mimeType: String,
                 src: String,
+                thumbnailURL: String?,
                 name: String?,
                 alt: String?,
                 height: Double?,
@@ -27,6 +29,7 @@ public final class Media: NSObject, Decodable {
         self.fileExtension = fileExtension
         self.mimeType = mimeType
         self.src = src
+        self.thumbnailURL = thumbnailURL
         self.name = name
         self.alt = alt
         self.height = height
@@ -48,11 +51,15 @@ public final class Media: NSObject, Decodable {
         let height = try container.decodeIfPresent(Double.self, forKey: .height)
         let width = try container.decodeIfPresent(Double.self, forKey: .width)
 
+        let thumbnailsByType = try container.decodeIfPresent(Dictionary<String, String>.self, forKey: .thumbnails)
+        let thumbnailURL = thumbnailsByType?["thumbnail"]
+
         self.init(mediaID: mediaID,
                   date: date,
                   fileExtension: fileExtension,
                   mimeType: mimeType,
                   src: src,
+                  thumbnailURL: thumbnailURL,
                   name: name,
                   alt: alt,
                   height: height,
@@ -67,6 +74,7 @@ private extension Media {
         case fileExtension = "extension"
         case mimeType = "mime_type"
         case src = "URL"
+        case thumbnails
         case name = "title"
         case alt
         case height

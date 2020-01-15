@@ -12,7 +12,7 @@ public class MediaRemote: Remote {
         var parameters: [String: Any] = [
             ParameterKey.contextKey: context ?? Default.context,
             ParameterKey.perPage: 100,
-            ParameterKey.fields: "ID,date,URL,title,alt,extension,mime_type",
+            ParameterKey.fields: "ID,date,URL,thumbnails,title,alt,extension,mime_type",
             ParameterKey.mimeType: "image"
         ]
         if pageHandle?.isEmpty == false {
