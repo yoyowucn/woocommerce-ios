@@ -51,7 +51,8 @@ final class ProductImagesViewController: UIViewController {
 
     // Child view controller.
     private lazy var imagesViewController: ProductImagesCollectionViewController = {
-        let viewController = ProductImagesCollectionViewController(images: productImageStatuses)
+        let viewController = ProductImagesCollectionViewController(images: productImageStatuses,
+                                                                   onDeletion: onDeletion)
         return viewController
     }()
 
@@ -81,6 +82,7 @@ final class ProductImagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        configureMainView()
         configureNavigation()
         configureAddButton()
         configureAddButtonBottomBorderView()
@@ -91,14 +93,20 @@ final class ProductImagesViewController: UIViewController {
 // MARK: - UI configurations
 //
 private extension ProductImagesViewController {
+    func configureMainView() {
+        view.backgroundColor = .basicBackground
+    }
+
     func configureNavigation() {
         title = NSLocalizedString("Photos", comment: "Product images (Product images page title)")
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(completeEditing))
+
+        removeNavigationBackBarButtonText()
     }
 
     func configureAddButton() {
-        addButton.setTitle(NSLocalizedString("ADD PHOTOS", comment: "Action to add photos on the Product images screen"), for: .normal)
+        addButton.setTitle(NSLocalizedString("Add Photos", comment: "Action to add photos on the Product images screen"), for: .normal)
         addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
         addButton.applyPrimaryButtonStyle()
     }
@@ -131,7 +139,12 @@ private extension ProductImagesViewController {
         onCompletion(productImages)
     }
 
-    private func showOptionsMenu() {
+    func onDeletion(productImage: ProductImage) {
+        productImages.removeAll(where: { $0.imageID == productImage.imageID })
+        navigationController?.popViewController(animated: true)
+    }
+
+    func showOptionsMenu() {
         let pickingContext = MediaPickingContext(origin: self, view: addButton, barButtonItem: nil)
         mediaPickingCoordinator.present(context: pickingContext)
     }
