@@ -2,8 +2,9 @@ import MobileCoreServices
 import WPMediaPicker
 import Yosemite
 
-/// Encapsulates capturing media from a device camera
-final class CameraCaptureCoordinator {
+/// Encapsulates capturing media from a device camera.
+///
+final class CameraCaptureCoordinator: NSObject {
     private var capturePresenter: WPMediaCapturePresenter?
 
     typealias Completion = ((_ media: PHAsset?, _ error: Error?) -> Void)
@@ -13,32 +14,52 @@ final class CameraCaptureCoordinator {
         self.onCompletion = onCompletion
     }
 
-    func presentMediaCapture(origin: UIViewController) {
-        capturePresenter = WPMediaCapturePresenter(presenting: origin)
-        capturePresenter!.completionBlock = { [weak self] mediaInfo in
+    func presentMediaCaptureIfAuthorized(origin: UIViewController) {
+        guard hasPhotoLibraryPermission() else {
+            requestPhotoLibraryPermission { [weak self] authorized in
+                guard authorized else {
+                    self?.onCompletion(nil, CameraCaptureError.photoLibraryPermissionNotAuthorized)
+                    return
+                }
+                self?.presentMediaCapture(origin: origin)
+            }
+            return
+        }
+        presentMediaCapture(origin: origin)
+    }
+
+    private func presentMediaCapture(origin: UIViewController) {
+        let capturePresenter = WPMediaCapturePresenter(presenting: origin)
+        capturePresenter.mediaType = .image
+        self.capturePresenter = capturePresenter
+        capturePresenter.completionBlock = { [weak self] mediaInfo in
             if let mediaInfo = mediaInfo as NSDictionary? {
                 self?.processMediaCaptured(mediaInfo)
             }
             self?.capturePresenter = nil
         }
 
-        capturePresenter!.presentCapture()
+        capturePresenter.presentCapture()
     }
 
     private func processMediaCaptured(_ mediaInfo: NSDictionary) {
         let completionBlock: WPMediaAddedBlock = { [weak self] media, error in
-            guard let media = media as? PHAsset else {
-                print("Adding media failed: ", error?.localizedDescription ?? "no media")
-                self?.onCompletion(nil, error)
+            guard let media = media as? PHAsset, error == nil else {
+                if PHPhotoLibrary.authorizationStatus() != .authorized {
+                    self?.onCompletion(nil, CameraCaptureError.photoLibraryPermissionNotAuthorized)
+                } else {
+                    self?.onCompletion(nil, error)
+                }
                 return
             }
 
             self?.onCompletion(media, nil)
-//            let info = MediaAnalyticsInfo(origin: .mediaLibrary(.camera), selectionMethod: .fullScreenPicker)
-//            MediaCoordinator.shared.addMedia(from: media, to: blog, analyticsInfo: info)
         }
 
-        guard let mediaType = mediaInfo[UIImagePickerController.InfoKey.mediaType.rawValue] as? String else { return }
+        guard let mediaType = mediaInfo[UIImagePickerController.InfoKey.mediaType.rawValue] as? String else {
+            onCompletion(nil, CameraCaptureError.unknownMediaType)
+            return
+        }
 
         switch mediaType {
         case String(kUTTypeImage):
@@ -46,12 +67,45 @@ final class CameraCaptureCoordinator {
                 let metadata = mediaInfo[UIImagePickerController.InfoKey.mediaMetadata.rawValue] as? [AnyHashable: Any] {
                 WPPHAssetDataSource().add(image, metadata: metadata, completionBlock: completionBlock)
             }
-        case String(kUTTypeMovie):
-            if let mediaURL = mediaInfo[UIImagePickerController.InfoKey.mediaURL.rawValue] as? URL {
-                WPPHAssetDataSource().addVideo(from: mediaURL, completionBlock: completionBlock)
-            }
         default:
+            onCompletion(nil, CameraCaptureError.unsupportedMediaType(mediaType: mediaType))
             break
+        }
+    }
+}
+
+// MARK: Helpers
+//
+private extension CameraCaptureCoordinator {
+    func hasPhotoLibraryPermission() -> Bool {
+        return PHPhotoLibrary.authorizationStatus() == .authorized
+    }
+
+    func requestPhotoLibraryPermission(completion: @escaping (_ authorized: Bool) -> Void) {
+        PHPhotoLibrary.requestAuthorization { status in
+            completion(status == .authorized)
+        }
+    }
+}
+
+enum CameraCaptureError: Error {
+    case unknownMediaType
+    case unsupportedMediaType(mediaType: String)
+    case photoLibraryPermissionNotAuthorized
+}
+
+extension CameraCaptureError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .unknownMediaType:
+            return NSLocalizedString("Unknown media type",
+            comment: "Error message when capturing a unknown media type")
+        case .unsupportedMediaType(let mediaType):
+            return NSLocalizedString("Camera capture should not support media type: \(mediaType)",
+                comment: "Error message when capturing a unsupported media type with device camera")
+        case .photoLibraryPermissionNotAuthorized:
+            return NSLocalizedString("Please make sure the app can access Photos in device settings",
+            comment: "Error message when an image captured by camera cannot be saved to the device Photos library")
         }
     }
 }

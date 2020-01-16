@@ -84,7 +84,7 @@ private extension MediaPickingCoordinator {
 //
 private extension MediaPickingCoordinator {
     func showCameraCapture(origin: UIViewController) {
-        cameraCapture.presentMediaCapture(origin: origin)
+        cameraCapture.presentMediaCaptureIfAuthorized(origin: origin)
     }
 
     func showDeviceMediaLibraryPicker(origin: UIViewController) {
