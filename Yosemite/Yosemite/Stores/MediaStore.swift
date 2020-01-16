@@ -3,24 +3,6 @@ import Networking
 import WordPressKit
 import Storage
 
-extension Media {
-    func toRemoteMedia() -> RemoteMedia {
-        let remoteMedia = RemoteMedia()
-        remoteMedia.title = name
-        remoteMedia.alt = alt
-        return remoteMedia
-    }
-}
-
-/// Networking Preferences
-///
-public struct Settings {
-
-    /// UserAgent to be used for every Networking Request
-    ///
-    public static var userAgent = "WooCommerce iOS"
-}
-
 // MARK: - MediaStore
 //
 public final class MediaStore: Store {
@@ -83,16 +65,18 @@ private extension MediaStore {
     }
 
     func uploadMedia(siteID: Int64, mediaAsset: ExportableAsset, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
-        let mediaImporter = MediaImportService()
-        _ = mediaImporter.import(mediaAsset,
-                             onCompletion: { [weak self] (remoteMedia) in
-                                self?.uploadMedia(siteID: siteID,
-                                                  media: remoteMedia,
-                                                  onCompletion: { (uploadedMedia, error) in
-                                                    onCompletion(uploadedMedia, error)
-                                })
-        }) { (error) in
-            onCompletion(nil, error)
-        }
+        let mediaExporter = MediaExportService()
+        _ = mediaExporter.export(mediaAsset,
+                                 onCompletion: { [weak self] (uploadableMedia, error) in
+                                    guard let uploadableMedia = uploadableMedia, error == nil else {
+                                        onCompletion(nil, error)
+                                        return
+                                    }
+                                    self?.uploadMedia(siteID: siteID,
+                                                      media: uploadableMedia,
+                                                      onCompletion: { (uploadedMedia, error) in
+                                                        onCompletion(uploadedMedia, error)
+                                    })
+        })
     }
 }

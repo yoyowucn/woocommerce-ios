@@ -2,6 +2,33 @@ import UIKit
 import WPMediaPicker
 import Yosemite
 
+final class ProductImagesService {
+    private let siteID: Int64
+
+    init(siteID: Int64) {
+        self.siteID = siteID
+    }
+
+    func uploadMediaAssetToSiteMediaLibrary(asset: ExportableAsset, completion: @escaping (_ image: ProductImage?, _ error: Error?) -> Void) {
+        let action = MediaAction.uploadMedia(siteID: siteID,
+                                             mediaAsset: asset) { (media, error) in
+                                                guard let media = media else {
+                                                    completion(nil, error)
+                                                    return
+                                                }
+                                                let productImage =
+                                                    ProductImage(imageID: media.mediaID,
+                                                                 dateCreated: media.date,
+                                                                 dateModified: media.date,
+                                                                 src: media.src,
+                                                                 name: media.name,
+                                                                 alt: media.alt)
+                                                completion(productImage, nil)
+        }
+        ServiceLocator.stores.dispatch(action)
+    }
+}
+
 /// Displays Product images with edit functionality.
 ///
 final class ProductImagesViewController: UIViewController {
@@ -13,15 +40,18 @@ final class ProductImagesViewController: UIViewController {
 
     private let siteID: Int64
     private let productID: Int64
-    private var productImages: [ProductImage] {
+    private let productImagesService: ProductImagesService
+    private var productImages: [ProductImage]
+
+    private var productImageStatuses: [ProductImageStatus] {
         didSet {
-            imagesViewController.updateProductImages(productImages)
+            imagesViewController.updateProductImages(productImageStatuses)
         }
     }
 
     // Child view controller.
     private lazy var imagesViewController: ProductImagesCollectionViewController = {
-        let viewController = ProductImagesCollectionViewController(images: productImages)
+        let viewController = ProductImagesCollectionViewController(images: productImageStatuses)
         return viewController
     }()
 
@@ -29,15 +59,17 @@ final class ProductImagesViewController: UIViewController {
         return MediaPickingCoordinator(siteID: siteID,
                                        onCameraCaptureCompletion: self.onCameraCaptureCompletion,
                                        onDeviceMediaLibraryPickerCompletion: self.onDeviceMediaLibraryPickerCompletion(assets:),
-                                       onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(assets:))
+                                       onWPMediaPickerCompletion: self.onWPMediaPickerCompletion(mediaItems:))
     }()
 
     private let onCompletion: Completion
 
-    init(product: Product, completion: @escaping Completion) {
+    init(product: Product, productImagesService: ProductImagesService, completion: @escaping Completion) {
         self.siteID = product.siteID
         self.productID = product.productID
+        self.productImagesService = productImagesService
         self.productImages = product.images
+        self.productImageStatuses = product.images.map({ ProductImageStatus.remote(image: $0) })
         self.onCompletion = completion
         super.init(nibName: nil, bundle: nil)
     }
@@ -109,20 +141,28 @@ private extension ProductImagesViewController {
 // MARK: - Image upload to WP Media Library and Product
 // TODO-jc: move these to a Product Images service
 private extension ProductImagesViewController {
-    func uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: ExportableAsset) {
-        let onMediaUploadToMediaLibrary = { [weak self] (media: Media) in
-            self?.addMediaToProduct(mediaItems: [media])
+    func uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: PHAsset) {
+        productImagesService.uploadMediaAssetToSiteMediaLibrary(asset: asset) { [weak self] (productImage, error) in
+            guard let productImage = productImage, error == nil else {
+                self?.showErrorAlert(error: error)
+                return
+            }
+            self?.updateProductImageStatus(asset: asset, productImage: productImage)
         }
+    }
 
-        let action = MediaAction.uploadMedia(siteID: siteID,
-                                             mediaAsset: asset) { [weak self] (media, error) in
-                                                guard let media = media else {
-                                                    self?.showErrorAlert(error: error)
-                                                    return
-                                                }
-                                                onMediaUploadToMediaLibrary(media)
+    func updateProductImageStatus(asset: PHAsset, productImage: ProductImage) {
+        if let index = productImageStatuses.firstIndex(where: { status -> Bool in
+            switch status {
+            case .uploading(let uploadingAsset):
+                return uploadingAsset == asset
+            default:
+                return false
+            }
+        }) {
+            productImageStatuses[index] = .remote(image: productImage)
+            productImages = [productImage] + productImages
         }
-        ServiceLocator.stores.dispatch(action)
     }
 
     func addMediaToProduct(mediaItems: [Media]) {
@@ -146,6 +186,7 @@ private extension ProductImagesViewController {
             showErrorAlert(error: error)
             return
         }
+        productImageStatuses = [.uploading(asset: mediaAsset)] + productImageStatuses
         uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: mediaAsset)
     }
 }
@@ -153,14 +194,15 @@ private extension ProductImagesViewController {
 // MARK: Action handling for device media library picker
 //
 private extension ProductImagesViewController {
-    func onDeviceMediaLibraryPickerCompletion(assets: [WPMediaAsset]) {
+    func onDeviceMediaLibraryPickerCompletion(assets: [PHAsset]) {
         defer {
             dismiss(animated: true, completion: nil)
         }
-        guard let assets = assets as? [ExportableAsset], assets.isEmpty == false else {
+        guard assets.isEmpty == false else {
             return
         }
         assets.forEach { asset in
+            productImageStatuses = [.uploading(asset: asset)] + productImageStatuses
             uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: asset)
         }
     }
@@ -170,11 +212,8 @@ private extension ProductImagesViewController {
 // MARK: - Action handling for WordPress Media Library
 //
 private extension ProductImagesViewController {
-    func onWPMediaPickerCompletion(assets: [WPMediaAsset]) {
-        guard let media = assets as? [Media] else {
-            return
-        }
-        addMediaToProduct(mediaItems: media)
+    func onWPMediaPickerCompletion(mediaItems: [Media]) {
+        addMediaToProduct(mediaItems: mediaItems)
     }
 }
 

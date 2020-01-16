@@ -3,9 +3,22 @@ import MobileCoreServices
 import AVFoundation
 import Photos
 
+extension URL {
+    func mimeTypeForPathExtension() -> String {
+        if
+            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, lastPathComponent as CFString, nil)?.takeRetainedValue(),
+            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
+        {
+            return contentType as String
+        }
+
+        return "application/octet-stream"
+    }
+}
+
 /// Media export handling of PHAssets
 ///
-class MediaAssetExporter: MediaExporter {
+final class MediaAssetExporter: MediaExporter {
 
     var mediaDirectoryType: MediaDirectory = .uploads
 
@@ -43,30 +56,30 @@ class MediaAssetExporter: MediaExporter {
 
     /// Default shared instance of the PHImageManager
     ///
-    fileprivate lazy var imageManager = {
+    private lazy var imageManager = {
         return PHImageManager.default()
     }()
 
-    let asset: PHAsset
+    private let asset: PHAsset
 
     init(asset: PHAsset) {
         self.asset = asset
     }
 
-    @discardableResult public func export(onCompletion: @escaping OnMediaExport, onError: @escaping (MediaExportError) -> Void) -> Progress {
+    @discardableResult func export(onCompletion: @escaping MediaExportCompletion) -> Progress {
         switch asset.mediaType {
         case .image:
-            return exportImage(forAsset: asset, onCompletion: onCompletion, onError: onError)
+            return exportImage(forAsset: asset, onCompletion: onCompletion)
         default:
-            onError(AssetExportError.unsupportedPHAssetMediaType)
+            onCompletion(nil, AssetExportError.unsupportedPHAssetMediaType)
         }
         return Progress.discreteCompletedProgress()
     }
 
-    @discardableResult fileprivate func exportImage(forAsset asset: PHAsset, onCompletion: @escaping OnMediaExport, onError: @escaping (MediaExportError) -> Void) -> Progress {
+    @discardableResult private func exportImage(forAsset asset: PHAsset, onCompletion: @escaping MediaExportCompletion) -> Progress {
 
         guard asset.mediaType == .image else {
-            onError(exporterErrorWith(error: AssetExportError.expectedPHAssetImageType))
+            onCompletion(nil, exporterErrorWith(error: AssetExportError.expectedPHAssetImageType))
             return Progress.discreteCompletedProgress()
         }
         var filename = UUID().uuidString + ".jpg"
@@ -78,7 +91,7 @@ class MediaAssetExporter: MediaExporter {
             filename = resource.originalFilename
             if UTTypeEqual(resource.uniformTypeIdentifier as CFString, kUTTypeGIF) {
                 // Since this is a GIF, handle the export in it's own way.
-                return exportGIF(forAsset: asset, resource: resource, onCompletion: onCompletion, onError: onError)
+                return exportGIF(forAsset: asset, resource: resource, onCompletion: onCompletion)
             }
         }
 
@@ -102,16 +115,16 @@ class MediaAssetExporter: MediaExporter {
         // Configure an error handler for the image request.
         let onImageRequestError: (Error?) -> Void = { (error) in
             guard let error = error else {
-                onError(AssetExportError.failedLoadingPHImageManagerRequest)
+                onCompletion(nil, AssetExportError.failedLoadingPHImageManagerRequest)
                 return
             }
-            onError(self.exporterErrorWith(error: error))
+            onCompletion(nil, self.exporterErrorWith(error: error))
         }
 
         // Request the image.
         imageManager.requestImageData(for: asset,
-                             options: options,
-                             resultHandler: { (data, uti, orientation, info) in
+                                      options: options,
+                                      resultHandler: { (data, uti, orientation, info) in
                                 progress.completedUnitCount = MediaExportProgressUnits.halfDone
                                 guard let imageData = data else {
                                     onImageRequestError(info?[PHImageErrorKey] as? Error)
@@ -123,18 +136,18 @@ class MediaAssetExporter: MediaExporter {
                                 if let options = self.imageOptions {
                                     exporter.options = options
                                     if options.exportImageType == nil, let utiToUse = uti {
-                                        exporter.options.exportImageType = self.preferedExportTypeFor(uti: utiToUse)
+                                        exporter.options.exportImageType = self.preferredExportTypeFor(uti: utiToUse)
                                     }
                                 }
-                                let exportProgress = exporter.export(onCompletion: { (imageExport) in
-                                    onCompletion(imageExport)
-                                }, onError: onError)
+                                let exportProgress = exporter.export(onCompletion: { (imageExport, error) in
+                                    onCompletion(imageExport, error)
+                                })
                                 progress.addChild(exportProgress, withPendingUnitCount: MediaExportProgressUnits.halfDone)
         })
         return progress
     }
 
-    func preferedExportTypeFor(uti: String) -> String? {
+    func preferredExportTypeFor(uti: String) -> String? {
         guard !self.allowableFileExtensions.isEmpty,
             let extensionType = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() as String?
             else {
@@ -152,10 +165,10 @@ class MediaAssetExporter: MediaExporter {
     /// - parameter onCompletion: Called on successful export, with the local file URL of the exported asset.
     /// - parameter onError: Called if an error was encountered during export.
     ///
-    fileprivate func exportGIF(forAsset asset: PHAsset, resource: PHAssetResource, onCompletion: @escaping OnMediaExport, onError: @escaping OnExportError) -> Progress {
+    private func exportGIF(forAsset asset: PHAsset, resource: PHAssetResource, onCompletion: @escaping MediaExportCompletion) -> Progress {
 
         guard UTTypeEqual(resource.uniformTypeIdentifier as CFString, kUTTypeGIF) else {
-            onError(exporterErrorWith(error: AssetExportError.expectedPHAssetGIFType))
+            onCompletion(nil, exporterErrorWith(error: AssetExportError.expectedPHAssetGIFType))
             return Progress.discreteCompletedProgress()
         }
         let url: URL
@@ -163,7 +176,7 @@ class MediaAssetExporter: MediaExporter {
             url = try mediaFileManager.makeLocalMediaURL(withFilename: resource.originalFilename,
                                                          fileExtension: "gif")
         } catch {
-            onError(exporterErrorWith(error: error))
+            onCompletion(nil, exporterErrorWith(error: error))
             return Progress.discreteCompletedProgress()
         }
         let options = PHAssetResourceRequestOptions()
@@ -177,14 +190,12 @@ class MediaAssetExporter: MediaExporter {
                           completionHandler: { (error) in
                             progress.completedUnitCount = progress.totalUnitCount
                             if let error = error {
-                                onError(self.exporterErrorWith(error: error))
+                                onCompletion(nil, self.exporterErrorWith(error: error))
                                 return
                             }
-                            onCompletion(MediaExport(url: url,
-                                                    fileSize: url.fileSize,
-                                                    width: url.pixelSize.width,
-                                                    height: url.pixelSize.height,
-                                                    duration: 0))
+                            let type = url.mimeTypeForPathExtension()
+                            let exported = ExportedMedia(localURL: url, filename: url.lastPathComponent, mimeType: type)
+                            onCompletion(exported, nil)
         })
         return progress
     }

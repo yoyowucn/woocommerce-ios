@@ -4,7 +4,7 @@ import CoreServices
 import Yosemite
 
 final class WordPressMediaLibraryImagePickerViewController: UIViewController {
-    typealias Completion = ((_ selectedMediaItems: [WPMediaAsset]) -> Void)
+    typealias Completion = ((_ selectedMediaItems: [Media]) -> Void)
     private let onCompletion: Completion
 
     private lazy var mediaPickerOptions: WPMediaPickerOptions = {
@@ -76,7 +76,7 @@ private extension WordPressMediaLibraryImagePickerViewController {
 
 extension WordPressMediaLibraryImagePickerViewController: WPMediaPickerViewControllerDelegate {
     func mediaPickerController(_ picker: WPMediaPickerViewController, didFinishPicking assets: [WPMediaAsset]) {
-        onCompletion(assets)
+        onCompletion(assets as? [Media] ?? [])
         dismiss(animated: true)
     }
 

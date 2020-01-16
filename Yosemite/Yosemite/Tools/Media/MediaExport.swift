@@ -1,4 +1,7 @@
 import Foundation
+import Networking
+
+typealias ExportedMedia = MediaUploadable
 
 enum MediaExportProgressUnits {
     static let done: Int64 = 100
@@ -6,36 +9,10 @@ enum MediaExportProgressUnits {
     static let quarterDone: Int64 = MediaExportProgressUnits.done / 4
     static let threeQuartersDone: Int64 = (MediaExportProgressUnits.done / 4) * 3
 }
-/// The MediaExport class represents the result of an MediaExporter.
-///
-class MediaExport {
-    /// The resulting file URL of an export.
-    ///
-    let url: URL
-    /// The resulting file size in bytes of the export.
-    let fileSize: Int64?
-    /// The pixel width of the media exported.
-    let width: CGFloat?
-    /// The pixel height of the media exported.
-    let height: CGFloat?
-    /// The duration of a media file, this is only available if the asset is a video.
-    let duration: TimeInterval?
-    /// A caption to be added to the media item.
-    let caption: String?
 
-    init(url: URL, fileSize: Int64?, width: CGFloat?, height: CGFloat?, duration: TimeInterval?, caption: String? = nil) {
-        self.url = url
-        self.fileSize = fileSize
-        self.height = height
-        self.width = width
-        self.duration = duration
-        self.caption = caption
-    }
-}
-
-/// Completion block with an AssetExport.
+/// Completion block when a media item is exported.
 ///
-typealias OnMediaExport = (MediaExport) -> Void
+typealias MediaExportCompletion = (ExportedMedia?, MediaExportError?) -> Void
 
 /// Generic Error protocol for detecting and type classifying known errors that occur while exporting.
 ///
@@ -73,10 +50,6 @@ enum MediaExportSystemError: MediaExportError {
     }
 }
 
-/// Failure block with an ExportError.
-///
-typealias OnExportError = (MediaExportError) -> Void
-
 /// Protocol of required default variables or values for a MediaExporter and passing those values between them.
 ///
 protocol MediaExporter {
@@ -94,7 +67,7 @@ protocol MediaExporter {
     ///   - onError: a callback to invoke when the export fails.
     /// - Returns: a progress object that indicates the progress on the export task
     ///
-    @discardableResult func export(onCompletion: @escaping OnMediaExport, onError: @escaping OnExportError) -> Progress
+    @discardableResult func export(onCompletion: @escaping MediaExportCompletion) -> Progress
 }
 
 /// Extension providing generic helper implementation particular to MediaExporters.

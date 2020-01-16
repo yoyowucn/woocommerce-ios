@@ -33,7 +33,7 @@
 		02BA23C622EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BA23C522EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift */; };
 		02BC678E23696FA700BEB725 /* MediaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC678D23696FA700BEB725 /* MediaStore.swift */; };
 		02BC679023696FFE00BEB725 /* MediaAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC678F23696FFE00BEB725 /* MediaAction.swift */; };
-		02BC679723698B8F00BEB725 /* MediaImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679623698B8F00BEB725 /* MediaImportService.swift */; };
+		02BC679723698B8F00BEB725 /* MediaExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679623698B8F00BEB725 /* MediaExportService.swift */; };
 		02BC679923698BD700BEB725 /* MediaImageExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679823698BD700BEB725 /* MediaImageExporter.swift */; };
 		02BC679B23698C4B00BEB725 /* ExportableAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679A23698C4B00BEB725 /* ExportableAsset.swift */; };
 		02BC679D23698C9D00BEB725 /* MediaExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BC679C23698C9D00BEB725 /* MediaExport.swift */; };
@@ -217,7 +217,7 @@
 		02BA23C522EEF092009539E7 /* StatsV4AvailabilityStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsV4AvailabilityStoreTests.swift; sourceTree = "<group>"; };
 		02BC678D23696FA700BEB725 /* MediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStore.swift; sourceTree = "<group>"; };
 		02BC678F23696FFE00BEB725 /* MediaAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAction.swift; sourceTree = "<group>"; };
-		02BC679623698B8F00BEB725 /* MediaImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaImportService.swift; sourceTree = "<group>"; };
+		02BC679623698B8F00BEB725 /* MediaExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaExportService.swift; sourceTree = "<group>"; };
 		02BC679823698BD700BEB725 /* MediaImageExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaImageExporter.swift; sourceTree = "<group>"; };
 		02BC679A23698C4B00BEB725 /* ExportableAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportableAsset.swift; sourceTree = "<group>"; };
 		02BC679C23698C9D00BEB725 /* MediaExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaExport.swift; sourceTree = "<group>"; };
@@ -465,7 +465,7 @@
 		02BC679523698B8200BEB725 /* Media */ = {
 			isa = PBXGroup;
 			children = (
-				02BC679623698B8F00BEB725 /* MediaImportService.swift */,
+				02BC679623698B8F00BEB725 /* MediaExportService.swift */,
 				02BC679823698BD700BEB725 /* MediaImageExporter.swift */,
 				02BC679A23698C4B00BEB725 /* ExportableAsset.swift */,
 				02BC679C23698C9D00BEB725 /* MediaExport.swift */,
@@ -1101,7 +1101,7 @@
 				450106872399AB3F00E24722 /* TaxClass+ReadOnlyConvertible.swift in Sources */,
 				D87F614C22657B150031A13B /* AppSettingsStore.swift in Sources */,
 				D8C11A5422DFAE9500D4A88D /* OrderStatsV4+ReadOnlyConvertible.swift in Sources */,
-				02BC679723698B8F00BEB725 /* MediaImportService.swift in Sources */,
+				02BC679723698B8F00BEB725 /* MediaExportService.swift in Sources */,
 				02E4F5E423CD5628003B0010 /* NSOrderedSet+Array.swift in Sources */,
 				749737672141CC8C0008C490 /* TopEarnerStats+ReadOnlyType.swift in Sources */,
 				7493751222498B2C007D85D1 /* ProductTag+ReadOnlyConvertible.swift in Sources */,

@@ -31,7 +31,7 @@ enum MediaDirectory {
 
 /// Encapsulates Media functions relative to the local Media directory.
 ///
-class MediaFileManager: NSObject {
+final class MediaFileManager: NSObject {
 
     fileprivate static let mediaDirectoryName = "Media"
 
@@ -87,7 +87,7 @@ class MediaFileManager: NSObject {
     /// - Note: if a file already exists with the same name, the file name is appended with a number
     ///   and incremented until a unique filename is found.
     ///
-    @objc func makeLocalMediaURL(withFilename filename: String, fileExtension: String?, incremented: Bool = true) throws -> URL {
+    private func makeLocalMediaURL(withFilename filename: String, fileExtension: String?, incremented: Bool = true) throws -> URL {
         let baseURL = try directoryURL()
         var url: URL
         if let fileExtension = fileExtension {
@@ -106,51 +106,5 @@ class MediaFileManager: NSObject {
     ///
     @objc func makeLocalMediaURL(withFilename filename: String, fileExtension: String?) throws -> URL {
         return try makeLocalMediaURL(withFilename: filename, fileExtension: fileExtension, incremented: true)
-    }
-
-    /// Returns a string appended with the thumbnail naming convention for local Media files.
-    ///
-    @objc func mediaFilenameAppendingThumbnail(_ filename: String) -> String {
-        var filename = filename as NSString
-        let pathExtension = filename.pathExtension
-        filename = filename.deletingPathExtension.appending("-thumbnail") as NSString
-        return filename.appendingPathExtension(pathExtension)!
-    }
-
-    /// Returns the size of a Media image located at the file URL, or zero if it doesn't exist.
-    ///
-    /// - Note: once we drop ObjC, this should be an optional that would return nil instead of zero.
-    ///
-    @objc func imageSizeForMediaAt(fileURL: URL?) -> CGSize {
-        guard let fileURL = fileURL else {
-            return CGSize.zero
-        }
-        let fileManager = FileManager.default
-        var isDirectory: ObjCBool = false
-        guard fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory) == true, isDirectory.boolValue == false else {
-            return CGSize.zero
-        }
-        guard
-            let imageSource = CGImageSourceCreateWithURL(fileURL as CFURL, nil),
-            let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? Dictionary<String, AnyObject>
-            else {
-                return CGSize.zero
-        }
-        var width = CGFloat(0), height = CGFloat(0)
-        if let widthProperty = imageProperties[kCGImagePropertyPixelWidth as String] as? CGFloat {
-            width = widthProperty
-        }
-        if let heightProperty = imageProperties[kCGImagePropertyPixelHeight as String] as? CGFloat {
-            height = heightProperty
-        }
-        return CGSize(width: width, height: height)
-    }
-
-    // MARK: - Class methods
-
-    /// Helper method for getting the default upload directory URL.
-    ///
-    @objc class func uploadsDirectoryURL() throws -> URL {
-        return try MediaFileManager.default.directoryURL()
     }
 }

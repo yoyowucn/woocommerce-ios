@@ -46,65 +46,6 @@ extension URL {
         }
         return url
     }
-
-    /// The URLResource fileSize of the file at the URL in bytes, if available.
-    ///
-    var fileSize: Int64? {
-        guard isFileURL else {
-            return nil
-        }
-        let values = try? resourceValues(forKeys: [.fileSizeKey])
-        guard let fileSize = values?.allValues[.fileSizeKey] as? NSNumber else {
-            return nil
-        }
-        return fileSize.int64Value
-    }
-
-    var pixelSize: CGSize {
-        get {
-            if isVideo {
-                let asset = AVAsset(url: self as URL)
-                if let track = asset.tracks(withMediaType: .video).first {
-                    return track.naturalSize.applying(track.preferredTransform)
-                }
-            } else if isImage {
-                let options: [NSString: NSObject] = [kCGImageSourceShouldCache: false as CFBoolean]
-                if
-                    let imageSource = CGImageSourceCreateWithURL(self as NSURL, nil),
-                    let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, options as CFDictionary?) as NSDictionary?,
-                    let pixelWidth = imageProperties[kCGImagePropertyPixelWidth as NSString] as? Int,
-                    let pixelHeight = imageProperties[kCGImagePropertyPixelHeight as NSString] as? Int
-                {
-                    return CGSize(width: pixelWidth, height: pixelHeight)
-                }
-            }
-            return CGSize.zero
-        }
-    }
-
-    var isVideo: Bool {
-        guard let uti = typeIdentifier else {
-            return false
-        }
-
-        return UTTypeConformsTo(uti as CFString, kUTTypeMovie)
-    }
-
-    var isImage: Bool {
-        guard let uti = typeIdentifier else {
-            return false
-        }
-
-        return UTTypeConformsTo(uti as CFString, kUTTypeImage)
-    }
-
-    var isGif: Bool {
-        if let uti = typeIdentifier {
-            return UTTypeConformsTo(uti as CFString, kUTTypeGIF)
-        } else {
-            return pathExtension.lowercased() == "gif"
-        }
-    }
 }
 
 extension Progress {
@@ -123,7 +64,7 @@ extension Progress {
 
 /// Media export handling of UIImages.
 ///
-class MediaImageExporter: MediaExporter {
+final class MediaImageExporter: MediaExporter {
 
     var mediaDirectoryType: MediaDirectory = .uploads
 
@@ -165,89 +106,31 @@ class MediaImageExporter: MediaExporter {
         var description: String {
             switch self {
             default:
-                return NSLocalizedString("The image could not be added to the Media Library.", comment: "Message shown when an image failed to load while trying to add it to the Media library.")
+                return NSLocalizedString("The image could not be added to the Media Library.",
+                                         comment: "Message shown when an image failed to load while trying to add it to the Media library.")
             }
         }
     }
 
     /// Default filename used when writing media images locally, which may be appended with "-1" or "-thumbnail".
     ///
-    fileprivate let defaultImageFilename = "image"
+    private let defaultImageFilename = "image"
 
-    private let image: UIImage?
     private let data: Data?
-    private let url: URL?
     private let filename: String?
-    private let caption: String?
     private let typeHint: String?
 
-    private init(image: UIImage?, filename: String?, data: Data?, url: URL?, caption: String?, typeHint: String? = nil) {
-        self.image = image
+    init(data: Data, filename: String?, typeHint: String? = nil) {
         self.filename = filename
         self.data = data
-        self.url = url
-        self.caption = caption
         self.typeHint = typeHint
     }
 
-    convenience init(image: UIImage, filename: String?, caption: String? = nil) {
-        self.init(image: image, filename: filename, data: nil, url: nil, caption: caption)
-    }
-
-    convenience init(url: URL) {
-        self.init(image: nil, filename: nil, data: nil, url: url, caption: nil)
-    }
-
-    convenience init(data: Data, filename: String?, typeHint: String? = nil) {
-        self.init(image: nil, filename: filename, data: data, url: nil, caption: nil, typeHint: typeHint)
-    }
-
-    @discardableResult public func export(onCompletion: @escaping OnMediaExport, onError: @escaping (MediaExportError) -> Void) -> Progress {
-        if let image = image {
-            return exportImage(image, fileName: filename, onCompletion: onCompletion, onError: onError)
-        } else if let data = data {
-            return exportImage(withData: data, fileName: filename, typeHint: typeHint, onCompletion: onCompletion, onError: onError)
-        } else if let url = url {
-            return exportImage(atFile: url, onCompletion: onCompletion, onError: onError)
-        }
-        return Progress.discreteCompletedProgress()
-    }
-
-    /// Exports and writes a UIImage to a local Media URL.
-    ///
-    /// A PNG or JPEG is expected but not necessarily required. Exporting will fail if a PNG or JPEG cannot
-    /// be represented from the UIImage, such as trying to export a GIF.
-    ///
-    /// - Parameters:
-    ///     - fileName: Filename if it's known.
-    ///     - onCompletion: Called on successful export, with the local file URL of the exported UIImage.
-    ///     - onError: Called if an error was encountered during creation.
-    ///
-    /// - Returns: a progress object that report the current state of the export process.
-    ///
-    func exportImage(_ image: UIImage, fileName: String?, onCompletion: @escaping OnMediaExport, onError: @escaping OnExportError) -> Progress {
-        var data: Data?
-        var hint: String?
-        // If the exportImageType is targeting a PNG, try to init PNG data.
-        if let exportType = options.exportImageType, UTTypeEqual(exportType as CFString, kUTTypePNG) {
-            data = image.pngData()
-            hint = kUTTypePNG as String
-        }
-        // If the data failed to init as PNG, or is another type, try and init as JPEG data.
-        if data == nil {
-            data = image.jpegData(compressionQuality: 1.0)
-            hint = kUTTypeJPEG as String
-        }
-        // Ensure that we do indeed have image data.
-        guard let imageData = data else {
-            onError(exporterErrorWith(error: ImageExportError.imageDataRepresentationFailed))
+    @discardableResult func export(onCompletion: @escaping MediaExportCompletion) -> Progress {
+        guard let data = data else {
             return Progress.discreteCompletedProgress()
         }
-        return exportImage(withData: imageData,
-                    fileName: fileName,
-                    typeHint: hint,
-                    onCompletion: onCompletion,
-                    onError: onError)
+        return exportImage(withData: data, fileName: filename, typeHint: typeHint, onCompletion: onCompletion)
     }
 
     /// Exports and writes an image's data, expected as PNG or JPEG format, to a local Media URL.
@@ -260,7 +143,7 @@ class MediaImageExporter: MediaExporter {
     ///
     /// - Returns: a progress object that report the current state of the export process.
     ///
-    func exportImage(withData data: Data, fileName: String?, typeHint: String?, onCompletion: @escaping OnMediaExport, onError: @escaping OnExportError) -> Progress {
+    func exportImage(withData data: Data, fileName: String?, typeHint: String?, onCompletion: @escaping MediaExportCompletion) -> Progress {
         do {
             let hint = typeHint ?? kUTTypeJPEG as String
             let sourceOptions: [String: Any] = [kCGImageSourceTypeIdentifierHint as String: hint as CFString]
@@ -273,43 +156,9 @@ class MediaImageExporter: MediaExporter {
             return exportImageSource(source,
                               filename: fileName,
                               type: options.exportImageType ?? utType as String,
-                              onCompletion: onCompletion,
-                              onError: onError)
+                              onCompletion: onCompletion)
         } catch {
-            onError(exporterErrorWith(error: error))
-        }
-        return Progress.discreteCompletedProgress()
-    }
-
-    /// Exports and writes image data located at a file URL, to a local Media URL.
-    ///
-    /// A JPEG or PNG is expected, but not necessarily required. The export will write the same data format
-    /// as found at the URL, or will throw if the type is unknown or fails.
-    ///
-    /// - Parameters:
-    ///     - url: The fileURL of image.
-    ///     - onCompletion: Called on successful export, with the local file URL of the exported UIImage.
-    ///     - onError: Called if an error was encountered during creation.
-    ///
-    /// - Returns: a progress object that report the current state of the export process.
-    ///
-    func exportImage(atFile url: URL, onCompletion: @escaping OnMediaExport, onError: @escaping OnExportError) -> Progress {
-        do {
-            let identifierHint = url.typeIdentifierFileExtension ?? kUTTypeJPEG as String
-            let sourceOptions: [String: Any] = [kCGImageSourceTypeIdentifierHint as String: identifierHint as CFString]
-            guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions as CFDictionary)  else {
-                throw ImageExportError.imageSourceCreationWithURLFailed
-            }
-            guard let utType = CGImageSourceGetType(source) else {
-                throw ImageExportError.imageSourceIsAnUnknownType
-            }
-            return exportImageSource(source,
-                              filename: UUID().uuidString,
-                              type: options.exportImageType ?? utType as String,
-                              onCompletion: onCompletion,
-                              onError: onError)
-        } catch {
-            onError(exporterErrorWith(error: error))
+            onCompletion(nil, exporterErrorWith(error: error))
         }
         return Progress.discreteCompletedProgress()
     }
@@ -323,12 +172,12 @@ class MediaImageExporter: MediaExporter {
     ///
     /// - Returns: a progress object that report the current state of the export process.
     ///
-    func exportImageSource(_ source: CGImageSource, filename: String?, type: String, onCompletion: @escaping OnMediaExport, onError: OnExportError) -> Progress {
+    func exportImageSource(_ source: CGImageSource, filename: String?, type: String, onCompletion: @escaping MediaExportCompletion) -> Progress {
         do {
             let filename = filename ?? defaultImageFilename
             // Make a new URL within the local Media directory
             let url = try mediaFileManager.makeLocalMediaURL(withFilename: filename,
-                                                               fileExtension: URL.fileExtensionForUTType(type))
+                                                             fileExtension: URL.fileExtensionForUTType(type))
 
             // Check MediaSettings and configure the image writer as needed.
             var writer = ImageSourceWriter(url: url, sourceUTType: type as CFString)
@@ -337,22 +186,23 @@ class MediaImageExporter: MediaExporter {
             }
             writer.lossyCompressionQuality = options.imageCompressionQuality
             writer.nullifyGPSData = options.stripsGeoLocationIfNeeded
-            let result = try writer.writeImageSource(source)
-            onCompletion(MediaExport(url: url,
-                                          fileSize: url.fileSize,
-                                          width: result.width,
-                                          height: result.height,
-                                          duration: nil,
-                                          caption: caption))
+            _ = try writer.writeImageSource(source)
+
+            let exported = ExportedMedia(localURL: url,
+                                         filename: url.lastPathComponent,
+                                         mimeType: url.mimeTypeForPathExtension())
+            onCompletion(exported, nil)
         } catch {
-            onError(exporterErrorWith(error: error))
+            onCompletion(nil, exporterErrorWith(error: error))
         }
         return Progress.discreteCompletedProgress()
     }
+}
 
+private extension MediaImageExporter {
     /// Configurable struct for writing an image to a URL from a CGImageSource, via CGImageDestination, particular to the needs of a MediaImageExporter.
     ///
-    fileprivate struct ImageSourceWriter {
+    struct ImageSourceWriter {
 
         /// File URL where the image should be written
         ///

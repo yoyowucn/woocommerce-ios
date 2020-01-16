@@ -1,15 +1,21 @@
+import Photos
 import UIKit
 import Yosemite
+
+enum ProductImageStatus {
+    case uploading(asset: PHAsset)
+    case remote(image: ProductImage)
+}
 
 /// Displays Product images in grid layout.
 ///
 final class ProductImagesCollectionViewController: UICollectionViewController {
 
-    private var productImages: [ProductImage]
+    private var productImages: [ProductImageStatus]
 
     private let imageService: ImageService
 
-    init(images: [ProductImage], imageService: ImageService = ServiceLocator.imageService) {
+    init(images: [ProductImageStatus], imageService: ImageService = ServiceLocator.imageService) {
         self.productImages = images
         self.imageService = imageService
         let columnLayout = ColumnFlowLayout(
@@ -35,7 +41,7 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
         collectionView.reloadData()
     }
 
-    func updateProductImages(_ productImages: [ProductImage]) {
+    func updateProductImages(_ productImages: [ProductImageStatus]) {
         self.productImages = productImages
 
         collectionView.reloadData()
@@ -58,17 +64,32 @@ extension ProductImagesCollectionViewController {
 
         let productImage = productImages[indexPath.row]
 
-        imageService.downloadAndCacheImageForImageView(cell.imageView,
-                                                       with: productImage.src,
-                                                       placeholder: .productPlaceholderImage,
-                                                       progressBlock: nil) { (image, error) in
-                                                        let success = image != nil && error == nil
-                                                        if success {
-                                                            cell.imageView.contentMode = .scaleAspectFit
-                                                        }
-                                                        else {
-                                                            cell.imageView.contentMode = .center
-                                                        }
+        switch productImage {
+        case .remote(let image):
+            imageService.downloadAndCacheImageForImageView(cell.imageView,
+                                                           with: image.src,
+                                                           placeholder: .productPlaceholderImage,
+                                                           progressBlock: nil) { (image, error) in
+                                                            let success = image != nil && error == nil
+                                                            if success {
+                                                                cell.imageView.contentMode = .scaleAspectFit
+                                                            }
+                                                            else {
+                                                                cell.imageView.contentMode = .center
+                                                            }
+            }
+        case .uploading(let asset):
+            let manager = PHImageManager.default()
+            let option = PHImageRequestOptions()
+            manager.requestImage(for: asset, targetSize: cell.bounds.size, contentMode: .aspectFit, options: option, resultHandler: { (result, info) in
+                if let result = result {
+                    cell.imageView.image = result
+                    cell.imageView.contentMode = .scaleAspectFit
+                }
+                else {
+                    cell.imageView.contentMode = .center
+                }
+            })
         }
 
         return cell
