@@ -41,7 +41,16 @@ final class ProductImagesViewController: UIViewController {
     private let siteID: Int64
     private let productID: Int64
     private let productImagesService: ProductImagesService
-    private var productImages: [ProductImage]
+    private var productImages: [ProductImage] {
+        return productImageStatuses.compactMap { status in
+            switch status {
+            case .remote(let productImage):
+                return productImage
+            default:
+                return nil
+            }
+        }
+    }
 
     private var productImageStatuses: [ProductImageStatus] {
         didSet {
@@ -69,7 +78,6 @@ final class ProductImagesViewController: UIViewController {
         self.siteID = product.siteID
         self.productID = product.productID
         self.productImagesService = productImagesService
-        self.productImages = product.images
         self.productImageStatuses = product.images.map({ ProductImageStatus.remote(image: $0) })
         self.onCompletion = completion
         super.init(nibName: nil, bundle: nil)
@@ -140,7 +148,12 @@ private extension ProductImagesViewController {
     }
 
     func onDeletion(productImage: ProductImage) {
-        productImages.removeAll(where: { $0.imageID == productImage.imageID })
+        productImageStatuses.removeAll { (status) -> Bool in
+            guard case .remote(let image) = status else {
+                return false
+            }
+            return image.imageID == productImage.imageID
+        }
         navigationController?.popViewController(animated: true)
     }
 
@@ -174,20 +187,19 @@ private extension ProductImagesViewController {
             }
         }) {
             productImageStatuses[index] = .remote(image: productImage)
-            productImages = [productImage] + productImages
         }
     }
 
     func addMediaToProduct(mediaItems: [Media]) {
-        let productMediaItems = mediaItems.map({
+        let newProductImageStatuses = mediaItems.map({
             ProductImage(imageID: $0.mediaID,
             dateCreated: Date(),
             dateModified: nil,
             src: $0.src,
             name: $0.name,
             alt: $0.alt)
-        })
-        self.productImages = productImages + productMediaItems
+        }).map({ ProductImageStatus.remote(image: $0) })
+        self.productImageStatuses = newProductImageStatuses + productImageStatuses
     }
 }
 
