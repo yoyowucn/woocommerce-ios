@@ -1,8 +1,7 @@
 import MobileCoreServices
-import WPMediaPicker
 import Yosemite
 
-/// Prepares the alert controller that will be presented when trying to add media to a site or Product.
+/// Prepares the alert controller that will be presented when trying to add media to a site.
 ///
 final class MediaPickingCoordinator {
     private lazy var cameraCapture: CameraCaptureCoordinator = {
@@ -31,12 +30,11 @@ final class MediaPickingCoordinator {
     func present(context: MediaPickingContext) {
         let origin = context.origin
         let fromView = context.view
-        let buttonItem = context.barButtonItem
 
         let menuAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menuAlert.view.tintColor = .text
 
-        if WPMediaCapturePresenter.isCaptureAvailable() {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
             menuAlert.addAction(cameraAction(origin: origin))
         }
 
@@ -48,7 +46,6 @@ final class MediaPickingCoordinator {
 
         menuAlert.popoverPresentationController?.sourceView = fromView
         menuAlert.popoverPresentationController?.sourceRect = fromView.bounds
-        menuAlert.popoverPresentationController?.barButtonItem = buttonItem
 
         origin.present(menuAlert, animated: true)
     }
@@ -58,25 +55,31 @@ final class MediaPickingCoordinator {
 //
 private extension MediaPickingCoordinator {
     func cameraAction(origin: UIViewController) -> UIAlertAction {
-        return UIAlertAction(title: NSLocalizedString("Take Photo or Video", comment: "Menu option for taking an image or video with the device's camera."), style: .default, handler: { [weak self] action in
+        let title = NSLocalizedString("Take a Photo",
+                                      comment: "Menu option for taking an image or video with the device's camera.")
+        return UIAlertAction(title: title, style: .default) { [weak self] action in
             self?.showCameraCapture(origin: origin)
-        })
+        }
     }
 
     func photoLibraryAction(origin: UIViewController) -> UIAlertAction {
-        return UIAlertAction(title: NSLocalizedString("Choose from My Device", comment: "Menu option for selecting media from the device's photo library."), style: .default, handler: { [weak self] action in
+        let title = NSLocalizedString("Choose from My Device",
+                                      comment: "Menu option for selecting media from the device's photo library.")
+        return UIAlertAction(title: title, style: .default) { [weak self] action in
             self?.showDeviceMediaLibraryPicker(origin: origin)
-        })
+        }
     }
 
     func siteMediaLibraryAction(origin: UIViewController) -> UIAlertAction {
-        return UIAlertAction(title: NSLocalizedString("WordPress Media Library", comment: "Menu option for selecting media from the site's media library."), style: .default, handler: { [weak self] action in
+        let title = NSLocalizedString("WordPress Media Library",
+                                      comment: "Menu option for selecting media from the site's media library.")
+        return UIAlertAction(title: title, style: .default) { [weak self] action in
             self?.showSiteMediaPicker(origin: origin)
-        })
+        }
     }
 
     func cancelAction() -> UIAlertAction {
-        return UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss the AlertView"), style: .cancel, handler: nil)
+        return UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss the media picking action sheet"), style: .cancel, handler: nil)
     }
 }
 

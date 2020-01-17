@@ -158,7 +158,7 @@ private extension ProductImagesViewController {
     }
 
     func showOptionsMenu() {
-        let pickingContext = MediaPickingContext(origin: self, view: addButton, barButtonItem: nil)
+        let pickingContext = MediaPickingContext(origin: self, view: addButton)
         mediaPickingCoordinator.present(context: pickingContext)
     }
 
