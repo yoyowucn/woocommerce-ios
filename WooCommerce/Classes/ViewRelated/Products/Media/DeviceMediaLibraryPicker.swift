@@ -1,7 +1,7 @@
 import WPMediaPicker
 import MobileCoreServices
 
-/// Encapsulates launching and customization of a media picker to import media from the Photos Library.
+/// Encapsulates launching and customization of a media picker to import media from the Photo Library.
 ///
 final class DeviceMediaLibraryPicker: NSObject {
     typealias Completion = ((_ selectedMediaItems: [PHAsset]) -> Void)

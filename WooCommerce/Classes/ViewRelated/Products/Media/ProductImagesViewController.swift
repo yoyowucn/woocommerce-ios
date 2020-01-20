@@ -206,13 +206,13 @@ private extension ProductImagesViewController {
 // MARK: - Action handling for camera capture
 //
 private extension ProductImagesViewController {
-    func onCameraCaptureCompletion(mediaAsset: PHAsset?, error: Error?) {
-        guard let mediaAsset = mediaAsset else {
+    func onCameraCaptureCompletion(asset: PHAsset?, error: Error?) {
+        guard let asset = asset else {
             showErrorAlert(error: error)
             return
         }
-        productImageStatuses = [.uploading(asset: mediaAsset)] + productImageStatuses
-        uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: mediaAsset)
+        productImageStatuses = [.uploading(asset: asset)] + productImageStatuses
+        uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: asset)
     }
 }
 

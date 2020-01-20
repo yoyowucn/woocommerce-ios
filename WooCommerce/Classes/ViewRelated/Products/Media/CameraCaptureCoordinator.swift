@@ -4,7 +4,7 @@ import Yosemite
 
 /// Encapsulates capturing media from a device camera.
 ///
-final class CameraCaptureCoordinator: NSObject {
+final class CameraCaptureCoordinator {
     private var capturePresenter: WPMediaCapturePresenter?
 
     typealias Completion = ((_ media: PHAsset?, _ error: Error?) -> Void)
@@ -99,13 +99,13 @@ extension CameraCaptureError: LocalizedError {
         switch self {
         case .unknownMediaType:
             return NSLocalizedString("Unknown media type",
-            comment: "Error message when capturing a unknown media type")
+                                     comment: "Error message when capturing a unknown media type")
         case .unsupportedMediaType(let mediaType):
             return NSLocalizedString("Camera capture should not support media type: \(mediaType)",
                 comment: "Error message when capturing a unsupported media type with device camera")
         case .photoLibraryPermissionNotAuthorized:
             return NSLocalizedString("Please make sure the app can access Photos in device settings",
-            comment: "Error message when an image captured by camera cannot be saved to the device Photos library")
+                                     comment: "Error message when an image captured by camera cannot be saved to the device Photos library")
         }
     }
 }
