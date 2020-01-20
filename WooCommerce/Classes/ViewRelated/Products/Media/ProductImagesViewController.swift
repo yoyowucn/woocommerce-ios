@@ -1,3 +1,4 @@
+import Photos
 import UIKit
 import WPMediaPicker
 import Yosemite
@@ -116,7 +117,7 @@ private extension ProductImagesViewController {
     func configureAddButton() {
         addButton.setTitle(NSLocalizedString("Add Photos", comment: "Action to add photos on the Product images screen"), for: .normal)
         addButton.addTarget(self, action: #selector(addTapped), for: .touchUpInside)
-        addButton.applyPrimaryButtonStyle()
+        addButton.applySecondaryButtonStyle()
     }
 
     func configureAddButtonBottomBorderView() {
@@ -147,6 +148,11 @@ private extension ProductImagesViewController {
         onCompletion(productImages)
     }
 
+    func showOptionsMenu() {
+        let pickingContext = MediaPickingContext(origin: self, view: addButton)
+        mediaPickingCoordinator.present(context: pickingContext)
+    }
+
     func onDeletion(productImage: ProductImage) {
         productImageStatuses.removeAll { (status) -> Bool in
             guard case .remote(let image) = status else {
@@ -156,12 +162,6 @@ private extension ProductImagesViewController {
         }
         navigationController?.popViewController(animated: true)
     }
-
-    func showOptionsMenu() {
-        let pickingContext = MediaPickingContext(origin: self, view: addButton)
-        mediaPickingCoordinator.present(context: pickingContext)
-    }
-
 }
 
 // MARK: - Image upload to WP Media Library and Product
@@ -254,6 +254,23 @@ private extension ProductImagesViewController {
             "OK",
             comment: "Dismiss button on the alert when there is an error updating the product"
         ), style: .cancel, handler: nil)
+        alertController.addAction(cancel)
+        present(alertController, animated: true)
+    }
+}
+
+// MARK: Error handling
+//
+private extension ProductImagesViewController {
+    func displayErrorAlert(error: Error?) {
+        let title = NSLocalizedString("Cannot upload image", comment: "Title of the alert when there is an error uploading image(s)")
+        let alertController = UIAlertController(title: title,
+                                                message: error?.localizedDescription,
+                                                preferredStyle: .alert)
+        let cancel = UIAlertAction(title: NSLocalizedString("OK",
+                                                            comment: "Dismiss button on the alert when there is an error uploading image(s)"),
+                                   style: .cancel,
+                                   handler: nil)
         alertController.addAction(cancel)
         present(alertController, animated: true)
     }
