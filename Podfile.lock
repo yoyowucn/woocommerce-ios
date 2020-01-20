@@ -95,7 +95,6 @@ DEPENDENCIES:
   - Kingfisher (~> 5.11.0)
   - WordPress-Editor-iOS (~> 1.11.0)
   - WordPressAuthenticator (~> 1.10.6)
-  - WordPressKit (~> 4.5.0)
   - WordPressShared (~> 1.8.2)
   - WordPressUI (~> 1.4)
   - Wormholy (~> 1.5.1)
@@ -168,6 +167,6 @@ SPEC CHECKSUMS:
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
   ZendeskSDK: 99679d8420a6d862773e2ddef0ebcc51b282317d
 
-PODFILE CHECKSUM: 01d0eb4be7c78aeab8986d757f296e7afc190722
+PODFILE CHECKSUM: e4231e9f0d566658171c431802f78085afec88e1
 
 COCOAPODS: 1.8.4

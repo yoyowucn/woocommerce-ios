@@ -1,6 +1,5 @@
 import Foundation
 import Networking
-import WordPressKit
 import Storage
 
 // MARK: - MediaStore

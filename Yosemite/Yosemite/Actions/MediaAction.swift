@@ -1,5 +1,4 @@
 import Foundation
-import WordPressKit
 
 // MARK: - MediaAction: Defines stats operations (supported by the MediaStore).
 //
