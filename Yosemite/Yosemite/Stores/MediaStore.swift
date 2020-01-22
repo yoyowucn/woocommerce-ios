@@ -51,18 +51,6 @@ private extension MediaStore {
         }
     }
 
-    func uploadMedia(siteID: Int64, media: MediaUploadable, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
-        let remote = MediaRemote(network: network)
-        remote.uploadMedia(for: siteID,
-                           mediaItems: [media]) { (uploadedMediaItems, error) in
-                            guard let uploadedMedia = uploadedMediaItems?.first, uploadedMediaItems?.count == 1 && error == nil else {
-                                onCompletion(nil, error)
-                                return
-                            }
-                            onCompletion(uploadedMedia, nil)
-        }
-    }
-
     func uploadMedia(siteID: Int64, mediaAsset: ExportableAsset, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
         let mediaExporter = MediaExportService()
         _ = mediaExporter.export(mediaAsset,
@@ -77,5 +65,23 @@ private extension MediaStore {
                                                         onCompletion(uploadedMedia, error)
                                     })
         })
+    }
+
+    func uploadMedia(siteID: Int64, media: MediaUploadable, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
+        let remote = MediaRemote(network: network)
+        remote.uploadMedia(for: siteID,
+                           mediaItems: [media]) { (uploadedMediaItems, error) in
+                            // Removes local media after the upload request.
+                            do {
+                                try MediaFileManager().removeLocalMedia(at: media.localURL)
+                            } catch(let error) {
+                                onCompletion(nil, error)
+                            }
+                            guard let uploadedMedia = uploadedMediaItems?.first, uploadedMediaItems?.count == 1 && error == nil else {
+                                onCompletion(nil, error)
+                                return
+                            }
+                            onCompletion(uploadedMedia, nil)
+        }
     }
 }

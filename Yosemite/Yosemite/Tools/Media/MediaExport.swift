@@ -1,56 +1,13 @@
 import Foundation
 import Networking
 
-typealias ExportedMedia = MediaUploadable
-
-enum MediaExportProgressUnits {
-    static let done: Int64 = 100
-    static let halfDone: Int64 = MediaExportProgressUnits.done / 2
-    static let quarterDone: Int64 = MediaExportProgressUnits.done / 4
-    static let threeQuartersDone: Int64 = (MediaExportProgressUnits.done / 4) * 3
-}
+typealias MediaUploadable = Networking.MediaUploadable
 
 /// Completion block when a media item is exported.
 ///
-typealias MediaExportCompletion = (ExportedMedia?, MediaExportError?) -> Void
+typealias MediaExportCompletion = (MediaUploadable?, Error?) -> Void
 
-/// Generic Error protocol for detecting and type classifying known errors that occur while exporting.
-///
-protocol MediaExportError: Error, CustomStringConvertible {
-    /// Convert an Error to an NSError with a localizedDescription available.
-    ///
-    func toNSError() -> NSError
-}
-
-/// MediaExportError default implementation.
-///
-extension MediaExportError {
-    /// Default implementation for ensuring a MediaExportError converts to an NSError with localized string.
-    ///
-    func toNSError() -> NSError {
-        return NSError(domain: _domain, code: _code, userInfo: [NSLocalizedDescriptionKey: String(describing: self)])
-    }
-}
-
-/// Generic MediaExportError tied to a system generated Error.
-///
-enum MediaExportSystemError: MediaExportError {
-    case failedWith(systemError: Error)
-    public var description: String {
-        switch self {
-        case .failedWith(let systemError):
-            return String(describing: systemError)
-        }
-    }
-    func toNSError() -> NSError {
-        switch self {
-        case .failedWith(let systemError):
-            return systemError as NSError
-        }
-    }
-}
-
-/// Protocol of required default variables or values for a MediaExporter and passing those values between them.
+/// Exports media to the local file system for remote upload.
 ///
 protocol MediaExporter {
 
@@ -58,19 +15,17 @@ protocol MediaExporter {
     ///
     /// - Note: This would generally be set to .uploads or .cache, but for unit testing we use .temporary.
     ///
-    var mediaDirectoryType: MediaDirectory { get set }
+    var mediaDirectoryType: MediaDirectory { get }
 
     /// Export a media to another format
     ///
     /// - Parameters:
-    ///   - onCompletion: a callback to invoke when the export finish with success.
-    ///   - onError: a callback to invoke when the export fails.
-    /// - Returns: a progress object that indicates the progress on the export task
+    ///   - onCompletion: a callback to invoke when the export finishes.
     ///
-    @discardableResult func export(onCompletion: @escaping MediaExportCompletion) -> Progress
+    func export(onCompletion: @escaping MediaExportCompletion)
 }
 
-/// Extension providing generic helper implementation particular to MediaExporters.
+/// Extension providing generic helper implementation particular to a MediaExporter.
 ///
 extension MediaExporter {
 
@@ -78,20 +33,6 @@ extension MediaExporter {
     ///
     var mediaFileManager: MediaFileManager {
         return MediaFileManager(directory: mediaDirectoryType)
-    }
-
-    /// Handles wrapping into MediaExportError value types when the encountered Error value type is unknown.
-    ///
-    /// - param error: Error with an unknown value type, or nil for easy conversion.
-    /// - returns: The ExporterError value type itself, or an ExportError.failedWith
-    ///
-    func exporterErrorWith(error: Error) -> MediaExportError {
-        switch error {
-        case let error as MediaExportError:
-            return error
-        default:
-            return MediaExportSystemError.failedWith(systemError: error)
-        }
     }
 }
 
@@ -101,5 +42,5 @@ protocol MediaExportingOptions {
 
     /// Strip the geoLocation from exported media, if needed.
     ///
-    var stripsGeoLocationIfNeeded: Bool { get set }
+    var stripsGeoLocationIfNeeded: Bool { get }
 }
