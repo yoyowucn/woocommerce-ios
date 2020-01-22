@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		020220E223966CD900290165 /* product-shipping-classes-load-one.json in Resources */ = {isa = PBXBuildFile; fileRef = 020220E123966CD900290165 /* product-shipping-classes-load-one.json */; };
+		020D07B523D850EC00FD9580 /* MediaRemoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020D07B423D850EC00FD9580 /* MediaRemoteTests.swift */; };
 		0219B03923964BB3007DCD5E /* ProductShippingClassMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0219B03823964BB3007DCD5E /* ProductShippingClassMapper.swift */; };
 		021C7BF723863D1800A3BCBD /* Encodable+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021C7BF623863D1800A3BCBD /* Encodable+Serialization.swift */; };
 		021E2A1423A9FC5900B1DE07 /* ProductBackordersSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021E2A1323A9FC5900B1DE07 /* ProductBackordersSetting.swift */; };
@@ -310,6 +311,7 @@
 
 /* Begin PBXFileReference section */
 		020220E123966CD900290165 /* product-shipping-classes-load-one.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "product-shipping-classes-load-one.json"; sourceTree = "<group>"; };
+		020D07B423D850EC00FD9580 /* MediaRemoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRemoteTests.swift; sourceTree = "<group>"; };
 		0219B03823964BB3007DCD5E /* ProductShippingClassMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductShippingClassMapper.swift; sourceTree = "<group>"; };
 		021C7BF623863D1800A3BCBD /* Encodable+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Serialization.swift"; sourceTree = "<group>"; };
 		021E2A1323A9FC5900B1DE07 /* ProductBackordersSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductBackordersSetting.swift; sourceTree = "<group>"; };
@@ -724,6 +726,7 @@
 				74CF5E8321402C04000CED0A /* TopEarnerStatsRemoteTests.swift */,
 				026CF621237D7E61009563D4 /* ProductVariationsRemoteTests.swift */,
 				025CA2C5238F4F3500B05C81 /* ProductShippingClassRemoteTests.swift */,
+				020D07B423D850EC00FD9580 /* MediaRemoteTests.swift */,
 			);
 			path = Remote;
 			sourceTree = "<group>";
@@ -1566,6 +1569,7 @@
 				B524194321AC622500D6FC0A /* DotcomDeviceMapperTests.swift in Sources */,
 				74D5BECE217E0F98007B0348 /* SiteSettingsRemoteTests.swift in Sources */,
 				D8FBFF1C22D51C34006E3336 /* OrderStatsRemoteV4Tests.swift in Sources */,
+				020D07B523D850EC00FD9580 /* MediaRemoteTests.swift in Sources */,
 				CE6D666F2379E82A007835A1 /* ArrayWooTests.swift in Sources */,
 				CEC4BF95234E7F34008D9195 /* RefundListMapperTests.swift in Sources */,
 				74A7B4BC217A807400E85A8B /* SiteSettingsMapperTests.swift in Sources */,

@@ -5,10 +5,6 @@ import Alamofire
 /// Network Mockup: Allows us to simulate HTTP Responses.
 ///
 class MockupNetwork: Network {
-    func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void, to request: URLRequestConvertible, completion: @escaping (Data?, Error?) -> Void) {
-
-    }
-
 
     /// Should this instance use the responseQueue or responseMap
     ///
@@ -69,6 +65,12 @@ class MockupNetwork: Network {
         }
 
         completion(data, nil)
+    }
+
+    func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void,
+                                 to request: URLRequestConvertible,
+                                 completion: @escaping (Data?, Error?) -> Void) {
+        responseData(for: request, completion: completion)
     }
 }
 

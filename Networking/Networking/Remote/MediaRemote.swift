@@ -1,7 +1,7 @@
 import Foundation
 import Alamofire
 
-/// Product: Remote Endpoints
+/// Media: Remote Endpoints
 ///
 public class MediaRemote: Remote {
     public func retrieveMediaLibrary(for siteID: Int64,
@@ -44,20 +44,17 @@ public class MediaRemote: Remote {
 
     // MARK: - Products
 
-    /// Retrieves all of the `Products` available.
+    /// Uploads an array of media in the local file system.
     ///
     /// - Parameters:
-    ///     - siteID: Site for which we'll fetch remote products.
-    ///     - context: view or edit. Scope under which the request is made;
-    ///                determines fields present in response. Default is view.
-    ///     - pageNumber: Number of page that should be retrieved.
-    ///     - pageSize: Number of products to be retrieved per page.
-    ///     - orderBy: the key to order the remote products. Default to product name.
-    ///     - order: ascending or descending order. Default to ascending.
+    ///     - siteID: Site for which we'll upload the media to.
+    ///     - context: Display or edit. Scope under which the request is made;
+    ///                determines fields present in response. Default is Display.
+    ///     - mediaItems: An array of uploadable media items.
     ///     - completion: Closure to be executed upon completion.
     ///
     public func uploadMedia(for siteID: Int64,
-                            context: String? = nil,
+                            context: String? = "Display",
                             mediaItems: [MediaUploadable],
                             completion: @escaping ([Media]?, Error?) -> Void) {
         let parameters = [
@@ -88,10 +85,6 @@ public class MediaRemote: Remote {
 public extension MediaRemote {
     enum Default {
         public static let context: String = "display"
-    }
-
-    private enum Path {
-        static let products   = "products"
     }
 
     private enum ParameterKey {

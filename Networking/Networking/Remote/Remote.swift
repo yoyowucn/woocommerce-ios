@@ -100,24 +100,24 @@ public class Remote {
                                                    completion: @escaping (M.Output?, Error?) -> Void) {
         network.uploadMultipartFormData(multipartFormData: multipartFormData,
                                         to: request) { (data, networkError) in
-            guard let data = data else {
-                completion(nil, networkError)
-                return
-            }
+                                            guard let data = data else {
+                                                completion(nil, networkError)
+                                                return
+                                            }
 
-            if let dotcomError = DotcomValidator.error(from: data) {
-                self.dotcomErrorWasReceived(error: dotcomError, for: request)
-                completion(nil, dotcomError)
-                return
-            }
+                                            if let dotcomError = DotcomValidator.error(from: data) {
+                                                self.dotcomErrorWasReceived(error: dotcomError, for: request)
+                                                completion(nil, dotcomError)
+                                                return
+                                            }
 
-            do {
-                let parsed = try mapper.map(response: data)
-                completion(parsed, nil)
-            } catch {
-                DDLogError("<> Mapping Error: \(error)")
-                completion(nil, error)
-            }
+                                            do {
+                                                let parsed = try mapper.map(response: data)
+                                                completion(parsed, nil)
+                                            } catch {
+                                                DDLogError("<> Mapping Error: \(error)")
+                                                completion(nil, error)
+                                            }
         }
     }
 }

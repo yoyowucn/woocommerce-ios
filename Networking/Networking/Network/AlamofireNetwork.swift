@@ -45,7 +45,9 @@ public class AlamofireNetwork: Network {
             }
     }
 
-    public func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void, to request: URLRequestConvertible, completion: @escaping (Data?, Error?) -> Void) {
+    public func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void,
+                                        to request: URLRequestConvertible,
+                                        completion: @escaping (Data?, Error?) -> Void) {
         let authenticated = AuthenticatedRequest(credentials: credentials, request: request)
 
         backgroundSessionManager.upload(multipartFormData: multipartFormData, with: authenticated) { (encodingResult) in
@@ -54,12 +56,8 @@ public class AlamofireNetwork: Network {
                 upload.responseData { response in
                     completion(response.value, response.error)
                 }
-                upload.uploadProgress(closure: {
-                    progress in
-                    print(progress.fractionCompleted)
-                })
-            case .failure(let encodingError):
-                print(encodingError)
+            case .failure(let error):
+                completion(nil, error)
             }
         }
     }
