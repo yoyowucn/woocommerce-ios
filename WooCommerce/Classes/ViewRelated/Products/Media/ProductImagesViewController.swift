@@ -3,33 +3,6 @@ import UIKit
 import WPMediaPicker
 import Yosemite
 
-final class ProductImagesService {
-    private let siteID: Int64
-
-    init(siteID: Int64) {
-        self.siteID = siteID
-    }
-
-    func uploadMediaAssetToSiteMediaLibrary(asset: ExportableAsset, completion: @escaping (_ image: ProductImage?, _ error: Error?) -> Void) {
-        let action = MediaAction.uploadMedia(siteID: siteID,
-                                             mediaAsset: asset) { (media, error) in
-                                                guard let media = media else {
-                                                    completion(nil, error)
-                                                    return
-                                                }
-                                                let productImage =
-                                                    ProductImage(imageID: media.mediaID,
-                                                                 dateCreated: media.date,
-                                                                 dateModified: media.date,
-                                                                 src: media.src,
-                                                                 name: media.name,
-                                                                 alt: media.alt)
-                                                completion(productImage, nil)
-        }
-        ServiceLocator.stores.dispatch(action)
-    }
-}
-
 /// Displays Product images with edit functionality.
 ///
 final class ProductImagesViewController: UIViewController {
@@ -169,25 +142,39 @@ private extension ProductImagesViewController {
 private extension ProductImagesViewController {
     func uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: PHAsset) {
         productImagesService.uploadMediaAssetToSiteMediaLibrary(asset: asset) { [weak self] (productImage, error) in
-            guard let productImage = productImage, error == nil else {
-                self?.showErrorAlert(error: error)
+            guard let self = self else {
                 return
             }
-            self?.updateProductImageStatus(asset: asset, productImage: productImage)
+            guard let assetIndex = self.index(of: asset) else {
+                self.showErrorAlert(error: nil)
+                return
+            }
+            guard let productImage = productImage, error == nil else {
+                self.updateProductImageStatus(at: assetIndex, error: error)
+                return
+            }
+            self.updateProductImageStatus(at: assetIndex, productImage: productImage)
         }
     }
 
-    func updateProductImageStatus(asset: PHAsset, productImage: ProductImage) {
-        if let index = productImageStatuses.firstIndex(where: { status -> Bool in
+    func updateProductImageStatus(at index: Int, productImage: ProductImage) {
+        productImageStatuses[index] = .remote(image: productImage)
+    }
+
+    func updateProductImageStatus(at index: Int, error: Error?) {
+        // TODO
+        productImageStatuses.remove(at: index)
+    }
+
+    func index(of asset: PHAsset) -> Int? {
+        return productImageStatuses.firstIndex(where: { status -> Bool in
             switch status {
             case .uploading(let uploadingAsset):
                 return uploadingAsset == asset
             default:
                 return false
             }
-        }) {
-            productImageStatuses[index] = .remote(image: productImage)
-        }
+        })
     }
 
     func addMediaToProduct(mediaItems: [Media]) {
