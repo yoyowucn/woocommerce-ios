@@ -1,11 +1,7 @@
-import Foundation
-
-
 /// Mapper: Media List
 ///
 struct MediaListMapper: Mapper {
-
-    /// (Attempts) to convert a dictionary into an Account entity.
+    /// (Attempts) to convert data into a Media list.
     ///
     func map(response: Data) throws -> [Media] {
         let decoder = JSONDecoder()
@@ -14,7 +10,7 @@ struct MediaListMapper: Mapper {
     }
 }
 
-private struct MediaListEnvelopeMapper: Mapper {
+struct MediaListEnvelopeMapper: Mapper {
 
     /// (Attempts) to convert a dictionary into an Account entity.
     ///

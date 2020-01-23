@@ -1,6 +1,7 @@
 import Foundation
 import Alamofire
 
+
 extension Alamofire.MultipartFormData: MultipartFormData {}
 
 /// AlamofireWrapper: Encapsulates all of the Alamofire OP's
@@ -18,7 +19,8 @@ public class AlamofireNetwork: Network {
     ///
     public required init(credentials: Credentials) {
         self.credentials = credentials
-        self.backgroundSessionManager = Alamofire.SessionManager(configuration: URLSessionConfiguration.background(withIdentifier: "com.automattic.woocommerce.backgroundsession"))
+        let configuration = URLSessionConfiguration.background(withIdentifier: "com.automattic.woocommerce.backgroundsession")
+        self.backgroundSessionManager = Alamofire.SessionManager(configuration: configuration)
     }
 
     /// Executes the specified Network Request. Upon completion, the payload will be sent back to the caller as a Data instance.

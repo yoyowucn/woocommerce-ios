@@ -1,5 +1,4 @@
 import Foundation
-import Alamofire
 
 /// Media: Remote Endpoints
 ///
@@ -42,8 +41,6 @@ public class MediaRemote: Remote {
         }
     }
 
-    // MARK: - Products
-
     /// Uploads an array of media in the local file system.
     ///
     /// - Parameters:
@@ -54,7 +51,7 @@ public class MediaRemote: Remote {
     ///     - completion: Closure to be executed upon completion.
     ///
     public func uploadMedia(for siteID: Int64,
-                            context: String? = "Display",
+                            context: String? = Default.context,
                             mediaItems: [UploadableMedia],
                             completion: @escaping ([Media]?, Error?) -> Void) {
         let parameters = [
@@ -90,8 +87,8 @@ public extension MediaRemote {
     private enum ParameterKey {
         static let page: String       = "page_handle"
         static let perPage: String    = "number"
-        static let contextKey: String = "context"
         static let fields: String     = "fields"
         static let mimeType: String   = "mime_type"
+        static let contextKey: String = "context"
     }
 }

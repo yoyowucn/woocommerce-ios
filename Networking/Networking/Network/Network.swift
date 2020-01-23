@@ -1,6 +1,8 @@
 import Foundation
 import Alamofire
 
+/// Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body.
+///
 public protocol MultipartFormData {
     func append(_ fileURL: URL, withName name: String, fileName: String, mimeType: String)
 }
@@ -25,6 +27,12 @@ public protocol Network {
     ///
     func responseData(for request: URLRequestConvertible, completion: @escaping (Data?, Error?) -> Void)
 
+    /// Executes the specified Network Request for file uploads. Upon completion, the payload will be sent back to the caller as a Data instance.
+    ///
+    /// - Parameters:
+    ///   - multipartFormData: Used for appending data for multipart form data uploads.
+    ///   - request: Request that should be performed.
+    ///   - completion: Closure to be executed upon completion.
     func uploadMultipartFormData(multipartFormData: @escaping (MultipartFormData) -> Void,
                                  to request: URLRequestConvertible,
                                  completion: @escaping (Data?, Error?) -> Void)

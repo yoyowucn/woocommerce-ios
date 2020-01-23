@@ -84,7 +84,7 @@ public class Remote {
         }
     }
 
-    /// Enqueues the specified Network Request.
+    /// Enqueues the specified Network Request for upload with multipart form data encoding.
     ///
     /// - Important:
     ///     - Parsing will be performed by the Mapper.
@@ -92,6 +92,7 @@ public class Remote {
     /// - Parameters:
     ///     - request: Request that should be performed.
     ///     - mapper: Mapper entitity that will be used to attempt to parse the Backend's Response.
+    ///     - multipartFormData: Used for appending data for multipart form data uploads.
     ///     - completion: Closure to be executed upon completion.
     ///
     func enqueueMultipartFormDataUpload<M: Mapper>(_ request: URLRequestConvertible,
