@@ -2,17 +2,15 @@ import Foundation
 import CocoaLumberjack
 import Photos
 
-/// Encapsulates exporting assets such as PHAssets, images, videos, or files at URLs to `MediaUploadable`.
-///
-/// - Note: Methods with escaping closures will call back via its corresponding thread.
+/// Encapsulates exporting assets such as PHAssets, images, videos, or files at URLs to `UploadableMedia`.
 ///
 final class MediaExportService {
     /// Completion handler for a created Media object.
     ///
-    typealias MediaExportCompletion = (MediaUploadable?, Error?) -> Void
+    typealias MediaExportCompletion = (UploadableMedia?, Error?) -> Void
 
     private lazy var exportQueue: DispatchQueue = {
-        return DispatchQueue(label: "org.wordpress.mediaExportService", autoreleaseFrequency: .workItem)
+        return DispatchQueue(label: "com.woocommerce.mediaExportService", autoreleaseFrequency: .workItem)
     }()
 
     // MARK: - Instance methods
@@ -75,11 +73,10 @@ private extension MediaExportService {
         ///
         /// - Note: This value may or may not be honored, depending on the export implementation and underlying data.
         ///
-        static let imageExportOptions = MediaImageExporter.Options(maximumImageSize: 3000,
-                                                                   imageCompressionQuality: 0.85,
-                                                                   exportImageType: nil,
-                                                                   stripsGeoLocationIfNeeded: false)
+        static let imageExportOptions = MediaImageExportOptions(maximumImageSize: 3000,
+                                                                imageCompressionQuality: 0.85,
+                                                                stripsGeoLocationIfNeeded: false)
 
-        static let allowableFileExtensions = Set<String>(["jpg", "jpeg", "png", "gif", "pdf"])
+        static let allowableFileExtensions = Set<String>(["jpg", "jpeg", "png", "gif"])
     }
 }

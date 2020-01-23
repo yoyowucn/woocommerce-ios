@@ -1,11 +1,11 @@
 import Foundation
 import Networking
 
-typealias MediaUploadable = Networking.UploadableMedia
+typealias UploadableMedia = Networking.UploadableMedia
 
 /// Completion block when a media item is exported.
 ///
-typealias MediaExportCompletion = (MediaUploadable?, Error?) -> Void
+typealias MediaExportCompletion = (UploadableMedia?, Error?) -> Void
 
 /// Exports media to the local file system for remote upload.
 ///
@@ -34,13 +34,4 @@ extension MediaExporter {
     var mediaFileManager: MediaFileManager {
         return MediaFileManager(directory: mediaDirectoryType)
     }
-}
-
-/// Protocol of general options available for an export, typically corresponding to a user setting.
-///
-protocol MediaExportingOptions {
-
-    /// Strip the geoLocation from exported media, if needed.
-    ///
-    var stripsGeoLocationIfNeeded: Bool { get }
 }

@@ -67,7 +67,7 @@ private extension MediaStore {
         })
     }
 
-    func uploadMedia(siteID: Int64, media: MediaUploadable, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
+    func uploadMedia(siteID: Int64, media: UploadableMedia, onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
         let remote = MediaRemote(network: network)
         remote.uploadMedia(for: siteID,
                            mediaItems: [media]) { (uploadedMediaItems, error) in
