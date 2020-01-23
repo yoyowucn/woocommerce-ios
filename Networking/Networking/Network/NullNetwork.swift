@@ -6,7 +6,6 @@ import Alamofire
 /// It does nothing at all.
 ///
 public final class NullNetwork: Network {
-
     public init() { }
     public required init(credentials: Credentials) { }
 
