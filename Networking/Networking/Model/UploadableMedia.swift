@@ -1,6 +1,6 @@
 import Foundation
 
-public struct MediaUploadable {
+public struct UploadableMedia {
     public let localURL: URL
     public let filename: String
     public let mimeType: String

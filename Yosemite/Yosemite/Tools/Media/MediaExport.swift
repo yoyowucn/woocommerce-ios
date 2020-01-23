@@ -1,7 +1,7 @@
 import Foundation
 import Networking
 
-typealias MediaUploadable = Networking.MediaUploadable
+typealias MediaUploadable = Networking.UploadableMedia
 
 /// Completion block when a media item is exported.
 ///

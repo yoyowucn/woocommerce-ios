@@ -55,7 +55,7 @@ public class MediaRemote: Remote {
     ///
     public func uploadMedia(for siteID: Int64,
                             context: String? = "Display",
-                            mediaItems: [MediaUploadable],
+                            mediaItems: [UploadableMedia],
                             completion: @escaping ([Media]?, Error?) -> Void) {
         let parameters = [
             ParameterKey.contextKey: context ?? Default.context,

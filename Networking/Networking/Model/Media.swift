@@ -1,6 +1,6 @@
 /// WordPress.com Account
 ///
-public final class Media: NSObject, Decodable {
+public struct Media: Decodable {
     public let mediaID: Int64
     public let date: Date    // gmt iso8601
     public let fileExtension: String
@@ -38,7 +38,7 @@ public final class Media: NSObject, Decodable {
 
     /// Public initializer for Media.
     ///
-    public convenience init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let mediaID = try container.decode(Int64.self, forKey: .mediaID)

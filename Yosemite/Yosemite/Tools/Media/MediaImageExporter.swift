@@ -6,12 +6,6 @@ import MobileCoreServices
 ///
 final class MediaImageExporter: MediaExporter {
 
-    let mediaDirectoryType: MediaDirectory
-
-    /// Export options.
-    ///
-    private let options: Options
-
     /// Available options for an image export.
     ///
     struct Options: MediaExportingOptions {
@@ -44,6 +38,12 @@ final class MediaImageExporter: MediaExporter {
             self.stripsGeoLocationIfNeeded = stripsGeoLocationIfNeeded
         }
     }
+
+    let mediaDirectoryType: MediaDirectory
+
+    /// Export options.
+    ///
+    private let options: Options
 
     /// Default filename used when writing media images locally, which may be appended with "-1" or "-thumbnail".
     ///

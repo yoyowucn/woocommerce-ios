@@ -3,7 +3,7 @@ import Foundation
 
 /// Mapper: Media List
 ///
-class MediaListMapper: Mapper {
+struct MediaListMapper: Mapper {
 
     /// (Attempts) to convert a dictionary into an Account entity.
     ///
@@ -14,7 +14,7 @@ class MediaListMapper: Mapper {
     }
 }
 
-class MediaListEnvelopeMapper: Mapper {
+private struct MediaListEnvelopeMapper: Mapper {
 
     /// (Attempts) to convert a dictionary into an Account entity.
     ///
