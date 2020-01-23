@@ -1,5 +1,11 @@
 import Foundation
 
+extension String {
+    var nilIfEmpty: String? {
+        return isEmpty ? nil: self
+    }
+}
+
 
 /// Represents a Product Entity.
 ///
@@ -411,8 +417,8 @@ public struct Product: Codable {
         try container.encode(fullDescription, forKey: .fullDescription)
 
         // Price Settings.
-        try container.encode(regularPrice, forKey: .regularPrice)
-        try container.encode(salePrice, forKey: .salePrice)
+        try container.encode(regularPrice?.nilIfEmpty, forKey: .regularPrice)
+        try container.encode(salePrice?.nilIfEmpty, forKey: .salePrice)
 
         // We need to send empty string if fields are null, because there is a bug on the API side
         // Issue: https://github.com/woocommerce/woocommerce/issues/25350
@@ -436,7 +442,7 @@ public struct Product: Codable {
         try container.encode(newTaxClass, forKey: .taxClass)
 
         // Shipping Settings.
-        try container.encode(weight, forKey: .weight)
+        try container.encode(weight?.nilIfEmpty, forKey: .weight)
         try container.encode(dimensions, forKey: .dimensions)
         try container.encode(shippingClass, forKey: .shippingClass)
 
