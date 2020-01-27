@@ -163,6 +163,7 @@ private extension ProductImagesViewController {
 
     func updateProductImageStatus(at index: Int, error: Error?) {
         // TODO
+        showErrorAlert(error: error)
         productImageStatuses.remove(at: index)
     }
 
