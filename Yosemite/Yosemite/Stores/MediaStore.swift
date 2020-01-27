@@ -1,16 +1,9 @@
 import Foundation
 import Networking
-import Storage
 
 // MARK: - MediaStore
 //
 public final class MediaStore: Store {
-    private let credentials: Credentials
-
-    private lazy var sharedDerivedStorage: StorageType = {
-        return storageManager.newDerivedStorage()
-    }()
-
     /// Registers for supported Actions.
     ///
     override public func registerSupportedActions(in dispatcher: Dispatcher) {
@@ -31,11 +24,6 @@ public final class MediaStore: Store {
         case .uploadMedia(let siteID, let mediaAsset, let onCompletion):
             uploadMedia(siteID: siteID, mediaAsset: mediaAsset, onCompletion: onCompletion)
         }
-    }
-
-    public init(dispatcher: Dispatcher, storageManager: StorageManagerType, network: Network, credentials: Credentials) {
-        self.credentials = credentials
-        super.init(dispatcher: dispatcher, storageManager: storageManager, network: network)
     }
 }
 
