@@ -18,6 +18,10 @@ protocol SearchUICommand {
     /// This will called by `SearchViewController` only when the search results are empty. It will
     /// only be called once and will be retained until `SearchViewController` is deallocated.
     ///
+    /// For a simple implementation, use `SearchEmptyLabelViewController`.
+    ///
+    /// - SeeAlso: SearchEmptyLabelViewController
+    ///
     func createEmptyViewController() -> UIViewController
 
     /// Creates a view model for the search result cell.
