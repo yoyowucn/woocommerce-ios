@@ -8,8 +8,6 @@ final class ProductSearchUICommand: SearchUICommand {
 
     let searchBarPlaceholder = NSLocalizedString("Search all products", comment: "Products Search Placeholder")
 
-    let emptyStateText = NSLocalizedString("No products found", comment: "Search Products (Empty State)")
-
     private let siteID: Int64
 
     init(siteID: Int64) {
@@ -26,6 +24,11 @@ final class ProductSearchUICommand: SearchUICommand {
 
     func createCellViewModel(model: Product) -> ProductsTabProductViewModel {
         return ProductsTabProductViewModel(product: model)
+    }
+
+    func createEmptyViewController() -> UIViewController {
+        let message = NSLocalizedString("No products found", comment: "Search Products (Empty State)")
+        return SearchEmptyLabelViewController(message: message)
     }
 
     /// Synchronizes the Products matching a given Keyword
