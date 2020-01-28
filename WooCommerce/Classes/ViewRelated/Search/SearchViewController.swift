@@ -14,10 +14,6 @@ where Cell.SearchModel == Command.CellViewModel {
     ///
     @IBOutlet private var cancelButton: UIButton!
 
-    /// Empty State Legend
-    ///
-    @IBOutlet private var emptyStateLabel: UILabel!
-
     /// Main SearchBar
     ///
     @IBOutlet private var searchBar: UISearchBar!
@@ -111,7 +107,6 @@ where Cell.SearchModel == Command.CellViewModel {
         configureSyncingCoordinator()
         configureCancelButton()
         configureActions()
-        configureEmptyStateLabel()
         configureMainView()
         configureSearchBar()
         configureSearchBarBordersView()
@@ -247,15 +242,6 @@ private extension SearchViewController {
     func configureActions() {
         let title = NSLocalizedString("Cancel", comment: "")
         cancelButton.setTitle(title, for: .normal)
-    }
-
-    /// Setup: No Results
-    ///
-    func configureEmptyStateLabel() {
-        emptyStateLabel.textColor = .textSubtle
-        emptyStateLabel.font = .headline
-        emptyStateLabel.adjustsFontForContentSizeCategory = true
-        emptyStateLabel.numberOfLines = 0
     }
 
     /// Setup: Results Controller
