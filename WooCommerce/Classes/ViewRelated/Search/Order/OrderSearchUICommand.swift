@@ -8,8 +8,6 @@ final class OrderSearchUICommand: SearchUICommand {
 
     let searchBarPlaceholder = NSLocalizedString("Search all orders", comment: "Orders Search Placeholder")
 
-    let emptyStateText = NSLocalizedString("No Orders found", comment: "Search Orders (Empty State)")
-
     private lazy var statusResultsController: ResultsController<StorageOrderStatus> = {
         let storageManager = ServiceLocator.storageManager
         let predicate = NSPredicate(format: "siteID == %lld", ServiceLocator.stores.sessionManager.defaultStoreID ?? Int.min)
@@ -33,6 +31,11 @@ final class OrderSearchUICommand: SearchUICommand {
         let orderStatus = lookUpOrderStatus(for: model)
         return OrderSearchCellViewModel(orderDetailsViewModel: orderDetailsViewModel,
                                         orderStatus: orderStatus)
+    }
+
+    func createEmptyViewController() -> UIViewController {
+        let message = NSLocalizedString("No Orders found", comment: "Search Orders (Empty State)")
+        return SearchEmptyLabelViewController(message: message)
     }
 
     /// Synchronizes the Orders matching a given Keyword
