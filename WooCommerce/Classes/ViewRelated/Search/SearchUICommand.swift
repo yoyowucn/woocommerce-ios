@@ -18,7 +18,10 @@ protocol SearchUICommand {
     /// This will called by `SearchViewController` only when the search results are empty. It will
     /// only be called once and will be retained until `SearchViewController` is deallocated.
     ///
-    /// For a simple implementation, use `SearchEmptyLabelViewController`.
+    /// The `view` of this controller will be added and constrained to the same size as the
+    /// `SearchViewController`'s `tableView`.
+    ///
+    /// For a simple return value of this method, use `SearchEmptyLabelViewController`.
     ///
     /// - SeeAlso: SearchEmptyLabelViewController
     ///

@@ -39,6 +39,12 @@ where Cell.SearchModel == Command.CellViewModel {
     ///
     private let resultsController: ResultsController<Command.ResultsControllerModel>
 
+    /// The controller of the view to show if there are no search results.
+    ///
+    /// - SeeAlso: displayEmptyState
+    ///
+    private var emptyViewController: UIViewController?
+
     /// SyncCoordinator: Keeps tracks of which pages have been refreshed, and encapsulates the "What should we sync now" logic.
     ///
     private let syncingCoordinator = SyncingCoordinator()
@@ -246,7 +252,6 @@ private extension SearchViewController {
     /// Setup: No Results
     ///
     func configureEmptyStateLabel() {
-        emptyStateLabel.text = searchUICommand.emptyStateText
         emptyStateLabel.textColor = .textSubtle
         emptyStateLabel.font = .headline
         emptyStateLabel.adjustsFontForContentSizeCategory = true
@@ -357,16 +362,48 @@ extension SearchViewController {
 //
 private extension SearchViewController {
 
-    /// Displays the Empty State Legend.
+    /// Displays the `emptyViewController`.
+    ///
+    /// The `emptyViewController` will be created if it hasn't been yet.
     ///
     func displayEmptyState() {
-        emptyStateLabel.isHidden = false
+        let emptyViewController: UIViewController? = {
+            if let existing = self.emptyViewController {
+                return existing
+            }
+
+            let childViewController = searchUICommand.createEmptyViewController()
+            guard let childView = childViewController.view else {
+                return nil
+            }
+
+            childView.translatesAutoresizingMaskIntoConstraints = false
+
+            add(childViewController)
+            view.addSubview(childView)
+
+            // Match the position and size to the `tableView`.
+            NSLayoutConstraint.activate([
+                childView.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
+                childView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
+                childView.topAnchor.constraint(equalTo: tableView.topAnchor),
+                childView.bottomAnchor.constraint(equalTo: tableView.bottomAnchor)
+            ])
+
+            childViewController.didMove(toParent: self)
+
+            self.emptyViewController = childViewController
+
+            return childViewController
+        }()
+
+        emptyViewController?.view.isHidden = false
     }
 
-    /// Removes the Empty State Legend.
+    /// Hides the `emptyViewController`.
     ///
     func removeEmptyState() {
-        emptyStateLabel.isHidden = true
+        emptyViewController?.view.isHidden = true
     }
 }
 
