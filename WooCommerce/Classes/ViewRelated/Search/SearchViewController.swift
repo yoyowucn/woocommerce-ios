@@ -367,6 +367,8 @@ private extension SearchViewController {
     /// The `emptyViewController` will be created if it hasn't been yet.
     ///
     func displayEmptyState() {
+        tableView.isHidden = true
+
         let emptyViewController: UIViewController? = {
             if let existing = self.emptyViewController {
                 return existing
@@ -403,6 +405,7 @@ private extension SearchViewController {
     /// Hides the `emptyViewController`.
     ///
     func removeEmptyState() {
+        tableView.isHidden = false
         emptyViewController?.view.isHidden = true
     }
 }
