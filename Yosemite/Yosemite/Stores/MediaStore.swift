@@ -1,9 +1,24 @@
 import Foundation
 import Networking
+import Storage
 
 // MARK: - MediaStore
 //
 public final class MediaStore: Store {
+    private lazy var mediaExportService: MediaExportService = DefaultMediaExportService()
+
+    public override init(dispatcher: Dispatcher, storageManager: StorageManagerType, network: Network) {
+        super.init(dispatcher: dispatcher, storageManager: storageManager, network: network)
+    }
+
+    init(mediaExportService: MediaExportService,
+         dispatcher: Dispatcher,
+         storageManager: StorageManagerType,
+         network: Network) {
+        super.init(dispatcher: dispatcher, storageManager: storageManager, network: network)
+        self.mediaExportService = mediaExportService
+    }
+
     /// Registers for supported Actions.
     ///
     override public func registerSupportedActions(in dispatcher: Dispatcher) {
@@ -46,18 +61,15 @@ private extension MediaStore {
     func uploadMedia(siteID: Int64,
                      mediaAsset: ExportableAsset,
                      onCompletion: @escaping (_ uploadedMedia: Media?, _ error: Error?) -> Void) {
-        let mediaExporter = MediaExportService()
-        mediaExporter.export(mediaAsset,
-                             onCompletion: { [weak self] (uploadableMedia, error) in
-                                guard let uploadableMedia = uploadableMedia, error == nil else {
-                                    onCompletion(nil, error)
-                                    return
-                                }
-                                self?.uploadMedia(siteID: siteID,
-                                                  uploadableMedia: uploadableMedia,
-                                                  onCompletion: { (uploadedMedia, error) in
-                                                    onCompletion(uploadedMedia, error)
-                                })
+        mediaExportService.export(mediaAsset,
+                                  onCompletion: { [weak self] (uploadableMedia, error) in
+                                    guard let uploadableMedia = uploadableMedia, error == nil else {
+                                        onCompletion(nil, error)
+                                        return
+                                    }
+                                    self?.uploadMedia(siteID: siteID,
+                                                      uploadableMedia: uploadableMedia,
+                                                      onCompletion: onCompletion)
         })
     }
 
@@ -72,6 +84,7 @@ private extension MediaStore {
                                 try MediaFileManager().removeLocalMedia(at: media.localURL)
                             } catch(let error) {
                                 onCompletion(nil, error)
+                                return
                             }
                             guard let uploadedMedia = uploadedMediaItems?.first, uploadedMediaItems?.count == 1 && error == nil else {
                                 onCompletion(nil, error)
