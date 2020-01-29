@@ -11,15 +11,15 @@ enum ProductImageStatus {
 ///
 final class ProductImagesCollectionViewController: UICollectionViewController {
 
-    private var productImages: [ProductImageStatus]
+    private var productImageStatuses: [ProductImageStatus]
 
     private let imageService: ImageService
     private let onDeletion: ProductImageViewController.Deletion
 
-    init(images: [ProductImageStatus],
+    init(imageStatuses: [ProductImageStatus],
          imageService: ImageService = ServiceLocator.imageService,
          onDeletion: @escaping ProductImageViewController.Deletion) {
-        self.productImages = images
+        self.productImageStatuses = imageStatuses
         self.imageService = imageService
         self.onDeletion = onDeletion
         let columnLayout = ColumnFlowLayout(
@@ -45,8 +45,8 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
         collectionView.reloadData()
     }
 
-    func updateProductImages(_ productImages: [ProductImageStatus]) {
-        self.productImages = productImages
+    func updateProductImageStatuses(_ productImageStatuses: [ProductImageStatus]) {
+        self.productImageStatuses = productImageStatuses
 
         collectionView.reloadData()
     }
@@ -57,7 +57,7 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
 extension ProductImagesCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return productImages.count
+        return productImageStatuses.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -66,9 +66,9 @@ extension ProductImagesCollectionViewController {
                                                                 fatalError()
         }
 
-        let productImage = productImages[indexPath.row]
+        let productImageStatus = productImageStatuses[indexPath.row]
 
-        switch productImage {
+        switch productImageStatus {
         case .remote(let image):
             imageService.downloadAndCacheImageForImageView(cell.imageView,
                                                            with: image.src,
@@ -104,7 +104,7 @@ extension ProductImagesCollectionViewController {
 //
 extension ProductImagesCollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let status = productImages[indexPath.row]
+        let status = productImageStatuses[indexPath.row]
         switch status {
         case .remote(let productImage):
             let productImageViewController = ProductImageViewController(productImage: productImage, onDeletion: onDeletion)

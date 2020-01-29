@@ -28,13 +28,13 @@ final class ProductImagesViewController: UIViewController {
 
     private var productImageStatuses: [ProductImageStatus] {
         didSet {
-            imagesViewController.updateProductImages(productImageStatuses)
+            imagesViewController.updateProductImageStatuses(productImageStatuses)
         }
     }
 
     // Child view controller.
     private lazy var imagesViewController: ProductImagesCollectionViewController = {
-        let viewController = ProductImagesCollectionViewController(images: productImageStatuses,
+        let viewController = ProductImagesCollectionViewController(imageStatuses: productImageStatuses,
                                                                    onDeletion: onDeletion)
         return viewController
     }()
@@ -82,7 +82,7 @@ private extension ProductImagesViewController {
     func configureNavigation() {
         title = NSLocalizedString("Photos", comment: "Product images (Product images page title)")
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(completeEditing))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonTapped))
 
         removeNavigationBackBarButtonText()
     }
@@ -117,7 +117,15 @@ private extension ProductImagesViewController {
         showOptionsMenu()
     }
 
-    @objc func completeEditing() {
+    @objc func doneButtonTapped() {
+        guard productImageStatuses.count == productImages.count else {
+            presentSaveChangesActionSheet()
+            return
+        }
+        completeEditing()
+    }
+
+    func completeEditing() {
         onCompletion(productImages)
     }
 
@@ -137,22 +145,45 @@ private extension ProductImagesViewController {
     }
 }
 
+// MARK: - Navigation actions handling
+//
+extension ProductImagesViewController {
+    override func shouldPopOnBackButton() -> Bool {
+        guard productImageStatuses.count == productImages.count else {
+            presentSaveChangesActionSheet()
+            return false
+        }
+        return true
+    }
+
+    private func presentSaveChangesActionSheet() {
+        UIAlertController.presentSaveChangesActionSheet(viewController: self, onSave: { [weak self] in
+            self?.completeEditing()
+        }, onDiscard: { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        })
+    }
+}
+
 // MARK: - Image upload to WP Media Library and Product
-// TODO-jc: move these to a Product Images service
+//
 private extension ProductImagesViewController {
-    func uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: PHAsset) {
+    func uploadMediaAssetToSiteMediaLibrary(asset: PHAsset) {
         productImagesService.uploadMediaAssetToSiteMediaLibrary(asset: asset) { [weak self] (productImage, error) in
             guard let self = self else {
                 return
             }
+
             guard let assetIndex = self.index(of: asset) else {
-                self.showErrorAlert(error: nil)
+                self.displayErrorAlert(error: nil)
                 return
             }
+
             guard let productImage = productImage, error == nil else {
                 self.updateProductImageStatus(at: assetIndex, error: error)
                 return
             }
+
             self.updateProductImageStatus(at: assetIndex, productImage: productImage)
         }
     }
@@ -162,8 +193,7 @@ private extension ProductImagesViewController {
     }
 
     func updateProductImageStatus(at index: Int, error: Error?) {
-        // TODO
-        showErrorAlert(error: error)
+        displayErrorAlert(error: error)
         productImageStatuses.remove(at: index)
     }
 
@@ -196,11 +226,11 @@ private extension ProductImagesViewController {
 private extension ProductImagesViewController {
     func onCameraCaptureCompletion(asset: PHAsset?, error: Error?) {
         guard let asset = asset else {
-            showErrorAlert(error: error)
+            displayErrorAlert(error: error)
             return
         }
         productImageStatuses = [.uploading(asset: asset)] + productImageStatuses
-        uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: asset)
+        uploadMediaAssetToSiteMediaLibrary(asset: asset)
     }
 }
 
@@ -216,7 +246,7 @@ private extension ProductImagesViewController {
         }
         assets.forEach { asset in
             productImageStatuses = [.uploading(asset: asset)] + productImageStatuses
-            uploadMediaAssetToSiteMediaLibraryThenAddToProduct(asset: asset)
+            uploadMediaAssetToSiteMediaLibrary(asset: asset)
         }
     }
 }
@@ -227,23 +257,6 @@ private extension ProductImagesViewController {
 private extension ProductImagesViewController {
     func onWPMediaPickerCompletion(mediaItems: [Media]) {
         addMediaToProduct(mediaItems: mediaItems)
-    }
-}
-
-// MARK: Error handling
-//
-private extension ProductImagesViewController {
-    func showErrorAlert(error: Error?) {
-        let title = NSLocalizedString("Cannot upload image", comment: "")
-        let alertController = UIAlertController(title: title,
-                                                message: error?.localizedDescription,
-                                                preferredStyle: .alert)
-        let cancel = UIAlertAction(title: NSLocalizedString(
-            "OK",
-            comment: "Dismiss button on the alert when there is an error updating the product"
-        ), style: .cancel, handler: nil)
-        alertController.addAction(cancel)
-        present(alertController, animated: true)
     }
 }
 

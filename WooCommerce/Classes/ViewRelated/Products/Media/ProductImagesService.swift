@@ -10,9 +10,6 @@ final class ProductImagesService {
     func uploadMediaAssetToSiteMediaLibrary(asset: ExportableAsset, completion: @escaping (_ image: ProductImage?, _ error: Error?) -> Void) {
         let action = MediaAction.uploadMedia(siteID: siteID,
                                              mediaAsset: asset) { (media, error) in
-                                                defer {
-
-                                                }
                                                 guard let media = media else {
                                                     completion(nil, error)
                                                     return
