@@ -225,6 +225,9 @@
 		45FBDF39238D3F8800127F77 /* ExtendedAddProductImageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 45FBDF36238D3C7500127F77 /* ExtendedAddProductImageCollectionViewCell.xib */; };
 		45FBDF3A238D3F8B00127F77 /* ExtendedAddProductImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBDF35238D3C7500127F77 /* ExtendedAddProductImageCollectionViewCell.swift */; };
 		45FBDF3C238D4EA800127F77 /* ExtendedAddProductImageCollectionViewCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBDF3B238D4EA800127F77 /* ExtendedAddProductImageCollectionViewCellTests.swift */; };
+		57992C2E23E0EF7000A91224 /* OrderSearchEmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57992C2D23E0EF7000A91224 /* OrderSearchEmptyViewController.swift */; };
+		57BCA0C823E1C7EB00761CBD /* OrderSearchEmptyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57BCA0C723E1C7EB00761CBD /* OrderSearchEmptyViewController.xib */; };
+		57D036DA23E0F89600B2E1B2 /* OrderSearchEmptyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D036D923E0F89600B2E1B2 /* OrderSearchEmptyViewModel.swift */; };
 		74036CC0211B882100E462C2 /* PeriodDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74036CBF211B882100E462C2 /* PeriodDataViewController.swift */; };
 		740382DB2267D94100A627F4 /* LargeImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740382D92267D94100A627F4 /* LargeImageTableViewCell.swift */; };
 		740382DC2267D94100A627F4 /* LargeImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 740382DA2267D94100A627F4 /* LargeImageTableViewCell.xib */; };
@@ -839,6 +842,9 @@
 		45FBDF35238D3C7500127F77 /* ExtendedAddProductImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAddProductImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		45FBDF36238D3C7500127F77 /* ExtendedAddProductImageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtendedAddProductImageCollectionViewCell.xib; sourceTree = "<group>"; };
 		45FBDF3B238D4EA800127F77 /* ExtendedAddProductImageCollectionViewCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAddProductImageCollectionViewCellTests.swift; sourceTree = "<group>"; };
+		57992C2D23E0EF7000A91224 /* OrderSearchEmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSearchEmptyViewController.swift; sourceTree = "<group>"; };
+		57BCA0C723E1C7EB00761CBD /* OrderSearchEmptyViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OrderSearchEmptyViewController.xib; sourceTree = "<group>"; };
+		57D036D923E0F89600B2E1B2 /* OrderSearchEmptyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderSearchEmptyViewModel.swift; sourceTree = "<group>"; };
 		6DC4526F9A7357761197EBF0 /* Pods_WooCommerceTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WooCommerceTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74036CBF211B882100E462C2 /* PeriodDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodDataViewController.swift; sourceTree = "<group>"; };
 		740382D92267D94100A627F4 /* LargeImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeImageTableViewCell.swift; sourceTree = "<group>"; };
@@ -1591,6 +1597,9 @@
 			children = (
 				0282DD97233CA093006A5FDB /* OrderSearchUICommand.swift */,
 				0282DD99233CA32D006A5FDB /* OrderSearchCellViewModel.swift */,
+				57992C2D23E0EF7000A91224 /* OrderSearchEmptyViewController.swift */,
+				57D036D923E0F89600B2E1B2 /* OrderSearchEmptyViewModel.swift */,
+				57BCA0C723E1C7EB00761CBD /* OrderSearchEmptyViewController.xib */,
 			);
 			path = Order;
 			sourceTree = "<group>";
@@ -2994,6 +3003,7 @@
 				02E6B97923853D81000A36F0 /* SettingTitleAndValueTableViewCell.xib in Resources */,
 				CE37C04522984E81008DCB39 /* PickListTableViewCell.xib in Resources */,
 				D85B8334222FABD1002168F3 /* StatusListTableViewCell.xib in Resources */,
+				57BCA0C823E1C7EB00761CBD /* OrderSearchEmptyViewController.xib in Resources */,
 				45B9C63F23A8E50D007FC4C5 /* ProductPriceSettingsViewController.xib in Resources */,
 				B5F571A621BEC92A0010D1B8 /* NoteDetailsHeaderPlainTableViewCell.xib in Resources */,
 				B5F355F121CD504400A7077A /* SearchViewController.xib in Resources */,
@@ -3283,6 +3293,7 @@
 				B57C743D20F5493300EEFC87 /* AccountHeaderView.swift in Sources */,
 				D8C251D2230CA90200F49782 /* StoresManager.swift in Sources */,
 				024DF31F23743045006658FE /* Header+AztecFormatting.swift in Sources */,
+				57992C2E23E0EF7000A91224 /* OrderSearchEmptyViewController.swift in Sources */,
 				B50911312049E27A007D25DC /* OrdersViewController.swift in Sources */,
 				B5A8F8AD20B88D9900D211DE /* LoginPrologueViewController.swift in Sources */,
 				B5D1AFC620BC7B7300DB0E8C /* StorePickerViewController.swift in Sources */,
@@ -3338,6 +3349,7 @@
 				CECC758623D21AC200486676 /* AggregateOrderItem.swift in Sources */,
 				02357B2A23CDB3E300147C2B /* ProductImageViewController.swift in Sources */,
 				B53B3F39219C817800DF1EB6 /* UIStoryboard+Woo.swift in Sources */,
+				57D036DA23E0F89600B2E1B2 /* OrderSearchEmptyViewModel.swift in Sources */,
 				021E2A1723A9FE5A00B1DE07 /* ProductInventorySettingsViewController.swift in Sources */,
 				020F41E823176F8E00776C4D /* TopBannerPresenter.swift in Sources */,
 				02F4F50B237AEB8A00E13A9C /* ProductFormTableViewDataSource.swift in Sources */,
