@@ -7,6 +7,21 @@ enum ProductImageStatus {
     case remote(image: ProductImage)
 }
 
+extension ProductImageStatus {
+    var cellClass: UICollectionViewCell.Type {
+        switch self {
+        case .uploading:
+            return InProgressProductImageCollectionViewCell.self
+        case .remote:
+            return ProductImageCollectionViewCell.self
+        }
+    }
+
+    var cellReuseIdentifier: String {
+        return cellClass.reuseIdentifier
+    }
+}
+
 /// Displays Product images in grid layout.
 ///
 final class ProductImagesCollectionViewController: UICollectionViewController {
@@ -41,6 +56,7 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
         collectionView.backgroundColor = .basicBackground
 
         collectionView.register(ProductImageCollectionViewCell.loadNib(), forCellWithReuseIdentifier: ProductImageCollectionViewCell.reuseIdentifier)
+        collectionView.register(InProgressProductImageCollectionViewCell.loadNib(), forCellWithReuseIdentifier: InProgressProductImageCollectionViewCell.reuseIdentifier)
 
         collectionView.reloadData()
     }
@@ -61,15 +77,14 @@ extension ProductImagesCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductImageCollectionViewCell.reuseIdentifier,
-                                                            for: indexPath) as? ProductImageCollectionViewCell else {
-                                                                fatalError()
-        }
-
         let productImageStatus = productImageStatuses[indexPath.row]
 
         switch productImageStatus {
         case .remote(let image):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: productImageStatus.cellReuseIdentifier,
+                                                                for: indexPath) as? ProductImageCollectionViewCell else {
+                                                                    fatalError()
+            }
             imageService.downloadAndCacheImageForImageView(cell.imageView,
                                                            with: image.src,
                                                            placeholder: .productPlaceholderImage,
@@ -82,10 +97,17 @@ extension ProductImagesCollectionViewController {
                                                                 cell.imageView.contentMode = .center
                                                             }
             }
+            return cell
         case .uploading(let asset):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: productImageStatus.cellReuseIdentifier,
+                                                                for: indexPath) as? InProgressProductImageCollectionViewCell else {
+                                                                    fatalError()
+            }
             let manager = PHImageManager.default()
-            let option = PHImageRequestOptions()
-            manager.requestImage(for: asset, targetSize: cell.bounds.size, contentMode: .aspectFit, options: option, resultHandler: { (result, info) in
+//            let option = PHImageRequestOptions()
+//            option.isSynchronous = true
+//            cell.updateSpinnerVisibility(shouldShowSpinner: true)
+            manager.requestImage(for: asset, targetSize: cell.bounds.size, contentMode: .aspectFit, options: nil, resultHandler: { (result, info) in
                 if let result = result {
                     cell.imageView.image = result
                     cell.imageView.contentMode = .scaleAspectFit
@@ -94,9 +116,8 @@ extension ProductImagesCollectionViewController {
                     cell.imageView.contentMode = .center
                 }
             })
+            return cell
         }
-
-        return cell
     }
 }
 
