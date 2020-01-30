@@ -2,23 +2,30 @@ import Photos
 import UIKit
 import Yosemite
 
+/// The status of a Product image.
+///
 enum ProductImageStatus {
+    /// A `PHAsset` is being uploaded.
+    ///
     case uploading(asset: PHAsset)
+
+    /// The Product image exists remotely.
+    ///
     case remote(image: ProductImage)
 }
 
 extension ProductImageStatus {
-    var cellClass: UICollectionViewCell.Type {
+    var cellReuseIdentifier: String {
+        return cellClass.reuseIdentifier
+    }
+
+    private var cellClass: UICollectionViewCell.Type {
         switch self {
         case .uploading:
             return InProgressProductImageCollectionViewCell.self
         case .remote:
             return ProductImageCollectionViewCell.self
         }
-    }
-
-    var cellReuseIdentifier: String {
-        return cellClass.reuseIdentifier
     }
 }
 
@@ -78,46 +85,61 @@ extension ProductImagesCollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let productImageStatus = productImageStatuses[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: productImageStatus.cellReuseIdentifier,
+                                                      for: indexPath)
+        configureCell(cell, productImageStatus: productImageStatus)
+        return cell
+    }
+}
 
+// MARK: Cell configurations
+//
+private extension ProductImagesCollectionViewController {
+    func configureCell(_ cell: UICollectionViewCell, productImageStatus: ProductImageStatus) {
         switch productImageStatus {
         case .remote(let image):
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: productImageStatus.cellReuseIdentifier,
-                                                                for: indexPath) as? ProductImageCollectionViewCell else {
-                                                                    fatalError()
+            guard let cell = cell as? ProductImageCollectionViewCell else {
+                fatalError("Unexpected cell type for status: \(productImageStatus)")
             }
-            imageService.downloadAndCacheImageForImageView(cell.imageView,
-                                                           with: image.src,
-                                                           placeholder: .productPlaceholderImage,
-                                                           progressBlock: nil) { (image, error) in
-                                                            let success = image != nil && error == nil
-                                                            if success {
-                                                                cell.imageView.contentMode = .scaleAspectFit
-                                                            }
-                                                            else {
-                                                                cell.imageView.contentMode = .center
-                                                            }
-            }
-            return cell
+            configureRemoteImageCell(cell, image: image)
         case .uploading(let asset):
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: productImageStatus.cellReuseIdentifier,
-                                                                for: indexPath) as? InProgressProductImageCollectionViewCell else {
-                                                                    fatalError()
+            guard let cell = cell as? InProgressProductImageCollectionViewCell else {
+                fatalError("Unexpected cell type for status: \(productImageStatus)")
             }
-            let manager = PHImageManager.default()
-//            let option = PHImageRequestOptions()
-//            option.isSynchronous = true
-//            cell.updateSpinnerVisibility(shouldShowSpinner: true)
-            manager.requestImage(for: asset, targetSize: cell.bounds.size, contentMode: .aspectFit, options: nil, resultHandler: { (result, info) in
-                if let result = result {
-                    cell.imageView.image = result
-                    cell.imageView.contentMode = .scaleAspectFit
-                }
-                else {
-                    cell.imageView.contentMode = .center
-                }
-            })
-            return cell
+            configureUploadingImageCell(cell, asset: asset)
         }
+    }
+
+    func configureRemoteImageCell(_ cell: ProductImageCollectionViewCell, image: ProductImage) {
+        imageService.downloadAndCacheImageForImageView(cell.imageView,
+                                                       with: image.src,
+                                                       placeholder: .productPlaceholderImage,
+                                                       progressBlock: nil) { (image, error) in
+                                                        let success = image != nil && error == nil
+                                                        if success {
+                                                            cell.imageView.contentMode = .scaleAspectFit
+                                                        }
+                                                        else {
+                                                            cell.imageView.contentMode = .center
+                                                        }
+        }
+    }
+
+    func configureUploadingImageCell(_ cell: InProgressProductImageCollectionViewCell, asset: PHAsset) {
+        let manager = PHImageManager.default()
+        manager.requestImage(for: asset,
+                             targetSize: cell.bounds.size,
+                             contentMode: .aspectFit,
+                             options: nil,
+                             resultHandler: { (result, info) in
+            if let result = result {
+                cell.imageView.image = result
+                cell.imageView.contentMode = .scaleAspectFit
+            }
+            else {
+                cell.imageView.contentMode = .center
+            }
+        })
     }
 }
 
