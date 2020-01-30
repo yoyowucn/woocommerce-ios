@@ -3,7 +3,6 @@ import UIKit
 final class InProgressProductImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet private weak var blurView: UIVisualEffectView!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
     @IBOutlet private weak var spinnerView: CircleSpinnerView!
 
     override func awakeFromNib() {
@@ -14,7 +13,6 @@ final class InProgressProductImageCollectionViewCell: UICollectionViewCell {
         configureSpinner()
         configureCellAppearance()
 
-        spinner.isHidden = true
         spinnerView.animate()
     }
 
@@ -42,9 +40,6 @@ private extension InProgressProductImageCollectionViewCell {
     }
 
     func configureSpinner() {
-        spinner.color = .brand
-        spinner.startAnimating()
-
         spinnerView.color = .brand
     }
 

@@ -28,9 +28,6 @@
                         </view>
                         <blurEffect style="regular"/>
                     </visualEffectView>
-                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Gsp-Fa-P8K">
-                        <rect key="frame" x="15" y="15" width="20" height="20"/>
-                    </activityIndicatorView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="871-BJ-oAJ" customClass="CircleSpinnerView" customModule="WooCommerce" customModuleProvider="target">
                         <rect key="frame" x="17.5" y="17.5" width="15" height="15"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -45,7 +42,6 @@
                 <constraint firstItem="871-BJ-oAJ" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" multiplier="0.3" id="FLk-GP-4lq"/>
                 <constraint firstItem="871-BJ-oAJ" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="IYG-no-WBk"/>
                 <constraint firstAttribute="top" secondItem="6Tv-6v-9a6" secondAttribute="top" id="Kp9-8L-sDI"/>
-                <constraint firstItem="Gsp-Fa-P8K" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="Sk5-Is-Vir"/>
                 <constraint firstItem="MaL-FH-Mbh" firstAttribute="bottom" secondItem="6Tv-6v-9a6" secondAttribute="bottom" id="Skh-hV-TwM"/>
                 <constraint firstItem="MaL-FH-Mbh" firstAttribute="trailing" secondItem="6Tv-6v-9a6" secondAttribute="trailing" id="VwE-Uz-ZcZ"/>
                 <constraint firstItem="6Tv-6v-9a6" firstAttribute="trailing" secondItem="gTV-IL-0wX" secondAttribute="trailing" id="WaC-CB-iDt"/>
@@ -53,13 +49,11 @@
                 <constraint firstItem="MaL-FH-Mbh" firstAttribute="top" secondItem="6Tv-6v-9a6" secondAttribute="top" id="m7c-Sg-LqL"/>
                 <constraint firstItem="MaL-FH-Mbh" firstAttribute="leading" secondItem="6Tv-6v-9a6" secondAttribute="leading" id="r2g-h9-r3a"/>
                 <constraint firstItem="871-BJ-oAJ" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="sBd-J0-YYD"/>
-                <constraint firstItem="Gsp-Fa-P8K" firstAttribute="centerY" secondItem="gTV-IL-0wX" secondAttribute="centerY" id="yZj-xq-DJe"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <connections>
                 <outlet property="blurView" destination="MaL-FH-Mbh" id="82L-KO-tsp"/>
                 <outlet property="imageView" destination="6Tv-6v-9a6" id="B6h-Mx-iKV"/>
-                <outlet property="spinner" destination="Gsp-Fa-P8K" id="Eeg-qO-SQH"/>
                 <outlet property="spinnerView" destination="871-BJ-oAJ" id="2yc-T8-pzI"/>
             </connections>
             <point key="canvasLocation" x="132" y="101"/>
