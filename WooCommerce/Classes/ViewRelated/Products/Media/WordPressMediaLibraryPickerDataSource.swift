@@ -51,11 +51,6 @@ final class WordPressMediaLibraryPickerDataSource: NSObject {
         self.loadMedia = loadMedia
         super.init()
     }
-
-    func updateMediaItems(_ mediaItems: [Media]) {
-        self.mediaItems = mediaItems
-        onDataChange?(false, [], [], [], [])
-    }
 }
 
 extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
@@ -79,16 +74,12 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
     }
 
     func media(at index: Int) -> WPMediaAsset {
-        fatalError()
-        // TODO: support WP media library
-//        let media = mediaItems[index]
-//        return media
+        let media = mediaItems[index]
+        return media
     }
 
     func media(withIdentifier identifier: String) -> WPMediaAsset? {
-        fatalError()
-        // TODO: support WP media library
-//        return mediaItems.first(where: { "\($0.mediaID)" == identifier })
+        return mediaItems.first(where: { "\($0.mediaID)" == identifier })
     }
 
     func registerChangeObserverBlock(_ callback: @escaping WPMediaChangesBlock) -> NSObjectProtocol {
