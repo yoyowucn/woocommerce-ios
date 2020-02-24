@@ -94,6 +94,8 @@ final class OrdersMasterViewController: UIViewController {
     /// Shows `SearchViewController`.
     ///
     @objc private func displaySearchOrders() {
+        fatalError("Just for testing!")
+
         guard let storeID = viewModel.siteID else {
             return
         }
