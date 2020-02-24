@@ -14,7 +14,16 @@ final class ProductImagesViewController: UIViewController {
 
     private let siteID: Int64
     private let productID: Int64
+
+
     private let productImagesService: ProductImagesService
+    private var productImageStatuses: [ProductImageStatus] {
+        didSet {
+            imagesViewController.updateProductImageStatuses(productImageStatuses)
+        }
+    }
+
+    private let originalProductImages: [ProductImage]
     private var productImages: [ProductImage] {
         return productImageStatuses.compactMap { status in
             switch status {
@@ -23,12 +32,6 @@ final class ProductImagesViewController: UIViewController {
             default:
                 return nil
             }
-        }
-    }
-
-    private var productImageStatuses: [ProductImageStatus] {
-        didSet {
-            imagesViewController.updateProductImageStatuses(productImageStatuses)
         }
     }
 
@@ -53,6 +56,7 @@ final class ProductImagesViewController: UIViewController {
         self.productID = product.productID
         self.productImagesService = productImagesService
         self.productImageStatuses = product.images.map({ ProductImageStatus.remote(image: $0) })
+        self.originalProductImages = product.images
         self.onCompletion = completion
         super.init(nibName: nil, bundle: nil)
     }
@@ -118,14 +122,6 @@ private extension ProductImagesViewController {
     }
 
     @objc func doneButtonTapped() {
-        guard productImageStatuses.count == productImages.count else {
-            presentSaveChangesActionSheet()
-            return
-        }
-        completeEditing()
-    }
-
-    func completeEditing() {
         onCompletion(productImages)
     }
 
@@ -135,7 +131,7 @@ private extension ProductImagesViewController {
     }
 
     func onDeletion(productImage: ProductImage) {
-        productImageStatuses.removeAll { (status) -> Bool in
+        productImageStatuses.removeAll { status -> Bool in
             guard case .remote(let image) = status else {
                 return false
             }
@@ -149,19 +145,21 @@ private extension ProductImagesViewController {
 //
 extension ProductImagesViewController {
     override func shouldPopOnBackButton() -> Bool {
-        guard productImageStatuses.count == productImages.count else {
-            presentSaveChangesActionSheet()
+        guard hasOutstandingChanges() == false else {
+            presentDiscardChangesActionSheet()
             return false
         }
         return true
     }
 
-    private func presentSaveChangesActionSheet() {
-        UIAlertController.presentSaveChangesActionSheet(viewController: self, onSave: { [weak self] in
-            self?.completeEditing()
-        }, onDiscard: { [weak self] in
+    private func presentDiscardChangesActionSheet() {
+        UIAlertController.presentDiscardChangesActionSheet(viewController: self, onDiscard: { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         })
+    }
+
+    private func hasOutstandingChanges() -> Bool {
+        return originalProductImages != productImages
     }
 }
 

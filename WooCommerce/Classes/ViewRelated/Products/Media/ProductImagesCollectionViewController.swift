@@ -2,33 +2,6 @@ import Photos
 import UIKit
 import Yosemite
 
-/// The status of a Product image.
-///
-enum ProductImageStatus {
-    /// A `PHAsset` is being uploaded.
-    ///
-    case uploading(asset: PHAsset)
-
-    /// The Product image exists remotely.
-    ///
-    case remote(image: ProductImage)
-}
-
-extension ProductImageStatus {
-    var cellReuseIdentifier: String {
-        return cellClass.reuseIdentifier
-    }
-
-    private var cellClass: UICollectionViewCell.Type {
-        switch self {
-        case .uploading:
-            return InProgressProductImageCollectionViewCell.self
-        case .remote:
-            return ProductImageCollectionViewCell.self
-        }
-    }
-}
-
 /// Displays Product images in grid layout.
 ///
 final class ProductImagesCollectionViewController: UICollectionViewController {
@@ -63,7 +36,8 @@ final class ProductImagesCollectionViewController: UICollectionViewController {
         collectionView.backgroundColor = .basicBackground
 
         collectionView.register(ProductImageCollectionViewCell.loadNib(), forCellWithReuseIdentifier: ProductImageCollectionViewCell.reuseIdentifier)
-        collectionView.register(InProgressProductImageCollectionViewCell.loadNib(), forCellWithReuseIdentifier: InProgressProductImageCollectionViewCell.reuseIdentifier)
+        collectionView.register(InProgressProductImageCollectionViewCell.loadNib(),
+                                forCellWithReuseIdentifier: InProgressProductImageCollectionViewCell.reuseIdentifier)
 
         collectionView.reloadData()
     }
@@ -92,25 +66,26 @@ extension ProductImagesCollectionViewController {
     }
 }
 
+
 // MARK: Cell configurations
 //
 private extension ProductImagesCollectionViewController {
     func configureCell(_ cell: UICollectionViewCell, productImageStatus: ProductImageStatus) {
         switch productImageStatus {
         case .remote(let image):
-            guard let cell = cell as? ProductImageCollectionViewCell else {
-                fatalError("Unexpected cell type for status: \(productImageStatus)")
-            }
             configureRemoteImageCell(cell, image: image)
         case .uploading(let asset):
-            guard let cell = cell as? InProgressProductImageCollectionViewCell else {
-                fatalError("Unexpected cell type for status: \(productImageStatus)")
-            }
             configureUploadingImageCell(cell, asset: asset)
         }
     }
 
-    func configureRemoteImageCell(_ cell: ProductImageCollectionViewCell, image: ProductImage) {
+    func configureRemoteImageCell(_ cell: UICollectionViewCell, image: ProductImage) {
+        guard let cell = cell as? ProductImageCollectionViewCell else {
+            fatalError()
+        }
+
+        cell.imageView.contentMode = .center
+
         imageService.downloadAndCacheImageForImageView(cell.imageView,
                                                        with: image.src,
                                                        placeholder: .productPlaceholderImage,
@@ -119,13 +94,14 @@ private extension ProductImagesCollectionViewController {
                                                         if success {
                                                             cell.imageView.contentMode = .scaleAspectFit
                                                         }
-                                                        else {
-                                                            cell.imageView.contentMode = .center
-                                                        }
         }
     }
 
-    func configureUploadingImageCell(_ cell: InProgressProductImageCollectionViewCell, asset: PHAsset) {
+    func configureUploadingImageCell(_ cell: UICollectionViewCell, asset: PHAsset) {
+        guard let cell = cell as? InProgressProductImageCollectionViewCell else {
+            fatalError()
+        }
+
         let manager = PHImageManager.default()
         manager.requestImage(for: asset,
                              targetSize: cell.bounds.size,
