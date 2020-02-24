@@ -35,7 +35,7 @@ target 'WooCommerce' do
 
   pod 'WordPress-Editor-iOS', '~> 1.11.0'
 
-  pod 'WPMediaPicker', '~> 1.6.0'
+  pod 'WPMediaPicker', :path => "../MediaPicker-iOS"
 
   # External Libraries
   # ==================

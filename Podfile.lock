@@ -98,7 +98,7 @@ DEPENDENCIES:
   - WordPressShared (~> 1.8.2)
   - WordPressUI (~> 1.4)
   - Wormholy (~> 1.5.1)
-  - WPMediaPicker (~> 1.6.0)
+  - WPMediaPicker (from `../MediaPicker-iOS`)
   - XLPagerTabStrip (~> 9.0)
   - ZendeskSDK (~> 4.0)
 
@@ -130,10 +130,13 @@ SPEC REPOS:
     - WordPressShared
     - WordPressUI
     - Wormholy
-    - WPMediaPicker
     - wpxmlrpc
     - XLPagerTabStrip
     - ZendeskSDK
+
+EXTERNAL SOURCES:
+  WPMediaPicker:
+    :path: "../MediaPicker-iOS"
 
 SPEC CHECKSUMS:
   1PasswordExtension: 0e95bdea64ec8ff2f4f693be5467a09fac42a83d
@@ -167,6 +170,6 @@ SPEC CHECKSUMS:
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
   ZendeskSDK: 99679d8420a6d862773e2ddef0ebcc51b282317d
 
-PODFILE CHECKSUM: e4231e9f0d566658171c431802f78085afec88e1
+PODFILE CHECKSUM: 6bdcc41cee277365818574835428a6a3e577c1e5
 
 COCOAPODS: 1.8.4
