@@ -126,7 +126,9 @@ extension ProductImagesCollectionViewController {
         let status = productImageStatuses[indexPath.row]
         switch status {
         case .remote(let productImage):
-            let productImageViewController = ProductImageViewController(productImage: productImage, onDeletion: onDeletion)
+            let productImageViewController = ProductImageViewController(productImage: productImage, onDeletion: { [weak self] productImage in
+                self?.onDeletion(productImage)
+            })
             navigationController?.pushViewController(productImageViewController, animated: true)
         default:
             return
