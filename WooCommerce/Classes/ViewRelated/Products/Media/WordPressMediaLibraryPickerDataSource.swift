@@ -3,7 +3,8 @@ import Yosemite
 import WordPressShared
 
 final class WordPressMediaLibraryMediaGroup: NSObject, WPMediaGroup {
-    private var mediaItems: [Media]
+    private let mediaItems: [Media]
+
     init(mediaItems: [Media]) {
         self.mediaItems = mediaItems
         super.init()

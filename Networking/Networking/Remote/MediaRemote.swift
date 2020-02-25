@@ -22,16 +22,9 @@ public class MediaRemote: Remote {
                                     method: .get,
                                     path: path,
                                     parameters: parameters)
-        let mapper = MediaListEnvelopeMapper()
+        let mapper = MediaListMapper()
 
-        enqueue(request, mapper: mapper) { (mediaListEnvelope, error) in
-            guard let mediaList = mediaListEnvelope?.mediaList, error == nil else {
-                completion(nil, error)
-                return
-            }
-
-            completion(mediaList, nil)
-        }
+        enqueue(request, mapper: mapper, completion: completion)
     }
 
     /// Uploads an array of media in the local file system.
