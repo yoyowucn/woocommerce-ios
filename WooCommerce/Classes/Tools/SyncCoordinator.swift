@@ -144,7 +144,7 @@ extension SyncingCoordinator {
     /// Maps an ObjectIndex to a PageNumber: [1, ...)
     ///
     func pageNumber(for objectIndex: Int) -> Int {
-        return objectIndex / pageSize + 1
+        return objectIndex / pageSize + pageFirstIndex
     }
 
     /// Indicates if the Cache for a given PageNumber is Invalid: Never Sync'ed (OR) TTL Expired

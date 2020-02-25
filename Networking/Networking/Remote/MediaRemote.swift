@@ -4,19 +4,18 @@ import Foundation
 ///
 public class MediaRemote: Remote {
     public func retrieveMediaLibrary(for siteID: Int64,
-                                     pageHandle: String? = nil,
-                                     appendingTo existingMediaList: [Media] = [],
+                                     pageFirstIndex: Int = Constants.pageFirstIndex,
+                                     pageNumber: Int = Constants.pageFirstIndex,
+                                     pageSize: Int = 25,
                                      context: String? = nil,
-                                     completion: @escaping ([Media]?, Error?) -> Void) {
-        var parameters: [String: Any] = [
+                                     completion: @escaping (_ mediaItems: [Media]?, _ error: Error?) -> Void) {
+        let parameters: [String: Any] = [
             ParameterKey.contextKey: context ?? Default.context,
-            ParameterKey.perPage: 100,
+            ParameterKey.perPage: pageSize,
+            ParameterKey.pageNumber: pageNumber - pageFirstIndex + Constants.pageFirstIndex,
             ParameterKey.fields: "ID,date,URL,thumbnails,title,alt,extension,mime_type",
             ParameterKey.mimeType: "image"
         ]
-        if pageHandle?.isEmpty == false {
-            parameters[ParameterKey.page] = pageHandle
-        }
 
         let path = "sites/\(siteID)/media"
         let request = DotcomRequest(wordpressApiVersion: .mark1_1,
@@ -25,15 +24,9 @@ public class MediaRemote: Remote {
                                     parameters: parameters)
         let mapper = MediaListEnvelopeMapper()
 
-        enqueue(request, mapper: mapper) { [weak self] (mediaListEnvelope, error) in
-            guard let fetchedMediaList = mediaListEnvelope?.mediaList, error == nil else {
+        enqueue(request, mapper: mapper) { (mediaListEnvelope, error) in
+            guard let mediaList = mediaListEnvelope?.mediaList, error == nil else {
                 completion(nil, error)
-                return
-            }
-
-            let mediaList = existingMediaList + fetchedMediaList
-            if let nextPageHandle = mediaListEnvelope?.meta?.nextPageHandle, nextPageHandle.isEmpty == false {
-                self?.retrieveMediaLibrary(for: siteID, pageHandle: nextPageHandle, appendingTo: mediaList, context: context, completion: completion)
                 return
             }
 
@@ -84,8 +77,12 @@ public extension MediaRemote {
         public static let context: String = "display"
     }
 
+    enum Constants {
+        public static let pageFirstIndex = 1
+    }
+
     private enum ParameterKey {
-        static let page: String       = "page_handle"
+        static let pageNumber: String = "page"
         static let perPage: String    = "number"
         static let fields: String     = "fields"
         static let mimeType: String   = "mime_type"

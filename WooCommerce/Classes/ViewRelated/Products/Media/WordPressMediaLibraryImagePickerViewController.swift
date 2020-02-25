@@ -40,10 +40,7 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         let picker = WPNavigationMediaPickerViewController()
-        mediaLibraryDataSource = WordPressMediaLibraryPickerDataSource(siteID: siteID,
-                                                                  loadMedia: { [weak self] (onCompletion) in
-                                                                    self?.retrieveMedia(completion: onCompletion)
-        })
+        mediaLibraryDataSource = WordPressMediaLibraryPickerDataSource(siteID: siteID)
         picker.dataSource = mediaLibraryDataSource
         picker.startOnGroupSelector = false
         picker.showGroupSelector = false
@@ -51,26 +48,16 @@ final class WordPressMediaLibraryImagePickerViewController: UIViewController {
         picker.delegate = self
         picker.modalPresentationStyle = .currentContext
         picker.mediaPicker.collectionView?.backgroundColor = .listBackground
-        picker.mediaPicker.defaultEmptyView.text = NSLocalizedString("No images yet", comment: "Placeholder text shown when there are no images for the Media Library yet")
+
+        let emptyImagesText = NSLocalizedString("No images yet",
+                                                comment: "Placeholder text shown when there are no images for the WordPress Media Library yet")
+        picker.mediaPicker.defaultEmptyView.text = emptyImagesText
         self.picker = picker
 
         picker.view.translatesAutoresizingMaskIntoConstraints = false
 
         add(picker)
         view.pinSubviewToAllEdges(picker.view)
-    }
-}
-
-private extension WordPressMediaLibraryImagePickerViewController {
-    func retrieveMedia(completion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
-        let action = MediaAction.retrieveMediaLibrary(siteID: siteID) { (mediaItems, error) in
-            guard mediaItems.isEmpty == false else {
-                completion([], error)
-                return
-            }
-            completion(mediaItems, nil)
-        }
-        ServiceLocator.stores.dispatch(action)
     }
 }
 

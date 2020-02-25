@@ -6,7 +6,7 @@ public enum MediaAction: Action {
 
     /// Retrieves all media from WP Media Library.
     ///
-    case retrieveMediaLibrary(siteID: Int64, onCompletion: (_ mediaItems: [Media], _ error: Error?) -> Void)
+    case retrieveMediaLibrary(siteID: Int64, pageFirstIndex: Int, pageNumber: Int, pageSize: Int, onCompletion: (_ mediaItems: [Media], _ error: Error?) -> Void)
 
     /// Uploads an exportable media asset to the site's WP Media Library.
     ///

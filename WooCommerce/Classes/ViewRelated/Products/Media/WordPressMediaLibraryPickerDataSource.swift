@@ -34,22 +34,24 @@ final class WordPressMediaLibraryMediaGroup: NSObject, WPMediaGroup {
 
 
 final class WordPressMediaLibraryPickerDataSource: NSObject {
-    private var loadMedia: LoadMedia
-    typealias LoadMedia = (_ onCompletion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) -> Void
     private var onDataChange: WPMediaChangesBlock?
 
     private var mediaItems: [Media]
     private let siteID: Int64
 
+    private let syncingCoordinator: SyncingCoordinator
+
     private lazy var mediaGroup: WPMediaGroup = {
         return WordPressMediaLibraryMediaGroup(mediaItems: mediaItems)
     }()
 
-    init(siteID: Int64, loadMedia: @escaping LoadMedia) {
+    init(siteID: Int64) {
         self.siteID = siteID
         self.mediaItems = []
-        self.loadMedia = loadMedia
+        self.syncingCoordinator = SyncingCoordinator(pageFirstIndex: Constants.pageFirstIndex, pageSize: Constants.numberOfItems)
         super.init()
+
+        syncingCoordinator.delegate = self
     }
 }
 
@@ -75,6 +77,7 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
 
     func media(at index: Int) -> WPMediaAsset {
         let media = mediaItems[index]
+        syncingCoordinator.ensureNextPageIsSynchronized(lastVisibleIndex: index)
         return media
     }
 
@@ -101,7 +104,7 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
     }
 
     func loadData(with options: WPMediaLoadOptions, success successBlock: WPMediaSuccessBlock?, failure failureBlock: WPMediaFailureBlock? = nil) {
-        loadMedia { [weak self] (mediaItems, error) in
+        retrieveMedia(pageNumber: Constants.pageFirstIndex, pageSize: Constants.numberOfItems) { [weak self] (mediaItems, error) in
             guard error == nil else {
                 failureBlock?(error)
                 return
@@ -125,5 +128,54 @@ extension WordPressMediaLibraryPickerDataSource: WPMediaCollectionDataSource {
 
     func ascendingOrdering() -> Bool {
         return true
+    }
+}
+
+extension WordPressMediaLibraryPickerDataSource: SyncingCoordinatorDelegate {
+    func sync(pageNumber: Int, pageSize: Int, onCompletion: ((Bool) -> Void)?) {
+        retrieveMedia(pageNumber: pageNumber, pageSize: pageSize) { [weak self] (mediaItems, error) in
+            guard error == nil else {
+                return
+            }
+            self?.updateMediaItems(mediaItems, pageNumber: pageNumber, pageSize: pageSize)
+        }
+    }
+}
+
+private extension WordPressMediaLibraryPickerDataSource {
+    func retrieveMedia(pageNumber: Int, pageSize: Int, completion: @escaping (_ mediaItems: [Media], _ error: Error?) -> Void) {
+        let action = MediaAction.retrieveMediaLibrary(siteID: siteID,
+                                                      pageFirstIndex: Constants.pageFirstIndex,
+                                                      pageNumber: pageNumber,
+                                                      pageSize: pageSize) { (mediaItems, error) in
+                                                        guard mediaItems.isEmpty == false else {
+                                                            completion([], error)
+                                                            return
+                                                        }
+                                                        completion(mediaItems, nil)
+        }
+        ServiceLocator.stores.dispatch(action)
+    }
+
+    func updateMediaItems(_ newMediaItems: [Media], pageNumber: Int, pageSize: Int) {
+        let startIndex = (pageNumber - Constants.pageFirstIndex) * pageSize
+        let endIndex = min(startIndex + newMediaItems.count - 1, (pageNumber + 1 - Constants.pageFirstIndex) * pageSize - 1)
+
+        guard mediaItems.count == startIndex else {
+            assertionFailure("""
+                Cannot update media items where the start index \(startIndex) is not continuous with the current media items of size \(mediaItems.count)
+                """)
+            return
+        }
+
+        mediaItems += newMediaItems
+        onDataChange?(true, [], IndexSet(integersIn: startIndex...endIndex), [], [])
+    }
+}
+
+private extension WordPressMediaLibraryPickerDataSource {
+    enum Constants {
+        static let numberOfItems: Int = 25
+        static let pageFirstIndex: Int = 0
     }
 }
