@@ -188,12 +188,6 @@ extension UIImage {
         return UIImage(named: "icon-jetpack-gray")!
     }
 
-    /// Image Icon
-    ///
-    static var imageImage: UIImage {
-        return Gridicon.iconOfType(.image, withSize: CGSize(width: 24, height: 24))
-    }
-
     /// Info Icon
     ///
     static var infoImage: UIImage {
