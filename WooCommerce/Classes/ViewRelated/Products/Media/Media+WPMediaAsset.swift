@@ -81,13 +81,18 @@ extension Media: WPMediaAsset {
         guard let url = URL(string: imageURL) else {
             return 0
         }
-        DispatchQueue.global().async {
-            ServiceLocator.imageService.retrieveImageFromCache(with: url) { (image) in
-                completionHandler(image, nil)
-            }
 
-            ServiceLocator.imageService.downloadImage(with: url, size: size, shouldCacheImage: true) { (image, error) in
-                completionHandler(image, error)
+        let imageService = ServiceLocator.imageService
+        DispatchQueue.global().async {
+            imageService.retrieveImageFromCache(with: url) { (image) in
+                if let image = image {
+                    completionHandler(image, nil)
+                    return
+                }
+
+                imageService.downloadImage(with: url, size: size, shouldCacheImage: true) { (image, error) in
+                    completionHandler(image, error)
+                }
             }
         }
         return Int32(mediaID)
