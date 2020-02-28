@@ -122,6 +122,12 @@ final class ProductImagesService {
             return image.imageID == productImage.imageID
         }
     }
+
+    /// Resets the product images to the ones from the given Product.
+    ///
+    func resetProductImages(to product: Product) {
+        productImageStatuses = product.imageStatuses
+    }
 }
 
 private extension ProductImagesService {

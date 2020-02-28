@@ -27,7 +27,7 @@ final class ProductFormViewController: UIViewController {
     private var viewModel: ProductFormTableViewModel
     private var tableViewDataSource: ProductFormTableViewDataSource
 
-    private let productImagesService: ProductImagesService
+    private var productImagesService: ProductImagesService
     private let productImagesProvider: ProductImagesProvider
 
     private let currency: String
@@ -59,19 +59,7 @@ final class ProductFormViewController: UIViewController {
         configureMainView()
         configureTableView()
 
-        productImagesService.addUpdateObserver(self) { [weak self] (productImageStatuses, error) in
-            guard let self = self else {
-                return
-            }
-
-            if error != nil {
-                let title = NSLocalizedString("Cannot upload image", comment: "The title of the alert when there is an error uploading an image")
-                let message = NSLocalizedString("Please try again.", comment: "The message of the alert when there is an error uploading an image")
-                self.displayErrorAlert(title: title, message: message)
-            }
-
-            self.product = self.productUpdater.imagesUpdated(images: productImageStatuses.images)
-        }
+        observeProductImageStatusUpdates()
     }
 }
 
@@ -112,6 +100,22 @@ private extension ProductFormViewController {
         tableView.reloadData()
     }
 
+    func observeProductImageStatusUpdates() {
+        productImagesService.addUpdateObserver(self) { [weak self] (productImageStatuses, error) in
+            guard let self = self else {
+                return
+            }
+
+            if error != nil {
+                let title = NSLocalizedString("Cannot upload image", comment: "The title of the alert when there is an error uploading an image")
+                let message = NSLocalizedString("Please try again.", comment: "The message of the alert when there is an error uploading an image")
+                self.displayErrorAlert(title: title, message: message)
+            }
+
+            self.product = self.productUpdater.imagesUpdated(images: productImageStatuses.images)
+        }
+    }
+
     /// Registers all of the available TableViewCells
     ///
     func registerTableViewCells() {
@@ -149,6 +153,29 @@ private extension ProductFormViewController {
 
         navigationController?.present(inProgressViewController, animated: true, completion: nil)
 
+        let group = DispatchGroup()
+
+        group.enter()
+        let updateObservationToken = productImagesService.addUpdateObserver(self) { [weak self] (productImageStatuses, error) in
+            guard productImageStatuses.count == productImageStatuses.images.count else {
+                return
+            }
+
+            guard let self = self else {
+                return
+            }
+
+            self.product = self.productUpdater.imagesUpdated(images: productImageStatuses.images)
+            group.leave()
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            updateObservationToken.cancel()
+            self?.updateProductRemotely()
+        }
+    }
+
+    func updateProductRemotely() {
         let action = ProductAction.updateProduct(product: product) { [weak self] (product, error) in
             guard let product = product, error == nil else {
                 let errorDescription = error?.localizedDescription ?? "No error specified"
@@ -160,6 +187,11 @@ private extension ProductFormViewController {
                 }
                 return
             }
+            // TODO-jc: how to reset the states after Product has been updated remotely, to differentiate from other self.product cases
+            // maybe it's easier to call `resetProductImages`?
+            self?.productImagesService = ProductImagesService(siteID: product.siteID,
+                                                              product: product)
+            self?.observeProductImageStatusUpdates()
             self?.product = product
 
             ServiceLocator.analytics.track(.productDetailUpdateSuccess)
