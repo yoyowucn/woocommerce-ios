@@ -5,6 +5,8 @@ import Yosemite
 
 
 final class ReviewsViewModel {
+    private let siteID: Int64
+
     private let data: ReviewsDataSource
 
     var isEmpty: Bool {
@@ -27,7 +29,8 @@ final class ReviewsViewModel {
         return data.notifications.filter { $0.read == false }
     }
 
-    init(data: ReviewsDataSource) {
+    init(siteID: Int64, data: ReviewsDataSource) {
+        self.siteID = siteID
         self.data = data
     }
 
@@ -117,10 +120,6 @@ extension ReviewsViewModel {
     private func synchronizeAllReviews(pageNumber: Int,
                                        pageSize: Int,
                                        onCompletion: (() -> Void)? = nil) {
-        guard let siteID = ServiceLocator.stores.sessionManager.defaultStoreID else {
-            return
-        }
-
         let action = ProductReviewAction.synchronizeProductReviews(siteID: siteID, pageNumber: pageNumber, pageSize: pageSize) { error in
             if let error = error {
                 DDLogError("⛔️ Error synchronizing reviews: \(error)")
@@ -140,10 +139,6 @@ extension ReviewsViewModel {
 
     private func synchronizeProductsReviewed(onCompletion: @escaping () -> Void) {
         let reviewsProductIDs = data.reviewsProductsIDs
-
-        guard let siteID = ServiceLocator.stores.sessionManager.defaultStoreID else {
-            return
-        }
 
         let action = ProductAction.retrieveProducts(siteID: siteID, productIDs: reviewsProductIDs) { error in
             if let error = error {

@@ -5,6 +5,8 @@ import UIKit
 //
 final class ReviewsViewController: UIViewController {
 
+    private let siteID: Int64
+
     /// Main TableView.
     ///
     @IBOutlet private weak var tableView: UITableView!
@@ -21,7 +23,7 @@ final class ReviewsViewController: UIViewController {
         return item
     }()
 
-    private let viewModel = ReviewsViewModel(data: DefaultReviewsDataSource())
+    private let viewModel: ReviewsViewModel
 
     /// Haptic Feedback!
     ///
@@ -90,6 +92,9 @@ final class ReviewsViewController: UIViewController {
     // MARK: - View Lifecycle
 
     init(siteID: Int64) {
+        self.siteID = siteID
+        self.viewModel = ReviewsViewModel(siteID: siteID, data: DefaultReviewsDataSource(siteID: siteID))
+
         super.init(nibName: nil, bundle: nil)
 
         // This 👇 should be called in init so the tab is correctly localized when the app launches
