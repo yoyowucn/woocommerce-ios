@@ -271,6 +271,7 @@
 		57F34AA12423D45A00E38AFB /* OrdersViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F34AA02423D45A00E38AFB /* OrdersViewModelTests.swift */; };
 		6856D1CF566FAA52C2138DFB /* OverlayMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6856D08FCB1555CA5592B29F /* OverlayMessageView.swift */; };
 		6856D35410B9CAF33FD4296E /* OverlayMessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6856D7EA28E748AFD36AF3CA /* OverlayMessageView.xib */; };
+		6856D7A816B0173FECFDE512 /* OverlayMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6856D9C6357E3C2B66F6B457 /* OverlayMessageViewController.swift */; };
 		74036CC0211B882100E462C2 /* PeriodDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74036CBF211B882100E462C2 /* PeriodDataViewController.swift */; };
 		740382DB2267D94100A627F4 /* LargeImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740382D92267D94100A627F4 /* LargeImageTableViewCell.swift */; };
 		740382DC2267D94100A627F4 /* LargeImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 740382DA2267D94100A627F4 /* LargeImageTableViewCell.xib */; };
@@ -1033,6 +1034,7 @@
 		57F34AA02423D45A00E38AFB /* OrdersViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersViewModelTests.swift; sourceTree = "<group>"; };
 		6856D08FCB1555CA5592B29F /* OverlayMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayMessageView.swift; sourceTree = "<group>"; };
 		6856D7EA28E748AFD36AF3CA /* OverlayMessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OverlayMessageView.xib; sourceTree = "<group>"; };
+		6856D9C6357E3C2B66F6B457 /* OverlayMessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayMessageViewController.swift; sourceTree = "<group>"; };
 		6DC4526F9A7357761197EBF0 /* Pods_WooCommerceTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WooCommerceTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74036CBF211B882100E462C2 /* PeriodDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodDataViewController.swift; sourceTree = "<group>"; };
 		740382D92267D94100A627F4 /* LargeImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeImageTableViewCell.swift; sourceTree = "<group>"; };
@@ -2073,6 +2075,7 @@
 			children = (
 				6856D7EA28E748AFD36AF3CA /* OverlayMessageView.xib */,
 				6856D08FCB1555CA5592B29F /* OverlayMessageView.swift */,
+				6856D9C6357E3C2B66F6B457 /* OverlayMessageViewController.swift */,
 			);
 			path = OverlayMessageView;
 			sourceTree = "<group>";
@@ -4365,6 +4368,7 @@
 				CE1F512920697F0100C6C810 /* UIFont+Helpers.swift in Sources */,
 				45D1CF4523BAC2A500945A36 /* ProductTaxClassListSelectorDataSource.swift in Sources */,
 				6856D1CF566FAA52C2138DFB /* OverlayMessageView.swift in Sources */,
+				6856D7A816B0173FECFDE512 /* OverlayMessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
