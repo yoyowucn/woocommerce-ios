@@ -389,6 +389,7 @@ private extension SearchViewController {
     /// Displays the Empty State Legend.
     ///
     func displayEmptyState() {
+        // Create the controller if it doesn't exist yet
         let childController: UIViewController = {
             if let existing = emptyStateViewController {
                 return existing
@@ -398,7 +399,8 @@ private extension SearchViewController {
                 return created
             }
         }()
-        guard let childView = childController.view else {
+        guard let childView = childController.view,
+              childController.parent == nil else {
             return
         }
 
@@ -407,7 +409,7 @@ private extension SearchViewController {
         add(childController)
         view.addSubview(childView)
 
-        // Match the position and size to the `tableView`.
+        // Match the position and size to the `tableView`. Attach top to the searchBar
         NSLayoutConstraint.activate([
             childView.leadingAnchor.constraint(equalTo: tableView.leadingAnchor),
             childView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
@@ -422,7 +424,8 @@ private extension SearchViewController {
     ///
     func removeEmptyState() {
         guard let childController = emptyStateViewController,
-              let childView = childController.view else {
+              let childView = childController.view,
+              childController.parent == self else {
             return
         }
 
