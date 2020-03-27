@@ -26,19 +26,20 @@ final class OverlayMessageViewController: UIViewController {
         fatalError("Not supported")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func loadView() {
+        let mainView = UIView()
 
-        configureOverlayMessageView()
-    }
+        let messageView: OverlayMessageView = {
+            let messageView: OverlayMessageView = OverlayMessageView.instantiateFromNib()
+            messageView.messageText = text
+            messageView.messageImage = image
+            messageView.actionVisible = false
+            return messageView
+        }()
 
-    private func configureOverlayMessageView() {
-        let messageView: OverlayMessageView = OverlayMessageView.instantiateFromNib()
-        messageView.messageText = text
-        messageView.messageImage = image
-
-        messageView.attach(to: view)
+        messageView.attach(to: mainView)
 
         overlayMessageView = messageView
+        view = mainView
     }
 }
