@@ -132,6 +132,10 @@ extension UIImage {
         return UIImage(named: "woo-empty-reviews")!
     }
 
+    static var emptySearchResultsImage: UIImage {
+        UIImage(named: "woo-empty-search-results")!
+    }
+
     /// Error State Image
     ///
     static var errorStateImage: UIImage {
