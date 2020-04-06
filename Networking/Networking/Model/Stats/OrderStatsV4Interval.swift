@@ -55,8 +55,8 @@ extension OrderStatsV4Interval: Comparable {
 private extension OrderStatsV4Interval {
     enum CodingKeys: String, CodingKey {
         case interval = "interval"
-        case dateStart = "date_start"
-        case dateEnd = "date_end"
+        case dateStart = "date_start_gmt"
+        case dateEnd = "date_end_gmt"
         case subtotals = "subtotals"
     }
 }

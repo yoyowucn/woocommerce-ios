@@ -27,7 +27,7 @@ class StoreStatsV4PeriodViewController: UIViewController {
     }
 
     /// Updated when reloading data.
-    var siteTimezone: TimeZone = .current
+    var siteTimezone: TimeZone = .siteTimezone
 
     // MARK: - Private Properties
     private let timeRange: StatsTimeRangeV4

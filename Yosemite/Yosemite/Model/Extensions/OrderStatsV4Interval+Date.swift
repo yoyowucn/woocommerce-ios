@@ -3,6 +3,7 @@ import Foundation
 extension OrderStatsV4Interval {
     private var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter.Stats.dateTimeFormatter
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         return dateFormatter
     }
 
