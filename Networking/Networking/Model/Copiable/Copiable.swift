@@ -6,14 +6,14 @@ import Foundation
 /// Only models that implement this protocol will have a generated `copy()` method. Please see the
 /// docs on how to execute the `copy()` generation.
 ///
-protocol Copiable {
+protocol GeneratedCopying {
 
 }
 
-public typealias CopiableVal<Wrapped> = Optional<Wrapped>
+public typealias Copiable<Wrapped> = Optional<Wrapped>
 
-public typealias NullableCopiableVal<Wrapped> = Optional<Optional<Wrapped>>
+public typealias NullableCopiable<Wrapped> = Optional<Optional<Wrapped>>
 
-extension CopiableVal {
+extension Copiable {
     public static var copy: Wrapped? { nil }
 }
