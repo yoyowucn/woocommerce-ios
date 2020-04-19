@@ -4,4 +4,4 @@ project:
         name: Networking
 templates:
     - Models+Copiable.stencil
-output: ../Networking/Model/Copiable
+output: ../Networking/Model/Copying/Generated

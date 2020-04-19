@@ -1,5 +1,6 @@
 
 {% for type in types.implementing.GeneratedCopying|struct %}
+// sourcery:file:{{ type.name }}+Copying
 
 extension {{ type.name }} {
     public func copy(
@@ -21,4 +22,6 @@ extension {{ type.name }} {
         )
     }
 }
+
+// sourcery:end
 {% endfor %}

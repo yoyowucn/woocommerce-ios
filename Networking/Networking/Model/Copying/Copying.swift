@@ -21,8 +21,3 @@ extension Copiable where Wrapped == Codable {
 extension NullableCopiable where Wrapped == Codable? {
     public static let nullify = Self.some(nil)
 }
-
-//
-//extension Copiable {
-//    public static var copy: Wrapped? { nil }
-//}
