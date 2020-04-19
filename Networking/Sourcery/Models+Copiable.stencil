@@ -3,18 +3,18 @@
 
 extension {{ type.name }} {
     public func copy(
-        {% for variable in type.variables|!computed|!static %}
+        {% for variable in type.variables|publicGet|!computed|!static %}
         {% set copiable_type %}{% if variable.isOptional %}NullableCopiable{% else %}Copiable{% endif %}{% endset %}
         {% set comma_if_not_last %}{% if not forloop.last %},{% endif %}{% endset %}
         {{ variable.name }}: {{ copiable_type }}<{{ variable.typeName | replace:"?","" }}> = .copy{{ comma_if_not_last }}
         {% endfor %}
     ) -> {{type.name}} {
-        {% for variable in type.variables|!computed|!static %}
+        {% for variable in type.variables|publicGet|!computed|!static %}
         let {{ variable.name }} = {{ variable.name }} ?? self.{{ variable.name }}
         {% endfor %}
 
         return {{ type.name }}(
-            {% for variable in type.variables|!computed|!static %}
+            {% for variable in type.variables|publicGet|!computed|!static %}
             {% set comma_if_not_last %}{% if not forloop.last %},{% endif %}{% endset %}
             {{ variable.name }}: {{ variable.name }}{{ comma_if_not_last }}
             {% endfor %}
