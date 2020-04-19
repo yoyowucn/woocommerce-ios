@@ -1,0 +1,7 @@
+project: 
+    file: ../Networking.xcodeproj
+    target: 
+        name: Networking
+templates:
+    - Models+Copiable.stencil
+output: ../Networking/Model/Copiable

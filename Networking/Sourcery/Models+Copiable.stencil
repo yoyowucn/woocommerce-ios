@@ -1,0 +1,21 @@
+
+{% for type in types.implementing.GeneratedCopying|struct %}
+
+extension {{ type.name }} {
+    public func copy(
+        {% for variable in type.variables %}
+        {% if variable.isOptional %}
+        {{ variable.name }}: NullableCopiable<{{ variable.typeName | replace:"?","" }}> = .copy{% if not forloop.last %},{% endif %}
+        {% elif not variable.isOptional %}
+        {{ variable.name }}: Copiable<{{ variable.typeName }}> = .copy{% if not forloop.last %},{% endif %}
+        {% endif %}
+        {% endfor %}
+    ) -> {{type.name}} {
+        {{ type.name }}(
+            {% for variable in type.variables %}
+            {{ variable.name }}: {{ variable.name }} ?? self.{{ variable.name }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        )
+    }
+}
+{% endfor %}
