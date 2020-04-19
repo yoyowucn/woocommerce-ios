@@ -3,17 +3,20 @@
 
 extension {{ type.name }} {
     public func copy(
-        {% for variable in type.variables %}
-        {% if variable.isOptional %}
-        {{ variable.name }}: NullableCopiable<{{ variable.typeName | replace:"?","" }}> = .copy{% if not forloop.last %},{% endif %}
-        {% elif not variable.isOptional %}
-        {{ variable.name }}: Copiable<{{ variable.typeName }}> = .copy{% if not forloop.last %},{% endif %}
-        {% endif %}
+        {% for variable in type.variables|!computed|!static %}
+        {% set copiable_type %}{% if variable.isOptional %}NullableCopiable{% else %}Copiable{% endif %}{% endset %}
+        {% set comma_if_not_last %}{% if not forloop.last %},{% endif %}{% endset %}
+        {{ variable.name }}: {{ copiable_type }}<{{ variable.typeName | replace:"?","" }}> = .copy{{ comma_if_not_last }}
         {% endfor %}
     ) -> {{type.name}} {
-        {{ type.name }}(
-            {% for variable in type.variables %}
-            {{ variable.name }}: {{ variable.name }} ?? self.{{ variable.name }}{% if not forloop.last %},{% endif %}
+        {% for variable in type.variables|!computed|!static %}
+        let {{ variable.name }} = {{ variable.name }} ?? self.{{ variable.name }}
+        {% endfor %}
+
+        return {{ type.name }}(
+            {% for variable in type.variables|!computed|!static %}
+            {% set comma_if_not_last %}{% if not forloop.last %},{% endif %}{% endset %}
+            {{ variable.name }}: {{ variable.name }}{{ comma_if_not_last }}
             {% endfor %}
         )
     }

@@ -12,13 +12,20 @@ extension ProductImage {
         name: NullableCopiable<String> = .copy,
         alt: NullableCopiable<String> = .copy
     ) -> ProductImage {
-        ProductImage(
-            imageID: imageID ?? self.imageID,
-            dateCreated: dateCreated ?? self.dateCreated,
-            dateModified: dateModified ?? self.dateModified,
-            src: src ?? self.src,
-            name: name ?? self.name,
-            alt: alt ?? self.alt
+        let imageID = imageID ?? self.imageID
+        let dateCreated = dateCreated ?? self.dateCreated
+        let dateModified = dateModified ?? self.dateModified
+        let src = src ?? self.src
+        let name = name ?? self.name
+        let alt = alt ?? self.alt
+
+        return ProductImage(
+            imageID: imageID,
+            dateCreated: dateCreated,
+            dateModified: dateModified,
+            src: src,
+            name: name,
+            alt: alt
         )
     }
 }
