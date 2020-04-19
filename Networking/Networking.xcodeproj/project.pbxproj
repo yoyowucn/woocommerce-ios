@@ -59,7 +59,6 @@
 		45ED4F12239E8C57004F1BE3 /* taxes-classes.json in Resources */ = {isa = PBXBuildFile; fileRef = 45ED4F11239E8C57004F1BE3 /* taxes-classes.json */; };
 		45ED4F14239E8F2E004F1BE3 /* TaxClassRemoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ED4F13239E8F2E004F1BE3 /* TaxClassRemoteTests.swift */; };
 		5792D67D244BC497009D0F4B /* Copiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5792D67C244BC497009D0F4B /* Copiable.swift */; };
-		5792D67F244BCFB6009D0F4B /* Models+Copiable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5792D67E244BCFB6009D0F4B /* Models+Copiable.generated.swift */; };
 		57BE08D82409B63800F6DCED /* reviews-missing-avatar-urls.json in Resources */ = {isa = PBXBuildFile; fileRef = 57BE08D72409B63700F6DCED /* reviews-missing-avatar-urls.json */; };
 		6647C0161DAC6AB6570C53A7 /* Pods_Networking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F25DC15EC1D7C631169CB5 /* Pods_Networking.framework */; };
 		6856DE98F90AC6E4743D18CA /* XCTestCase+Wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6856D1228ADBC14D8202E49D /* XCTestCase+Wait.swift */; };
@@ -383,7 +382,6 @@
 		45ED4F13239E8F2E004F1BE3 /* TaxClassRemoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxClassRemoteTests.swift; sourceTree = "<group>"; };
 		573B448C242422DB00E71ADC /* orders-load-all-2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "orders-load-all-2.json"; sourceTree = "<group>"; };
 		5792D67C244BC497009D0F4B /* Copiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copiable.swift; sourceTree = "<group>"; };
-		5792D67E244BCFB6009D0F4B /* Models+Copiable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Models+Copiable.generated.swift"; sourceTree = "<group>"; };
 		57BE08D72409B63700F6DCED /* reviews-missing-avatar-urls.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "reviews-missing-avatar-urls.json"; sourceTree = "<group>"; };
 		6856D1228ADBC14D8202E49D /* XCTestCase+Wait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Wait.swift"; sourceTree = "<group>"; };
 		69314EDE650855CAF927057E /* Pods_NetworkingTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NetworkingTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -703,13 +701,20 @@
 			path = Refund;
 			sourceTree = "<group>";
 		};
-		5792D67B244BC470009D0F4B /* Copiable */ = {
+		571D6022244C9A8E0079749F /* Generated */ = {
 			isa = PBXGroup;
 			children = (
-				5792D67C244BC497009D0F4B /* Copiable.swift */,
-				5792D67E244BCFB6009D0F4B /* Models+Copiable.generated.swift */,
 			);
-			path = Copiable;
+			path = Generated;
+			sourceTree = "<group>";
+		};
+		5792D67B244BC470009D0F4B /* Copying */ = {
+			isa = PBXGroup;
+			children = (
+				571D6022244C9A8E0079749F /* Generated */,
+				5792D67C244BC497009D0F4B /* Copiable.swift */,
+			);
+			path = Copying;
 			sourceTree = "<group>";
 		};
 		6856DE4E23A475D8CEBD10C1 /* Testing */ = {
@@ -936,7 +941,7 @@
 		B557DA1B20979E6D005962F4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5792D67B244BC470009D0F4B /* Copiable */,
+				5792D67B244BC470009D0F4B /* Copying */,
 				B50A583A21AD872E00617455 /* Devices */,
 				020D07B623D852AB00FD9580 /* Media */,
 				CE6BFEE62236CF0D005C79FB /* Product */,
@@ -1535,7 +1540,6 @@
 				743E84EE2217244C00FAC9D7 /* ShipmentTrackingListMapper.swift in Sources */,
 				B567AF2520A0CCA300AB6C62 /* AuthenticatedRequest.swift in Sources */,
 				CE430672234B9EB20073CBFF /* OrderItemTax.swift in Sources */,
-				5792D67F244BCFB6009D0F4B /* Models+Copiable.generated.swift in Sources */,
 				D8736B5C22F083C500A14A29 /* OrderCount.swift in Sources */,
 				B505F6EA20BEFC3700BB1B69 /* MockupNetwork.swift in Sources */,
 				CE0A0F17223970E80075ED8D /* ProductDefaultAttribute.swift in Sources */,

@@ -14,6 +14,15 @@ public typealias Copiable<Wrapped> = Optional<Wrapped>
 
 public typealias NullableCopiable<Wrapped> = Optional<Optional<Wrapped>>
 
-extension Copiable {
-    public static var copy: Wrapped? { nil }
+extension Copiable where Wrapped == Codable {
+    public static let copy: Wrapped? = nil
 }
+
+extension NullableCopiable where Wrapped == Codable? {
+    public static let nullify = Self.some(nil)
+}
+
+//
+//extension Copiable {
+//    public static var copy: Wrapped? { nil }
+//}
