@@ -10,6 +10,6 @@ protocol Copiable {
 
 }
 
-typealias CopiableVal<Wrapped> = Optional<Wrapped>
+public typealias CopiableVal<Wrapped> = Optional<Wrapped>
 
-typealias NullableCopiableVal<Wrapped> = Optional<Optional<Wrapped>>
+public typealias NullableCopiableVal<Wrapped> = Optional<Optional<Wrapped>>
