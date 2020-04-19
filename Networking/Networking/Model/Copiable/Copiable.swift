@@ -13,3 +13,7 @@ protocol Copiable {
 public typealias CopiableVal<Wrapped> = Optional<Wrapped>
 
 public typealias NullableCopiableVal<Wrapped> = Optional<Optional<Wrapped>>
+
+extension CopiableVal {
+    public static var copy: Wrapped? { nil }
+}
