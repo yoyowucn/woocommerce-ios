@@ -3,5 +3,5 @@ project:
     target: 
         name: Networking
 templates:
-    - Models+Copiable.stencil
+    - Models+Copying.stencil
 output: ../Networking/Model/Copying/Generated
