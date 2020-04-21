@@ -23,6 +23,14 @@ final class OrdersViewModel {
     }
 
     private let storageManager: StorageManagerType
+    private let notificationCenter: NotificationCenter
+
+    /// The block called if self requests a resynchronization of the first page.
+    ///
+    /// In the future, if the `SyncCoordinator` should be managed by this `ViewModel`, then we
+    /// wouldn't need this block at all.
+    ///
+    var onShouldResynchronizeAfterAppActivation: (() -> ())?
 
     /// OrderStatus that must be matched by retrieved orders.
     ///
@@ -35,6 +43,9 @@ final class OrdersViewModel {
     /// Defaults to `true`.
     ///
     private let includesFutureOrders: Bool
+
+    /// Used for tracking whether the app was _previously_ in the background.
+    private var isAppActive: Bool = true
 
     /// Should be bound to the UITableView to auto-update the list of Orders.
     ///
@@ -75,9 +86,11 @@ final class OrdersViewModel {
     }
 
     init(storageManager: StorageManagerType = ServiceLocator.storageManager,
+         notificationCenter: NotificationCenter = .default,
          statusFilter: OrderStatus?,
          includesFutureOrders: Bool = true) {
         self.storageManager = storageManager
+        self.notificationCenter = notificationCenter
         self.statusFilter = statusFilter
         self.includesFutureOrders = includesFutureOrders
     }
@@ -90,6 +103,26 @@ final class OrdersViewModel {
     func activateAndForwardUpdates(to tableView: UITableView) {
         resultsController.startForwardingEvents(to: tableView)
         try? resultsController.performFetch()
+
+        notificationCenter.addObserver(self, selector: #selector(handleAppDeactivation),
+                                       name: UIApplication.willResignActiveNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(handleAppActivation),
+                                       name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
+    @objc private func handleAppDeactivation() {
+        isAppActive = false
+    }
+
+    /// Request a resynchornization if the app was previously in the background.
+    ///
+    @objc private func handleAppActivation() {
+        guard !isAppActive else {
+            return
+        }
+
+        isAppActive = true
+        onShouldResynchronizeAfterAppActivation?()
     }
 
     /// Returns what `OrderAction` should be used when synchronizing.
@@ -148,9 +181,11 @@ final class OrdersViewModel {
     /// | Action           | Current Tab | Delete All | GET ?status=processing | GET ?status=any |
     /// |------------------|-------------|------------|------------------------|-----------------|
     /// | Pull-to-refresh  | Processing  | y          | y                      | y               |
+    /// | App activated    | Processing  | .          | y                      | y               |
     /// | `viewWillAppear` | Processing  | .          | y                      | y               |
     /// | Load next page   | Processing  | .          | y                      | .               |
     /// | Pull-to-refresh  | All Orders  | y          | .                      | y               |
+    /// | App activated    | All Orders  | .          | .                      | y               |
     /// | `viewWillAppear` | All Orders  | .          | .                      | y               |
     /// | Load next page   | All Orders  | .          | .                      | y               |
     ///
